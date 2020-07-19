@@ -1,0 +1,51 @@
+#include "subgroup.h"
+
+Subgroup Subgroup::fromString(const QString &value)
+{
+    if (value == "A") {
+        return getA();
+    }
+    if (value == "B") {
+        return getB();
+    }
+    if (value == "Common") {
+        return getCommon();
+    }
+    throw std::invalid_argument("Can't parse subgroup: " + value.toStdString());
+}
+
+Subgroup Subgroup::getA()
+{
+    return Subgroup("A", "(А)");
+}
+
+Subgroup Subgroup::getB()
+{
+    return Subgroup("B", "(Б)");
+}
+
+Subgroup Subgroup::getCommon()
+{
+    return Subgroup("Common", "");
+}
+
+bool Subgroup::isShow() const
+{
+    return !text_.isEmpty();
+}
+
+QString Subgroup::tag() const
+{
+    return tag_;
+}
+
+QString Subgroup::text() const
+{
+    return text_;
+}
+
+Subgroup::Subgroup(QString tag, QString text)
+    : tag_(tag), text_(text)
+{
+
+}
