@@ -24,6 +24,19 @@ QVector<QTime> Time_::endTime()
     };
 }
 
+QStringList Time_::timeList()
+{
+    QStringList list;
+
+    auto start = startTime();
+    auto end = endTime();
+    for (auto s = start.begin(), e = end.begin(); s != start.end() && e != end.end(); ++s, ++e) {
+        list << s->toString(PATTERN) + " - " + e->toString(PATTERN);
+    }
+
+    return list;
+}
+
 Time_::Time_(const QTime &start, const QTime &end)
     : start_(start),
       end_(end)
@@ -64,6 +77,11 @@ int Time_::number() const
 int Time_::duration() const
 {
     return duration_;
+}
+
+bool Time_::operator==(const Time_ &time) const
+{
+    return start_ == time.start_ && end_ == time.end_;
 }
 
 

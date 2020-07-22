@@ -12,6 +12,8 @@ public:
     static QVector<QTime> startTime();
     static QVector<QTime> endTime();
 
+    static QStringList timeList();
+
     Time_(const QTime &start, const QTime &end);
     Time_(const Time_ &time) = default;
 
@@ -20,6 +22,8 @@ public:
 
     int number() const;
     int duration() const;
+
+    bool operator==(const Time_ &time) const;
 
 private:
     QTime start_;

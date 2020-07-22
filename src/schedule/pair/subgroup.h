@@ -14,9 +14,13 @@ public:
     static Subgroup getCommon();
 
     bool isShow() const;
+    bool separate(const Subgroup &subgroup) const;
 
     QString tag() const;
     QString text() const;
+
+    bool operator==(const Subgroup &subgroup) const;
+    bool operator!=(const Subgroup &subgroup) const;
 
 private:
     Subgroup(QString tag, QString text);

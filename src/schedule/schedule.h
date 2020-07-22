@@ -4,6 +4,7 @@
 #include <QtWidgets>
 #include <vector>
 
+#include "scheduleDay.h"
 #include "pair/pair.h"
 
 
@@ -15,9 +16,14 @@ public:
     Schedule();
     void addPair(const Pair &pair);
 
+    QVector<int> indexes() const;
+    int row() const;
+    int column() const;
+
     void print();
 
 private:
+    QMap<DayOfWeek, ScheduleDay> days_;
     std::vector<Pair> pairs_;
 };
 

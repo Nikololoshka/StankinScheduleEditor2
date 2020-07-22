@@ -19,6 +19,9 @@ public:
     Pair(const QString &title, const QString &lecturer, const QString &classroom,
          const Type &type, const Subgroup &subgroup, const Time_ &time);
     Pair(const Pair &pair);
+    Pair(Pair &&pair);
+
+    Pair& operator=(const Pair &pair);
 
     QString title() const;
     void setTitle(const QString &title);
@@ -37,9 +40,17 @@ public:
 
     void addDate(const std::unique_ptr<DateItem> &item);
     void removeDate(DateItem *const item);
-    bool contains(const DateItem *item) const;
 
+    bool before(const Pair &pair) const;
+    bool contains(const std::unique_ptr<DateItem> &item) const;
+
+    DayOfWeek dayOfWeek() const;
+    bool intersect(const Pair &pair) const;
+    bool separate(const Pair &pair) const;
     QString toString() const;
+
+    Time_ time() const;
+    void setTime(const Time_ &time);
 
 private:
     QString datesToString() const;

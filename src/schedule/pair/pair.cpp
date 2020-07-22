@@ -41,6 +41,30 @@ Pair::Pair(const Pair &pair)
     }
 }
 
+Pair::Pair(Pair &&pair)
+    : Pair(pair.title_, pair.lecturer_, pair.classroom_,
+           pair.type_, pair.subgroup_, pair.time_)
+{
+    dates_.swap(pair.dates_);
+}
+
+Pair& Pair::operator=(const Pair &pair)
+{
+    setTitle(pair.title_);
+    setLecturer(pair.classroom_);
+    setClassroom(pair.classroom_);
+    setType(pair.type_);
+    setSubgroup(pair.subgroup_);
+    setTime(pair.time_);
+
+    dates_.clear();
+    for (auto& date : pair.dates_) {
+        dates_.emplace_back(date->copy());
+    }
+
+    return *this;
+}
+
 QString Pair::title() const
 {
     return title_;
@@ -105,7 +129,7 @@ void Pair::addDate(const std::unique_ptr<DateItem> &item)
                                          day->toString()).toStdString());
         }
     }
-    if (contains(item.get())) {
+    if (contains(item)) {
         throw InvalidAddDateException("Date is intersect: " + item->toString() +
                                       " in " + datesToString());
     }
@@ -126,14 +150,52 @@ void Pair::removeDate(DateItem *const item)
     // dates_.removeOne(item);
 }
 
-bool Pair::contains(const DateItem *item) const
+bool Pair::contains(const std::unique_ptr<DateItem> &item) const
 {
-    for (auto& date : dates_ ) {
-        if (date->contains(item)) {
+    for (const auto& date : dates_ ) {
+        if (date->contains(item.get())) {
             return true;
         }
     }
     return false;
+}
+
+DayOfWeek Pair::dayOfWeek() const
+{
+    return dates_.front()->dayOfWeek();
+}
+
+bool Pair::intersect(const Pair &pair) const
+{
+    bool isTime = time_.intersect(pair.time_);
+    if (!isTime) {
+        return false;
+    }
+
+    for (const auto& date : pair.dates_) {
+        if (this->contains(date)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool Pair::separate(const Pair &pair) const
+{
+    return subgroup_.separate(pair.subgroup_);
+}
+
+bool Pair::before(const Pair &pair) const
+{
+    for (const auto& date : dates_) {
+        for (const auto& otherDate : pair.dates_) {
+            if (!date->before(otherDate.get())) {
+                return false;
+            }
+        }
+    }
+    return true;
 }
 
 QString Pair::toString() const
@@ -157,3 +219,14 @@ QString Pair::datesToString() const
 
     return "[" + list.join(", ") + "]";
 }
+
+void Pair::setTime(const Time_ &time)
+{
+    time_ = time;
+}
+
+Time_ Pair::time() const
+{
+    return time_;
+}
+

@@ -15,7 +15,7 @@ DayOfWeek DateUtils::of(const QDate &date)
 }
 
 
-QVector<QString> DateUtils::dayOfWeekList()
+QStringList DateUtils::dayOfWeekList()
 {
     return {
         "Понедельник",
@@ -24,5 +24,12 @@ QVector<QString> DateUtils::dayOfWeekList()
         "Четверг",
         "Пятница",
         "Суббота"
+    };
+}
+
+QStringList DateUtils::dayOfWeekMiniList()
+{
+    return {
+        "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"
     };
 }

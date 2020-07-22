@@ -15,7 +15,8 @@ enum class DayOfWeek {
 
 namespace DateUtils {
     DayOfWeek of(const QDate& date);
-    QVector<QString> dayOfWeekList();
+    QStringList dayOfWeekList();
+    QStringList dayOfWeekMiniList();
 }
 
 
