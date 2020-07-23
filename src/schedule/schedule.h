@@ -13,6 +13,12 @@ class Schedule
 public:
     static Schedule fromJson(const QJsonDocument &value);
 
+    struct ScheduleIndex {
+        int row;
+        int number;
+        int innerRow;
+    };
+
     Schedule();
     void addPair(const Pair &pair);
 
@@ -20,6 +26,7 @@ public:
     int row() const;
     int column() const;
 
+    ScheduleIndex transform(int row, int column) const;
     void print();
 
 private:

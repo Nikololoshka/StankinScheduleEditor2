@@ -2,7 +2,8 @@
 #define STANKINSCHEDULEEDITOR2
 
 #include <QtWidgets>
-#include "scheduleHeaderView.h"
+#include "view/scheduleHorizontalHeader.h"
+#include "view/scheduleVerticalHeader.h"
 #include "schedule/schedule.h"
 
 QT_BEGIN_NAMESPACE
@@ -22,15 +23,19 @@ protected:
     void showEvent(QShowEvent *event) override;
 
 private:
+    void initStatusBar();
     void initTable();
 
     void updateTable();
     void resizeTable();
+    void updateStatusBarCoords(int row, int column);
 
 private:
     Ui::StankinScheduleEditor2 *ui;
 
-    QScopedPointer<ScheduleHeaderView> headerView_;
+    ScheduleVerticalHeader *headerView_;
+    QLabel *labelCoords_;
+
     Schedule schedule_;
 
 };

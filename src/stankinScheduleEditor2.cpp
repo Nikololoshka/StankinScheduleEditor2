@@ -7,7 +7,9 @@ StankinScheduleEditor2::StankinScheduleEditor2(QWidget *parent)
 {
     ui->setupUi(this);
 
+    initStatusBar();
     initTable();
+
     try {
         QString root = "D:\\Temp files\\Qt projects\\data\\ИДБ-17-09.json";
         // QDir dir(root);
@@ -47,11 +49,23 @@ StankinScheduleEditor2::~StankinScheduleEditor2()
     delete ui;
 }
 
+void StankinScheduleEditor2::initStatusBar()
+{
+    labelCoords_ = new QLabel(this);
+    labelCoords_->setText("");
+    ui->statusBar->addPermanentWidget(labelCoords_);
+}
+
 void StankinScheduleEditor2::initTable()
 {
-    headerView_.reset(new ScheduleHeaderView());
-    ui->table->setVerticalHeader(headerView_.get());
+    headerView_= new ScheduleVerticalHeader(ui->table);
+    ui->table->setVerticalHeader(headerView_);
     ui->table->verticalHeader()->setStretchLastSection(true);
+
+    ui->table->setHorizontalHeader(new ScheduleHorizontalHeader(ui->table));
+
+    ui->table->horizontalHeader()->setMinimumHeight(30);
+    ui->table->verticalHeader()->setMinimumWidth(30);
 
     ui->table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->table->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
@@ -59,16 +73,18 @@ void StankinScheduleEditor2::initTable()
     ui->table->setHorizontalHeaderLabels(Time_::timeList());
     ui->table->setVerticalHeaderLabels(DateUtils::dayOfWeekMiniList());
 
-    connect(ui->table, &QTableWidget::cellClicked, [this](int, int){
-        ui->table->verticalHeader()->doItemsLayout();
+
+    connect(ui->table, &QTableWidget::itemSelectionChanged, [this](){
+        auto indexes = ui->table->selectionModel()->selectedIndexes();
+        if (!indexes.isEmpty()) {
+            auto& index = indexes.first();
+            ui->table->verticalHeader()->doItemsLayout();
+            updateStatusBarCoords(index.row(), index.column());
+        }
     });
 
     ui->table->setStyleSheet(
         "QTableWidget::item { selection-background-color: #deeff5; } "
-    );
-
-    ui->table->selectionModel()->setCurrentIndex(
-        ui->table->model()->index(0, 0), QItemSelectionModel::Select
     );
 
     resizeTable();
@@ -100,6 +116,13 @@ void StankinScheduleEditor2::resizeTable()
     ui->table->repaint();
 }
 
+void StankinScheduleEditor2::updateStatusBarCoords(int row, int column)
+{
+    auto index = schedule_.transform(row, column);
+    labelCoords_->setText(QString("Координаты: (%1; %2; %3)")
+                              .arg(index.row).arg(index.number).arg(index.innerRow));
+}
+
 
 
 void StankinScheduleEditor2::resizeEvent(QResizeEvent *event)
@@ -114,3 +137,4 @@ void StankinScheduleEditor2::showEvent(QShowEvent *event)
     resizeTable();
     QMainWindow::showEvent(event);
 }
+

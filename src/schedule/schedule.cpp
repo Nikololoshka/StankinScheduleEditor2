@@ -47,6 +47,22 @@ int Schedule::column() const
     return 8;
 }
 
+Schedule::ScheduleIndex Schedule::transform(int row, int column) const
+{
+    auto indexes = this->indexes();
+    int tempIndex = row;
+
+    for (int i = 0; i < indexes.size(); ++i) {
+        tempIndex -= indexes[i];
+
+        if (tempIndex < 0) {
+            return { i, column, indexes[i] + tempIndex };
+        }
+    }
+
+    return { indexes.size() - 1, column, indexes.last() - 1 };
+}
+
 void Schedule::print()
 {
     for (auto &pair : pairs_) {

@@ -64,7 +64,7 @@ add_definitions(-DUSE_INSTALL_TARGET)
 # Sources
 # ******************************************************************************
 AddSources("${SOURCE_DIR}" "app" list_app_src)
-AddSources("${SOURCE_DIR}/forms" "forms" list_app_src)
+AddSources("${SOURCE_DIR}/view" "view" list_app_src)
 AddSources("${SOURCE_DIR}/schedule" "schedule" list_app_src)
 AddSources("${SOURCE_DIR}/schedule/pair" "pair" list_app_src)
 

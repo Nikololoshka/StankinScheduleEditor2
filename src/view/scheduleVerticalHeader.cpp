@@ -1,21 +1,19 @@
-#include "scheduleHeaderView.h"
+#include "scheduleVerticalHeader.h"
 
-ScheduleHeaderView::ScheduleHeaderView()
-    : QHeaderView(Qt::Vertical)
+ScheduleVerticalHeader::ScheduleVerticalHeader(QWidget *parent)
+    : QHeaderView(Qt::Vertical, parent)
 {
-    connect(this, &ScheduleHeaderView::sectionClicked, [](int logicalIndex) {
-        qDebug() << logicalIndex;
-    });
+    setDefaultAlignment(Qt::AlignCenter);
 }
 
-void ScheduleHeaderView::setIndexses(const QVector<int> &indexes)
+void ScheduleVerticalHeader::setIndexses(const QVector<int> &indexes)
 {
     indexes_ = indexes;
     update();
 }
 
 
-void ScheduleHeaderView::paintSection(QPainter *painter, const QRect &rect, int logicalIndex) const
+void ScheduleVerticalHeader::paintSection(QPainter *painter, const QRect &rect, int logicalIndex) const
 {
     const int REAL_ROW_SIZE = this->size().height() / 6;
 
@@ -36,13 +34,11 @@ void ScheduleHeaderView::paintSection(QPainter *painter, const QRect &rect, int 
     painter->setBackground(Qt::transparent);
 
     auto table = static_cast<QTableWidget*>(this->parentWidget());
-    if (table != nullptr) {
-        auto selectedIndex = table->currentRow();
+    auto indexes = table->selectionModel()->selectedIndexes();
+    if (!indexes.isEmpty()) {
+        auto selectedIndex = indexes.first().row();
         if (computeIndex(selectedIndex) == realIndex) {
-             auto font = painter->font();
-             font.setWeight(5);
-             font.setBold(true);
-             painter->setFont(font);
+            setBoldText(painter);
         }
     }
 
@@ -74,7 +70,7 @@ void ScheduleHeaderView::paintSection(QPainter *painter, const QRect &rect, int 
     */
 }
 
-int ScheduleHeaderView::computeIndex(int logicalIndex) const
+int ScheduleVerticalHeader::computeIndex(int logicalIndex) const
 {
     int tempIndex = logicalIndex;
     int padding = 0;
@@ -91,3 +87,9 @@ int ScheduleHeaderView::computeIndex(int logicalIndex) const
     return indexes_.size() - 1;
 }
 
+void ScheduleVerticalHeader::setBoldText(QPainter *painter) const
+{
+    auto font = painter->font();
+    font.setBold(true);
+    painter->setFont(font);
+}

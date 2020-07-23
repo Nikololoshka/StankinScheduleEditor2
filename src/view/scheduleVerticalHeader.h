@@ -1,13 +1,13 @@
-#ifndef SCHEDULEHEADERVIEW_H
-#define SCHEDULEHEADERVIEW_H
+#ifndef SCHEDULEVERTICALHEADER_H
+#define SCHEDULEVERTICALHEADER_H
 
 #include <QtWidgets>
 
 
-class ScheduleHeaderView : public QHeaderView
+class ScheduleVerticalHeader : public QHeaderView
 {
 public:
-    ScheduleHeaderView();
+    ScheduleVerticalHeader(QWidget *parent = nullptr);
     void setIndexses(const QVector<int> &indexes);
 
 protected:
@@ -15,9 +15,10 @@ protected:
 
 private:
     int computeIndex(int logicalIndex) const;
+    void setBoldText(QPainter *painter) const;
 
 private:
     QVector<int> indexes_;
 };
 
-#endif // SCHEDULEHEADERVIEW_H
+#endif // SCHEDULEVERTICALHEADER_H
