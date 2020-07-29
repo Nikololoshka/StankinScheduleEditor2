@@ -14,6 +14,15 @@ Frequency Frequency::fromString(const QString &value)
     throw std::invalid_argument("Can't parse frequency: " + value.toStdString());
 }
 
+QVector<Frequency> Frequency::list()
+{
+    return {
+        getOnce(),
+        getEvery(),
+        getThroughout()
+    };
+}
+
 Frequency Frequency::getOnce()
 {
     return Frequency(1, "once", "");

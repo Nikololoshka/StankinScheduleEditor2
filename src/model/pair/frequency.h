@@ -8,6 +8,7 @@ class Frequency
 {
 public:
     static Frequency fromString(const QString &value);
+    static QVector<Frequency> list();
 
     static Frequency getOnce();
     static Frequency getEvery();

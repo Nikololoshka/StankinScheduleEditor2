@@ -15,7 +15,11 @@ public:
     static QStringList timeList();
 
     Time_(const QTime &start, const QTime &end);
+    Time_(const QString &start, const QString &end);
     Time_(const Time_ &time) = default;
+
+    QString start() const;
+    QString end() const;
 
     bool intersect(const Time_ &time) const;
     QJsonObject toJson() const;
@@ -24,6 +28,9 @@ public:
     int duration() const;
 
     bool operator==(const Time_ &time) const;
+
+private:
+    void init();
 
 private:
     QTime start_;

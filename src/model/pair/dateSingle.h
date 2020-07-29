@@ -10,8 +10,11 @@ class DateRange;
 class DateSingle : public DateItem
 {
 public:
+    DateSingle(const QDate &date);
     DateSingle(const QJsonObject &item);
     DateSingle(const DateSingle &date);
+
+    QDate date() const;
 
     QJsonObject toJson() const override;
     DayOfWeek dayOfWeek() const override;

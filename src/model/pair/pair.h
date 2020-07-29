@@ -7,8 +7,7 @@
 #include "time_.h"
 #include "type.h"
 #include "subgroup.h"
-#include "dateSingle.h"
-#include "dateRange.h"
+#include "date.h"
 
 
 class Pair
@@ -22,6 +21,7 @@ public:
     Pair(Pair &&pair);
 
     Pair& operator=(const Pair &pair);
+    bool operator==(const Pair &pair) const;
 
     QString title() const;
     void setTitle(const QString &title);
@@ -38,8 +38,15 @@ public:
     Subgroup subgroup() const;
     void setSubgroup(const Subgroup &subgroup);
 
+    Time_ time() const;
+    void setTime(const Time_ &time);
+
+    Date date() const;
+    void setDate(const Date &date);
+
+
     void addDate(const std::unique_ptr<DateItem> &item);
-    void removeDate(DateItem *const item);
+    void removeDate(const std::unique_ptr<DateItem> &item);
 
     bool before(const Pair &pair) const;
     bool contains(const std::unique_ptr<DateItem> &item) const;
@@ -47,25 +54,17 @@ public:
     DayOfWeek dayOfWeek() const;
     bool intersect(const Pair &pair) const;
     bool separate(const Pair &pair) const;
+
     QString toString() const;
-
-    Time_ time() const;
-    void setTime(const Time_ &time);
-
-private:
-    QString datesToString() const;
 
 private:
     QString title_;
     QString lecturer_;
     QString classroom_;
-
     Type type_;
     Subgroup subgroup_;
-
     Time_ time_;
-
-    std::vector<std::unique_ptr<DateItem>> dates_;
+    Date date_;
 };
 
 #endif // PAIR_H

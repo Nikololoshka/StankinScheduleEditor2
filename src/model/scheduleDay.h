@@ -6,6 +6,22 @@
 
 using Cell = QVector<unsigned int>;
 
+struct ScheduleCell {
+    QString text;
+    int rowSpan;
+    int columnSpan;
+
+    bool isSpanValid() const;
+};
+
+struct ScheduleIndex {
+    int row;
+    int number;
+    int innerRow;
+
+    QString toString() const;
+};
+
 class ScheduleDay
 {
 public:
@@ -18,12 +34,18 @@ public:
     int row() const;
     int column() const;
 
+    void possibleChange(const std::unique_ptr<Pair> &oldPair,
+                        const std::unique_ptr<Pair> &newPair) const;
+
+    ScheduleCell pairsTextByIndex(const ScheduleIndex &index) const;
+    QVector<Pair> pairsByIndex(const ScheduleIndex &index) const;
     QVector<Pair> fromCell(const Cell &cell) const;
 
 private:
     void isAddCheck(const Pair &pair) const;
     void reallocate();
     int find(unsigned int id) const;
+    int computeRowSpan(int duration, const ScheduleIndex &index) const;
 
 private:
     struct PairData {

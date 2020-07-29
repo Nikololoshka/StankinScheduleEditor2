@@ -36,33 +36,38 @@ Pair::Pair(const Pair &pair)
     : Pair(pair.title_, pair.lecturer_, pair.classroom_,
            pair.type_, pair.subgroup_, pair.time_)
 {
-    for (auto& date : pair.dates_) {
-        dates_.emplace_back(date->copy());
-    }
+    setDate(pair.date_);
 }
 
 Pair::Pair(Pair &&pair)
     : Pair(pair.title_, pair.lecturer_, pair.classroom_,
            pair.type_, pair.subgroup_, pair.time_)
 {
-    dates_.swap(pair.dates_);
+    setDate(pair.date_);
 }
 
 Pair& Pair::operator=(const Pair &pair)
 {
     setTitle(pair.title_);
-    setLecturer(pair.classroom_);
+    setLecturer(pair.lecturer_);
     setClassroom(pair.classroom_);
     setType(pair.type_);
     setSubgroup(pair.subgroup_);
     setTime(pair.time_);
-
-    dates_.clear();
-    for (auto& date : pair.dates_) {
-        dates_.emplace_back(date->copy());
-    }
+    setDate(pair.date_);
 
     return *this;
+}
+
+bool Pair::operator==(const Pair &pair) const
+{
+    return title_ == pair.title_ &&
+        lecturer_ == pair.lecturer_ &&
+        classroom_ == pair.classroom_ &&
+        type_ == pair.type_ &&
+        subgroup_ == pair.subgroup_ &&
+        time_ == pair.time_ &&
+        date_ == pair.date_;
 }
 
 QString Pair::title() const
@@ -119,50 +124,44 @@ void Pair::setSubgroup(const Subgroup &subgroup)
     subgroup_ = subgroup;
 }
 
-void Pair::addDate(const std::unique_ptr<DateItem> &item)
+Date Pair::date() const
 {
-    if (!dates_.empty()) {
-        auto& day = dates_.front();
-        if (item->dayOfWeek() != day->dayOfWeek()) {
-            throw std::invalid_argument(("Wrong day of the week: " +
-                                         item->toString() + " and " +
-                                         day->toString()).toStdString());
-        }
-    }
-    if (contains(item)) {
-        throw InvalidAddDateException("Date is intersect: " + item->toString() +
-                                      " in " + datesToString());
-    }
-
-    auto iter = dates_.end();
-    for (auto it = dates_.begin(); it != dates_.end(); ++it) {
-        if ((*it)->before(item.get())) {
-            break;
-        }
-        iter = it;
-    }
-
-    dates_.emplace(iter, item->copy());
+    return date_;
 }
 
-void Pair::removeDate(DateItem *const item)
+void Pair::setDate(const Date &date)
 {
-    // dates_.removeOne(item);
+    date_ = date;
+}
+
+void Pair::setTime(const Time_ &time)
+{
+    time_ = time;
+}
+
+Time_ Pair::time() const
+{
+    return time_;
+}
+
+void Pair::addDate(const std::unique_ptr<DateItem> &item)
+{
+    date_.addDate(item);
+}
+
+void Pair::removeDate(const std::unique_ptr<DateItem> &item)
+{
+    date_.removeDate(item);
 }
 
 bool Pair::contains(const std::unique_ptr<DateItem> &item) const
 {
-    for (const auto& date : dates_ ) {
-        if (date->contains(item.get())) {
-            return true;
-        }
-    }
-    return false;
+    return date_.contains(item);
 }
 
 DayOfWeek Pair::dayOfWeek() const
 {
-    return dates_.front()->dayOfWeek();
+    return date_.dayOfWeek();
 }
 
 bool Pair::intersect(const Pair &pair) const
@@ -172,10 +171,8 @@ bool Pair::intersect(const Pair &pair) const
         return false;
     }
 
-    for (const auto& date : pair.dates_) {
-        if (this->contains(date)) {
-            return true;
-        }
+    if (date_.contains(pair.date_)) {
+        return true;
     }
 
     return false;
@@ -188,14 +185,7 @@ bool Pair::separate(const Pair &pair) const
 
 bool Pair::before(const Pair &pair) const
 {
-    for (const auto& date : dates_) {
-        for (const auto& otherDate : pair.dates_) {
-            if (!date->before(otherDate.get())) {
-                return false;
-            }
-        }
-    }
-    return true;
+    return date_.before(pair.date_);
 }
 
 QString Pair::toString() const
@@ -206,27 +196,7 @@ QString Pair::toString() const
            + type_.text() + ". "
            + (subgroup_.isShow() ?  subgroup_.text() + ". " : "")
            + (classroom_.isEmpty() ? "" : classroom_ + ". ")
-           + datesToString();
+           + date_.toString();
 }
 
-QString Pair::datesToString() const
-{
-    QStringList list;
-    std::transform(dates_.begin(), dates_.end(), std::back_inserter(list),
-                   [](auto& date) -> QString {
-                       return date->toString();
-                   });
-
-    return "[" + list.join(", ") + "]";
-}
-
-void Pair::setTime(const Time_ &time)
-{
-    time_ = time;
-}
-
-Time_ Pair::time() const
-{
-    return time_;
-}
 

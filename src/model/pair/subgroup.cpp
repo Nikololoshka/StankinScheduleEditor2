@@ -14,6 +14,13 @@ Subgroup Subgroup::fromString(const QString &value)
     throw std::invalid_argument("Can't parse subgroup: " + value.toStdString());
 }
 
+QVector<Subgroup> Subgroup::list()
+{
+    return {
+        Subgroup::getCommon(), Subgroup::getA(), Subgroup::getB()
+    };
+}
+
 Subgroup Subgroup::getA()
 {
     return Subgroup("A", "(А)");

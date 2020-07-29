@@ -33,3 +33,17 @@ QStringList DateUtils::dayOfWeekMiniList()
         "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"
     };
 }
+
+DayOfWeek DateUtils::of(int number)
+{
+    switch (number) {
+    case 0: return DayOfWeek::Monday;
+    case 1: return DayOfWeek::Tuesday;
+    case 2: return DayOfWeek::Wednesday;
+    case 3: return DayOfWeek::Thursday;
+    case 4: return DayOfWeek::Friday;
+    case 5: return DayOfWeek::Saturday;
+    }
+    throw std::invalid_argument(("Number day of week unsupported: "
+                                 + QString::number(number)).toStdString());
+}

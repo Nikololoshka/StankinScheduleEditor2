@@ -7,7 +7,7 @@ ScheduleHorizontalHeader::ScheduleHorizontalHeader(QWidget *parent)
 }
 
 void ScheduleHorizontalHeader::paintSection(QPainter *painter, const QRect &rect, int logicalIndex) const
-{
+{    
     painter->setRenderHint(QPainter::Antialiasing);
     painter->setPen(Qt::black);
     painter->setBackground(Qt::transparent);

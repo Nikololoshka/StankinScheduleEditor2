@@ -2,6 +2,12 @@
 #include "dateSingle.h"
 
 
+DateRange::DateRange(const QDate &start, const QDate &end, const Frequency &frequency)
+    : DateItem(frequency)
+{
+    init(start, end, frequency);
+}
+
 DateRange::DateRange(const QJsonObject &item, const Frequency &frequency)
     : DateItem(frequency)
 {
@@ -16,21 +22,7 @@ DateRange::DateRange(const QJsonObject &item, const Frequency &frequency)
     QDate start = QDate::fromString(list[0], DateItem::FULL_FORMAT);
     QDate end = QDate::fromString(list[1], DateItem::FULL_FORMAT);
 
-    qint64 days = start.daysTo(end);
-    if ((days % frequency.delta() != 0) || (days <= 0)) {
-        throw std::invalid_argument(("Date range is not correct: "
-                                     + dateString + ", "
-                                     + frequency.tag()).toStdString());
-    }
-
-    if (DateUtils::of(start) != DateUtils::of(end)) {
-        throw std::invalid_argument(("Date range day of week is not correct: "
-                                     + dateString + ", "
-                                     + frequency.tag()).toStdString());
-    }
-
-    start_ = start;
-    end_ = end;
+    init(start, end, frequency);
 }
 
 DateRange::DateRange(const DateRange &date)
@@ -40,6 +32,34 @@ DateRange::DateRange(const DateRange &date)
 {
 }
 
+void DateRange::init(const QDate &start, const QDate &end, const Frequency &frequency)
+{
+    qint64 days = start.daysTo(end);
+    if ((days % frequency.delta() != 0) || (days <= 0)) {
+        throw std::invalid_argument(("Date range is not correct: "
+                                     + start.toString() + " - " + end.toString() + ", "
+                                     + frequency.tag()).toStdString());
+    }
+
+    if (DateUtils::of(start) != DateUtils::of(end)) {
+        throw std::invalid_argument(("Date range day of week is not correct: "
+                                     + start.toString() + " - " + end.toString() + ", "
+                                     + frequency.tag()).toStdString());
+    }
+
+    start_ = start;
+    end_ = end;
+}
+
+QDate DateRange::start() const
+{
+    return start_;
+}
+
+QDate DateRange::end() const
+{
+    return end_;
+}
 
 QJsonObject DateRange::toJson() const
 {
@@ -126,3 +146,6 @@ QDate DateRange::operator[](const int index) const
 {
     return start_.addDays(frequency_.delta() * index);
 }
+
+
+

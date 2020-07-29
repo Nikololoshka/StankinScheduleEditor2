@@ -14,6 +14,13 @@ Type Type::fromString(const QString &value)
     throw std::invalid_argument("Can't parse type: " + value.toStdString());
 }
 
+QVector<Type> Type::list()
+{
+    return {
+        Type::getLecture(), Type::getSeminar(), Type::getLaboratory()
+    };
+}
+
 Type Type::getLecture()
 {
     return Type("Lecture", "Лекция");
@@ -27,6 +34,11 @@ Type Type::getSeminar()
 Type Type::getLaboratory()
 {
     return Type("Laboratory", "Лабораторная работа");
+}
+
+bool Type::operator==(const Type &type) const
+{
+    return tag_ == type.tag_;
 }
 
 QString Type::text() const

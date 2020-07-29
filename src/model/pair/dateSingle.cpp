@@ -1,6 +1,12 @@
 #include "dateSingle.h"
 #include "dateRange.h"
 
+DateSingle::DateSingle(const QDate &date)
+    : DateItem(Frequency::getOnce()),
+      date_(date)
+{
+}
+
 DateSingle::DateSingle(const QJsonObject &item)
     : DateItem(Frequency::getOnce())
 {
@@ -11,6 +17,11 @@ DateSingle::DateSingle(const DateSingle &date)
     : DateItem(date.frequency_),
       date_(date.date_)
 {
+}
+
+QDate DateSingle::date() const
+{
+    return date_;
 }
 
 QJsonObject DateSingle::toJson() const

@@ -41,17 +41,38 @@ Time_::Time_(const QTime &start, const QTime &end)
     : start_(start),
       end_(end)
 {
-    int startIndex  = startTime().indexOf(start);
-    int endIndex = endTime().indexOf(end);
+    init();
+}
+
+Time_::Time_(const QString &start, const QString &end)
+    : Time_(QTime::fromString(start, PATTERN),
+            QTime::fromString(end, PATTERN))
+{
+}
+
+void Time_::init()
+{
+    int startIndex  = startTime().indexOf(start_);
+    int endIndex = endTime().indexOf(end_);
 
     if (startIndex == -1 || endIndex == -1 || endIndex < startIndex) {
         throw std::invalid_argument(("Not correct time: '" +
-                                     start.toString()
-                                     + "', '" + end.toString() + "'").toStdString());
+                                     start_.toString()
+                                     + "', '" + end_.toString() + "'").toStdString());
     }
 
     number_ = startIndex;
     duration_ = endIndex - startIndex + 1;
+}
+
+QString Time_::start() const
+{
+    return start_.toString(PATTERN);
+}
+
+QString Time_::end() const
+{
+    return end_.toString(PATTERN);
 }
 
 bool Time_::intersect(const Time_ &time) const
@@ -83,5 +104,3 @@ bool Time_::operator==(const Time_ &time) const
 {
     return start_ == time.start_ && end_ == time.end_;
 }
-
-

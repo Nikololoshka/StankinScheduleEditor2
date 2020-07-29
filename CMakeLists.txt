@@ -64,9 +64,13 @@ add_definitions(-DUSE_INSTALL_TARGET)
 # Sources
 # ******************************************************************************
 AddSources("${SOURCE_DIR}" "app" list_app_src)
+
 AddSources("${SOURCE_DIR}/view" "view" list_app_src)
-AddSources("${SOURCE_DIR}/schedule" "schedule" list_app_src)
-AddSources("${SOURCE_DIR}/schedule/pair" "pair" list_app_src)
+AddSources("${SOURCE_DIR}/model" "schedule" list_app_src)
+
+AddSources("${SOURCE_DIR}/model/pair" "pair" list_app_src)
+AddSources("${SOURCE_DIR}/ui" "ui" list_app_src)
+AddSources("${SOURCE_DIR}/ui/editor" "editor" list_app_src)
 
 set(list_app_res "res/res.qrc")
 
@@ -80,6 +84,9 @@ add_subdirectory(test)
 # Target
 # ******************************************************************************
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
+include_directories("${SOURCE_DIR}/model")
+include_directories("${SOURCE_DIR}/view")
 
 add_executable(${PROJECT_NAME} ${list_app_src} ${list_app_res})
 target_include_directories(${PROJECT_NAME} PUBLIC ${BINARY_DIR})

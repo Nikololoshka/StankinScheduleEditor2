@@ -1,11 +1,15 @@
 #include "stankinScheduleEditor2.h"
 #include "ui_stankinScheduleEditor2.h"
 
+#include "editor/pairSelectorDialog.h"
+
 StankinScheduleEditor2::StankinScheduleEditor2(QWidget *parent)
     : QMainWindow(parent),
       ui(new Ui::StankinScheduleEditor2)
 {
     ui->setupUi(this);
+
+    schedule_ = QSharedPointer<Schedule>::create();
 
     initStatusBar();
     initTable();
@@ -28,7 +32,7 @@ StankinScheduleEditor2::StankinScheduleEditor2(QWidget *parent)
             // qDebug() << QString(json);
 
             qDebug() << "Schedule load...";
-            schedule_ = Schedule::fromJson(doc);
+            schedule_ = QSharedPointer<Schedule>::create(doc);
             qDebug() << "Schedule complite!";
 
             updateTable();
@@ -36,8 +40,6 @@ StankinScheduleEditor2::StankinScheduleEditor2(QWidget *parent)
         // }
 
     } catch (std::exception &e) {
-        qDebug() << e.what();
-    } catch (QException &e) {
         qDebug() << e.what();
     } catch (...) {
         qDebug() << "Unknown error :(";
@@ -47,6 +49,13 @@ StankinScheduleEditor2::StankinScheduleEditor2(QWidget *parent)
 StankinScheduleEditor2::~StankinScheduleEditor2()
 {
     delete ui;
+}
+
+void StankinScheduleEditor2::onTableCellDoubleClicked(int row, int column)
+{
+    auto index = schedule_->transform(row, column);
+    auto selector = new PairSelectorDialog(schedule_, index, this);
+    selector->show();
 }
 
 void StankinScheduleEditor2::initStatusBar()
@@ -83,8 +92,15 @@ void StankinScheduleEditor2::initTable()
         }
     });
 
+    connect(ui->table, &QTableWidget::cellDoubleClicked,
+            this, &StankinScheduleEditor2::onTableCellDoubleClicked);
+
+    ui->table->setTextElideMode(Qt::ElideNone);
     ui->table->setStyleSheet(
-        "QTableWidget::item { selection-background-color: #deeff5; } "
+        "QTableWidget::item { "
+        "   selection-background-color: #deeff5;"
+        "   selection-color: #000000;"
+        "}"
     );
 
     resizeTable();
@@ -92,8 +108,26 @@ void StankinScheduleEditor2::initTable()
 
 void StankinScheduleEditor2::updateTable()
 {
-    ui->table->setRowCount(schedule_.row());
-    headerView_->setIndexses(schedule_.indexes());
+    ui->table->setRowCount(schedule_->row());
+    headerView_->setIndexses(schedule_->indexes());
+
+    for (int i = 0; i < ui->table->rowCount(); ++i) {
+        for (int j = 0; j < ui->table->columnCount(); ++j) {
+            auto cell = schedule_->pairsTextByIndex(i, j);
+            QTableWidgetItem *item = new QTableWidgetItem(cell.text);
+            item->setTextAlignment(Qt::AlignTop | Qt::AlignLeft | Qt::TextWordWrap);
+            ui->table->setItem(i, j, item);
+
+            if (cell.isSpanValid()) {
+                ui->table->setSpan(i, j, cell.rowSpan, cell.columnSpan);
+            }
+
+            if (cell.columnSpan > 1) {
+                j += cell.columnSpan - 1;
+            }
+        }
+    }
+
     resizeTable();
 }
 
@@ -101,14 +135,31 @@ void StankinScheduleEditor2::resizeTable()
 {
     const int REAL_ROW_SIZE = (ui->table->height() - ui->table->horizontalHeader()->height()) / 6;
 
-    auto indexes = schedule_.indexes();
+    auto indexes = schedule_->indexes();
 
     int rowPadding = 0;
     for (int i = 0; i < indexes.size(); ++i) {
         const int rowSize = REAL_ROW_SIZE / indexes[i];
+        const int columnSize = ui->table->columnWidth(0);
+
         for (int j = 0; j < indexes[i]; ++j) {
             const int index = rowPadding + j;
             ui->table->verticalHeader()->resizeSection(index, rowSize);
+
+            for (int k = 0; k < ui->table->columnCount(); ++k) {
+                auto item = ui->table->item(index, k);
+                if (item != nullptr) {
+                    int columnSpanCount = ui->table->columnSpan(index, k);
+                    int rowSpanCount = ui->table->rowSpan(index, k);
+
+                    if (!item->text().isEmpty()) {
+                        auto font = fontForText(item->text(),
+                                                columnSize * columnSpanCount,
+                                                rowSize * rowSpanCount - 5);
+                        item->setFont(font);
+                    }
+                }
+            }
         }
         rowPadding += indexes[i];
     }
@@ -118,12 +169,27 @@ void StankinScheduleEditor2::resizeTable()
 
 void StankinScheduleEditor2::updateStatusBarCoords(int row, int column)
 {
-    auto index = schedule_.transform(row, column);
-    labelCoords_->setText(QString("Координаты: (%1; %2; %3)")
-                              .arg(index.row).arg(index.number).arg(index.innerRow));
+    auto index = schedule_->transform(row, column);
+    labelCoords_->setText(index.toString());
 }
 
+QFont StankinScheduleEditor2::fontForText(const QString &text, int width, int height,
+                                          unsigned int flags)
+{
+    QFont font = qApp->font();
 
+    for (int i = 12; i > 3; --i) {
+        font.setPixelSize(i);
+        auto rect = QFontMetrics(font)
+                        .boundingRect(0, 0, width, height, static_cast<int>(flags), text);
+        if (rect.width() < width && rect.height() < height) {
+            font.setPixelSize(i);
+            break;
+        }
+    }
+
+    return font;
+}
 
 void StankinScheduleEditor2::resizeEvent(QResizeEvent *event)
 {
@@ -137,4 +203,3 @@ void StankinScheduleEditor2::showEvent(QShowEvent *event)
     resizeTable();
     QMainWindow::showEvent(event);
 }
-
