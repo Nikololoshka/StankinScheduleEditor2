@@ -3,10 +3,13 @@
 
 Schedule::Schedule()
 {
-
+    for (auto& day : DateUtils::list()) {
+        days_[day];
+    }
 }
 
 Schedule::Schedule(const QJsonDocument &value)
+    : Schedule()
 {
     QJsonArray pairs = value.array();
     for (int i = 0; i < pairs.size(); ++i) {
@@ -15,9 +18,26 @@ Schedule::Schedule(const QJsonDocument &value)
     }
 }
 
+QJsonArray Schedule::toJson() const
+{
+    QJsonArray array;
+    for (auto& day : days_) {
+        auto dayArray = day.toJson();
+        for (int i = 0; i < dayArray.size(); ++i) {
+            array.append(dayArray[i]);
+        }
+    }
+    return array;
+}
+
 void Schedule::addPair(const Pair &pair)
 {
     days_[pair.dayOfWeek()].add(pair);
+}
+
+void Schedule::remove(const Pair &pair)
+{
+    days_[pair.dayOfWeek()].remove(pair);
 }
 
 QVector<int> Schedule::indexes() const
@@ -45,12 +65,16 @@ int Schedule::column() const
     return 8;
 }
 
-void Schedule::possibleChange(const std::unique_ptr<Pair> &oldPair,
-                              const std::unique_ptr<Pair> &newPair) const
+void Schedule::changePair(const std::optional<Pair> &oldPair,
+                          const std::optional<Pair> &newPair)
 {
-    for (auto& day : days_) {
-        day.possibleChange(oldPair, newPair);
-    }
+    days_[newPair->dayOfWeek()].changePair(oldPair, newPair);
+}
+
+void Schedule::possibleChange(const std::optional<Pair> &oldPair,
+                              const std::optional<Pair> &newPair) const
+{
+    days_[newPair->dayOfWeek()].possibleChange(oldPair, newPair);
 }
 
 ScheduleCell Schedule::pairsTextByIndex(const ScheduleIndex &index) const

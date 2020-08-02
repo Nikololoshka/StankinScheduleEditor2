@@ -20,6 +20,8 @@ public:
     Pair(const Pair &pair);
     Pair(Pair &&pair);
 
+    QJsonObject toJson() const;
+
     Pair& operator=(const Pair &pair);
     bool operator==(const Pair &pair) const;
 
@@ -44,6 +46,7 @@ public:
     Date date() const;
     void setDate(const Date &date);
 
+    std::unique_ptr<Pair> copy() const;
 
     void addDate(const std::unique_ptr<DateItem> &item);
     void removeDate(const std::unique_ptr<DateItem> &item);

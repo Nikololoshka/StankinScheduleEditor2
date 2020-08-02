@@ -46,6 +46,19 @@ Pair::Pair(Pair &&pair)
     setDate(pair.date_);
 }
 
+QJsonObject Pair::toJson() const
+{
+    return QJsonObject({
+        { "title", title_ },
+        { "lecturer", lecturer_ },
+        { "classroom", classroom_ },
+        { "type", type_.tag() },
+        { "subgroup", subgroup_.tag() },
+        { "time", time_.toJson() },
+        { "dates", date_.toJson() }
+    });
+}
+
 Pair& Pair::operator=(const Pair &pair)
 {
     setTitle(pair.title_);
@@ -132,6 +145,13 @@ Date Pair::date() const
 void Pair::setDate(const Date &date)
 {
     date_ = date;
+}
+
+std::unique_ptr<Pair> Pair::copy() const
+{
+    auto pair = std::make_unique<Pair>(*this);
+    pair->setDate(this->date());
+    return pair;
 }
 
 void Pair::setTime(const Time_ &time)

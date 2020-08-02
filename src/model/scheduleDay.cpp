@@ -6,9 +6,18 @@ bool ScheduleCell::isSpanValid() const
 }
 
 ScheduleDay::ScheduleDay()
-    : index_(1)
+    : index_(1),
+      rows_(1, QVector<Cell>(8))
 {
+}
 
+QJsonArray ScheduleDay::toJson() const
+{
+    QJsonArray array;
+    for (const auto& data : pairs_) {
+        array.append(data.pair.toJson());
+    }
+    return array;
 }
 
 void ScheduleDay::add(const Pair &pair)
@@ -20,7 +29,10 @@ void ScheduleDay::add(const Pair &pair)
 
 void ScheduleDay::remove(const Pair &pair)
 {
-    // TODO
+    pairs_.erase(std::remove_if(pairs_.begin(), pairs_.end(), [&pair](const PairData &data){
+        return pair == data.pair;
+    }), pairs_.end());
+    reallocate();
 }
 
 int ScheduleDay::size() const
@@ -38,11 +50,35 @@ int ScheduleDay::column() const
     return 8;
 }
 
-void ScheduleDay::possibleChange(const std::unique_ptr<Pair> &oldPair,
-                                 const std::unique_ptr<Pair> &newPair) const
+void ScheduleDay::changePair(const std::optional<Pair> &oldPair,
+                             const std::optional<Pair> &newPair)
 {
+    possibleChange(oldPair, newPair);
+
+    pairs_.append({index_++, *newPair});
+    if (oldPair.has_value()) {
+        remove(*oldPair);
+    }
+
+    reallocate();
+}
+
+void ScheduleDay::possibleChange(const std::optional<Pair> &oldPair,
+                                 const std::optional<Pair> &newPair) const
+{
+    bool isNull = true;
+    if (oldPair.has_value()) {
+        if (oldPair->dayOfWeek() != newPair->dayOfWeek()) {
+            throw std::logic_error(("Wrong day of the week: " +
+                                    DateUtils::toString(oldPair->dayOfWeek()) + " and " +
+                                    DateUtils::toString(newPair->dayOfWeek())).toStdString());
+        }
+
+        isNull = false;
+    }
+
     for (auto& data : pairs_) {
-        if (oldPair.get() != nullptr && data.pair == *oldPair) {
+        if (!isNull && data.pair == *oldPair) {
             continue;
         }
 

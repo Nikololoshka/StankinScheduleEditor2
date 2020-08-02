@@ -27,6 +27,8 @@ class ScheduleDay
 public:
     ScheduleDay();
 
+    QJsonArray toJson() const;
+
     void add(const Pair &pair);
     void remove(const Pair &pair);
 
@@ -34,8 +36,10 @@ public:
     int row() const;
     int column() const;
 
-    void possibleChange(const std::unique_ptr<Pair> &oldPair,
-                        const std::unique_ptr<Pair> &newPair) const;
+    void changePair(const std::optional<Pair> &oldPair,
+                    const std::optional<Pair> &newPair);
+    void possibleChange(const std::optional<Pair> &oldPair,
+                        const std::optional<Pair> &newPair) const;
 
     ScheduleCell pairsTextByIndex(const ScheduleIndex &index) const;
     QVector<Pair> pairsByIndex(const ScheduleIndex &index) const;
@@ -54,8 +58,8 @@ private:
     };
 
     unsigned int index_;
-    QVector<PairData> pairs_;
     QVector<QVector<Cell>> rows_;
+    QVector<PairData> pairs_;
 
     static unsigned int EMPTY;
 };

@@ -13,7 +13,7 @@ DateEditorDialog::DateEditorDialog(const Date &date, const std::unique_ptr<DateI
       result_(nullptr)
 {
     ui->setupUi(this);
-    setWindowFlag(Qt::WindowCloseButtonHint, false);
+    setWindowFlag(Qt::WindowContextHelpButtonHint, false);
 
     auto frequencies = Frequency::list();
     for (auto& frequency : frequencies) {

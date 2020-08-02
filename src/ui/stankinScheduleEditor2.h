@@ -19,7 +19,13 @@ public:
     ~StankinScheduleEditor2() override;
 
 public slots:
+    void onNewFileClicked();
+    void onOpenFileClicked();
+    void onSaveFileClicked();
+    void onSaveAsFileClicked();
+
     void onTableCellDoubleClicked(int row, int column);
+    void updateTable();
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
@@ -29,7 +35,7 @@ private:
     void initStatusBar();
     void initTable();
 
-    void updateTable();
+    void loadSchedule(const QString &path);
     void resizeTable();
     void updateStatusBarCoords(int row, int column);
     static QFont fontForText(const QString &text, int width, int height,
@@ -37,11 +43,13 @@ private:
 
 private:
     Ui::StankinScheduleEditor2 *ui;
+    bool isModified;
 
     ScheduleVerticalHeader *headerView_;
     QLabel *labelCoords_;
 
     QSharedPointer<Schedule> schedule_;
+    std::optional<QFileInfo> file_;
 
 };
 

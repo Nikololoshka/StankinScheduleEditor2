@@ -4,45 +4,36 @@
 #include "dateEditorDialog.h"
 
 PairEditorDialog::PairEditorDialog(const QSharedPointer<Schedule> &schedule,
-                                   const Pair &pair, QWidget *parent) :
+                                   const std::optional<Pair> &pair, QWidget *parent) :
       QDialog(parent),
       ui(new Ui::PairEditorDialog),
       schedule_(schedule),
-      pair_(pair),
-      date_(pair.date())
+      pair_(pair)
 {
     ui->setupUi(this);
-    setWindowFlag(Qt::WindowCloseButtonHint, false);
-
-    ui->titleLineEdit->setText(pair_.title());
-    ui->lecturerLineEdit->setText(pair_.lecturer());
-    ui->classroomLineEdit->setText(pair_.classroom());
+    setWindowFlag(Qt::WindowContextHelpButtonHint, false);
 
     auto types = Type::list();
     for (auto& type : types) {
         ui->typeComboBox->addItem(type.text(), type.tag());
     }
-    ui->typeComboBox->setCurrentText(pair_.type().text());
 
     auto subgroups = Subgroup::list();
     for (auto& subgroup : subgroups) {
         ui->subgroupComboBox->addItem(subgroup.text(), subgroup.tag());
     }
-    ui->subgroupComboBox->setCurrentText(pair_.subgroup().text());
 
     auto startTimes = Time_::startTime();
     for (auto& time : startTimes) {
         ui->timeStartComboBox->addItem(time.toString(Time_::PATTERN));
     }
-    ui->timeStartComboBox->setCurrentText(pair_.time().start());
 
     auto endTimes = Time_::endTime();
     for (auto& time : endTimes) {
         ui->timeEndComboBox->addItem(time.toString(Time_::PATTERN));
     }
-    ui->timeEndComboBox->setCurrentText(pair_.time().end());
 
-    updateDateList();
+    bind();
 
     connect(ui->timeStartComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
             this, &PairEditorDialog::onStartTimeChanged);
@@ -63,12 +54,7 @@ PairEditorDialog::~PairEditorDialog()
     delete ui;
 }
 
-bool PairEditorDialog::isValid() const
-{
-    return result_.get() != nullptr;
-}
-
-std::unique_ptr<Pair>& PairEditorDialog::result()
+std::optional<Pair> &PairEditorDialog::result()
 {
     return result_;
 }
@@ -102,15 +88,17 @@ void PairEditorDialog::onOkButtonClicked()
 
         Time_ time(ui->timeStartComboBox->currentText(), ui->timeEndComboBox->currentText());
 
-        Pair newPair(title,
-                     lecture,
-                     classroom,
-                     type,
-                     subgroup,
-                     time);
-        newPair.setDate(date_);
+        auto newPair = std::make_optional<Pair>(title,
+                                                lecture,
+                                                classroom,
+                                                type,
+                                                subgroup,
+                                                time);
+        newPair->setDate(date_);
+        schedule_->possibleChange(pair_, newPair);
+        result_ = newPair;
 
-
+        close();
 
     } catch (std::exception &e) {
         QMessageBox::critical(this,
@@ -184,4 +172,22 @@ void PairEditorDialog::updateDateList()
     for (int i = 0; i < date_.size(); ++i) {
         ui->dateList->addItem(date_[i]->toString());
     }
+}
+
+void PairEditorDialog::bind()
+{
+    if (!pair_.has_value()) {
+        return;
+    }
+
+    ui->titleLineEdit->setText(pair_->title());
+    ui->lecturerLineEdit->setText(pair_->lecturer());
+    ui->classroomLineEdit->setText(pair_->classroom());
+    ui->typeComboBox->setCurrentText(pair_->type().text());
+    ui->subgroupComboBox->setCurrentText(pair_->subgroup().text());
+    ui->timeStartComboBox->setCurrentText(pair_->time().start());
+    ui->timeEndComboBox->setCurrentText(pair_->time().end());
+
+    date_ = pair_->date();
+    updateDateList();
 }

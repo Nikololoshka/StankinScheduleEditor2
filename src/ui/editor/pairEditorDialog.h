@@ -15,8 +15,10 @@ class PairEditorDialog : public QDialog
 
 public:
     PairEditorDialog(const QSharedPointer<Schedule> &schedule,
-                     const Pair &pair, QWidget *parent = nullptr);
+                     const std::optional<Pair> &pair, QWidget *parent = nullptr);
     ~PairEditorDialog();
+
+    std::optional<Pair>& result();
 
 public slots:
     void onOkButtonClicked();
@@ -29,15 +31,16 @@ public slots:
 private:
     void editDate(const std::unique_ptr<DateItem> &item);
     void updateDateList();
+    void bind();
 
 private:
     Ui::PairEditorDialog *ui;
 
     QSharedPointer<Schedule> schedule_;
-    Pair pair_;
+    std::optional<Pair> pair_;
     Date date_;
 
-    std::unique_ptr<Pair> result_;
+    std::optional<Pair> result_;
 };
 
 #endif // PAIREDITORDIALOG_H

@@ -42,6 +42,16 @@ bool Date::operator==(const Date &date) const
     return contains(date);
 }
 
+QJsonArray Date::toJson() const
+{
+    QJsonArray array;
+    for (const auto& date : dates_) {
+        array.append(date->toJson());
+    }
+
+    return array;
+}
+
 std::unique_ptr<DateItem> Date::at(int index) const
 {
     return std::unique_ptr<DateItem>((*this)[index]->copy());

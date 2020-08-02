@@ -13,13 +13,19 @@ class PairSelectorDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit PairSelectorDialog(const QSharedPointer<Schedule> &schedule,
-                                const ScheduleIndex &index, QWidget *parent = nullptr);
+    PairSelectorDialog(const QSharedPointer<Schedule> &schedule,
+                       const ScheduleIndex &index, QWidget *parent = nullptr);
     ~PairSelectorDialog();
 
 public slots:
-    void onItemClicked(const QModelIndex &index);
-    void onEditBottomClicked();
+    void onItemDoubleClicked(const QModelIndex &index);
+    void onAddButtonClicked();
+    void onEditButtomClicked();
+    void onRemoveButtomClicked();
+
+private:
+    void editPair(std::optional<Pair> &pair);
+    void updateList();
 
 private:
     Ui::PairSelectorDialog *ui;

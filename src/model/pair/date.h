@@ -16,6 +16,8 @@ public:
     const std::unique_ptr<DateItem>& operator[](int index) const;
     bool operator==(const Date &date) const;
 
+    QJsonArray toJson() const;
+
     std::unique_ptr<DateItem> at(int index) const;
 
     void addDate(const std::unique_ptr<DateItem> &item);

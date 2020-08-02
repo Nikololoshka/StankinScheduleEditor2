@@ -5,7 +5,8 @@
 
 StankinScheduleEditor2::StankinScheduleEditor2(QWidget *parent)
     : QMainWindow(parent),
-      ui(new Ui::StankinScheduleEditor2)
+      ui(new Ui::StankinScheduleEditor2),
+      isModified(false)
 {
     ui->setupUi(this);
 
@@ -14,36 +15,14 @@ StankinScheduleEditor2::StankinScheduleEditor2(QWidget *parent)
     initStatusBar();
     initTable();
 
-    try {
-        QString root = "D:\\Temp files\\Qt projects\\data\\ИДБ-17-09.json";
-        // QDir dir(root);
-
-        // for (auto &path : dir.entryList()) {
-            QFile file(root);
-
-            qDebug() << "File open " + file.fileName() + "...";
-            if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-                qDebug() << "File not open!";
-            }
-
-            auto json = file.readAll();
-            QJsonDocument doc = QJsonDocument::fromJson(json);
-
-            // qDebug() << QString(json);
-
-            qDebug() << "Schedule load...";
-            schedule_ = QSharedPointer<Schedule>::create(doc);
-            qDebug() << "Schedule complite!";
-
-            updateTable();
-        //    break;
-        // }
-
-    } catch (std::exception &e) {
-        qDebug() << e.what();
-    } catch (...) {
-        qDebug() << "Unknown error :(";
-    }
+    connect(ui->actionCreate, &QAction::triggered,
+            this, &StankinScheduleEditor2::onNewFileClicked);
+    connect(ui->actionOpen, &QAction::triggered,
+            this, &StankinScheduleEditor2::onOpenFileClicked);
+    connect(ui->actionSave, &QAction::triggered,
+            this, &StankinScheduleEditor2::onSaveFileClicked);
+    connect(ui->actionSaveAs, &QAction::triggered,
+            this, &StankinScheduleEditor2::onSaveAsFileClicked);
 }
 
 StankinScheduleEditor2::~StankinScheduleEditor2()
@@ -51,11 +30,90 @@ StankinScheduleEditor2::~StankinScheduleEditor2()
     delete ui;
 }
 
+void StankinScheduleEditor2::onNewFileClicked()
+{
+    if (isModified) {
+        auto answer = QMessageBox::warning(this,
+                                           "Расписание было изменено",
+                                           "Вы хотите сохранить внесенные изменения?\n"
+                                           "Ваши изменения будут потеряны, если вы не сохраните их",
+                                           QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel,
+                                           QMessageBox::Save);
+        switch (answer) {
+            case QMessageBox::Save: {
+                onSaveFileClicked();
+                break;
+            }
+            case QMessageBox::Cancel: {
+                return;
+            }
+            default: {
+
+            }
+        }
+    }
+
+    schedule_ = QSharedPointer<Schedule>::create();
+    file_ = std::optional<QFileInfo>();
+    isModified = false;
+    updateTable();
+    setWindowTitle(qApp->applicationName());
+}
+
+void StankinScheduleEditor2::onOpenFileClicked()
+{
+    auto path = QFileDialog::getOpenFileName(this,
+                                             "Открытие расписание",
+                                             ".",
+                                             "Json file (*.json)");
+    if (path.isEmpty()) {
+        return;
+    }
+
+    try {
+        loadSchedule(path);
+    } catch (std::exception &e) {
+        QMessageBox::critical(this,
+                              "Ошибка загрузки расписания",
+                              e.what());
+        return;
+    }
+
+    file_ = std::make_optional<QFileInfo>(path);
+    setWindowTitle(qApp->applicationName() + " [" + file_->fileName() + "]");
+}
+
+void StankinScheduleEditor2::onSaveFileClicked()
+{
+    if (!file_.has_value()) {
+        onSaveAsFileClicked();
+    }
+
+    QFile file(file_->absoluteFilePath());
+    if (!file.open(QIODevice::WriteOnly)) {
+        // TODO: Open error
+    }
+
+    auto json = schedule_->toJson();
+    QJsonDocument doc(json);
+    file.write(doc.toJson(QJsonDocument::Indented));
+    file.close();
+}
+
+void StankinScheduleEditor2::onSaveAsFileClicked()
+{
+    auto path = QFileDialog::getSaveFileName(this,
+                                             "Сохранить расписание",
+                                             ".",
+                                             "Json file (*.json)");
+}
+
 void StankinScheduleEditor2::onTableCellDoubleClicked(int row, int column)
 {
     auto index = schedule_->transform(row, column);
     auto selector = new PairSelectorDialog(schedule_, index, this);
-    selector->show();
+    selector->exec();
+    updateTable();
 }
 
 void StankinScheduleEditor2::initStatusBar()
@@ -106,8 +164,26 @@ void StankinScheduleEditor2::initTable()
     resizeTable();
 }
 
+void StankinScheduleEditor2::loadSchedule(const QString &path)
+{
+    QFile file(path);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qDebug() << "File not open!";
+        throw std::logic_error(("Не удалось открыть файл! " + file.errorString()).toStdString());
+    }
+
+    auto json = file.readAll();
+    QJsonDocument doc = QJsonDocument::fromJson(json);
+    schedule_ = QSharedPointer<Schedule>::create(doc);
+    updateTable();
+    isModified = false;
+}
+
 void StankinScheduleEditor2::updateTable()
 {
+    ui->table->clearSpans();
+    ui->table->clearContents();
+
     ui->table->setRowCount(schedule_->row());
     headerView_->setIndexses(schedule_->indexes());
 
@@ -128,6 +204,7 @@ void StankinScheduleEditor2::updateTable()
         }
     }
 
+    isModified = true;
     resizeTable();
 }
 

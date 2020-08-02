@@ -47,3 +47,20 @@ DayOfWeek DateUtils::of(int number)
     throw std::invalid_argument(("Number day of week unsupported: "
                                  + QString::number(number)).toStdString());
 }
+
+QString DateUtils::toString(DayOfWeek dayOfWeek)
+{
+    return dayOfWeekList()[static_cast<int>(dayOfWeek)];
+}
+
+QVector<DayOfWeek> DateUtils::list()
+{
+    return {
+        DayOfWeek::Monday,
+        DayOfWeek::Tuesday,
+        DayOfWeek::Wednesday,
+        DayOfWeek::Thursday,
+        DayOfWeek::Friday,
+        DayOfWeek::Saturday
+    };
+}
