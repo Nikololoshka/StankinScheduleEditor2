@@ -1,6 +1,6 @@
 # Project StankinScheduleEditor2
 # ******************************************************************************
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.15)
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/functions.cmake)
 
@@ -43,7 +43,7 @@ set(TEMPLATE_DOMAIN "github.com/nikololoshka" CACHE STRING "Domain")
 
 # Qt
 # ******************************************************************************
-set(TEMPLATE_QT_VERSION "5.13.2" CACHE STRING "Qt Version")
+set(TEMPLATE_QT_VERSION "5.15.0" CACHE STRING "Qt Version")
 set(TEMPLATE_QT_MODULES Core Gui Widgets)
 
 find_package(Qt5 ${TEMPLATE_QT_VERSION} EXACT CONFIG REQUIRED ${TEMPLATE_QT_MODULES})
@@ -51,6 +51,14 @@ find_package(Qt5 ${TEMPLATE_QT_VERSION} EXACT CONFIG REQUIRED ${TEMPLATE_QT_MODU
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
+
+# OpenCV
+# ******************************************************************************
+if (WIN32)
+    set(OpenCV_DIR "D:/opencv/install")
+endif()
+
+find_package(OpenCV REQUIRED)
 
 # Configure files
 # ******************************************************************************
@@ -66,11 +74,13 @@ add_definitions(-DUSE_INSTALL_TARGET)
 AddSources("${SOURCE_DIR}" "app" list_app_src)
 
 AddSources("${SOURCE_DIR}/view" "view" list_app_src)
-AddSources("${SOURCE_DIR}/model" "schedule" list_app_src)
 
+AddSources("${SOURCE_DIR}/model" "schedule" list_app_src)
 AddSources("${SOURCE_DIR}/model/pair" "pair" list_app_src)
+
 AddSources("${SOURCE_DIR}/ui" "ui" list_app_src)
 AddSources("${SOURCE_DIR}/ui/editor" "editor" list_app_src)
+AddSources("${SOURCE_DIR}/ui/import" "import" list_app_src)
 
 set(list_app_res "res/res.qrc")
 
@@ -97,4 +107,6 @@ target_link_libraries(${PROJECT_NAME}
     PUBLIC Qt5::Core
     PUBLIC Qt5::Widgets
     PUBLIC Qt5::Gui
+    ${OpenCV_LIBS}
 )
+

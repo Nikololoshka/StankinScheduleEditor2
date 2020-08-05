@@ -24,6 +24,8 @@ public slots:
     void onSaveFileClicked();
     void onSaveAsFileClicked();
 
+    void onImportClicked();
+
     void onTableCellDoubleClicked(int row, int column);
     void updateTable();
 

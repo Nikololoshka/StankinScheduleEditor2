@@ -2,6 +2,7 @@
 #include "ui_stankinScheduleEditor2.h"
 
 #include "editor/pairSelectorDialog.h"
+#include "import/importDialog.h"
 
 StankinScheduleEditor2::StankinScheduleEditor2(QWidget *parent)
     : QMainWindow(parent),
@@ -23,6 +24,8 @@ StankinScheduleEditor2::StankinScheduleEditor2(QWidget *parent)
             this, &StankinScheduleEditor2::onSaveFileClicked);
     connect(ui->actionSaveAs, &QAction::triggered,
             this, &StankinScheduleEditor2::onSaveAsFileClicked);
+    connect(ui->actionImport, &QAction::triggered,
+            this, &StankinScheduleEditor2::onImportClicked);
 }
 
 StankinScheduleEditor2::~StankinScheduleEditor2()
@@ -106,6 +109,12 @@ void StankinScheduleEditor2::onSaveAsFileClicked()
                                              "Сохранить расписание",
                                              ".",
                                              "Json file (*.json)");
+}
+
+void StankinScheduleEditor2::onImportClicked()
+{
+    auto import = new ImportDialog(this);
+    import->show();
 }
 
 void StankinScheduleEditor2::onTableCellDoubleClicked(int row, int column)
