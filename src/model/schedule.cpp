@@ -87,7 +87,7 @@ ScheduleCell Schedule::pairsTextByIndex(int row, int column) const
     return pairsTextByIndex(transform(row, column));
 }
 
-QVector<Pair> Schedule::pairsByIndex(const ScheduleIndex &index) const
+std::vector<Pair> Schedule::pairsByIndex(const ScheduleIndex &index) const
 {
     return days_[DateUtils::of(index.row)].pairsByIndex(index);
 }

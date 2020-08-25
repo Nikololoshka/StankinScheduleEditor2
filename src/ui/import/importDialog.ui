@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>487</width>
+    <width>527</width>
     <height>340</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Импорт расписаний</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_4">
    <item>
@@ -19,14 +19,14 @@
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
-        <widget class="QLabel" name="label">
+        <widget class="QLabel" name="filesLabel">
          <property name="text">
           <string>Список расписаний</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QListView" name="listView">
+        <widget class="QListWidget" name="filesList">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>0</horstretch>
@@ -38,6 +38,9 @@
            <width>0</width>
            <height>0</height>
           </size>
+         </property>
+         <property name="sortingEnabled">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -55,7 +58,7 @@
        <item>
         <widget class="QProgressBar" name="mainProgressBar">
          <property name="value">
-          <number>24</number>
+          <number>0</number>
          </property>
          <property name="textVisible">
           <bool>true</bool>
@@ -70,7 +73,7 @@
           <enum>QProgressBar::TopToBottom</enum>
          </property>
          <property name="format">
-          <string>%p%</string>
+          <string>Готов к работе</string>
          </property>
         </widget>
        </item>
@@ -82,7 +85,7 @@
         </widget>
        </item>
        <item>
-        <layout class="QFormLayout" name="workerLayout"/>
+        <layout class="QGridLayout" name="workerLayout"/>
        </item>
        <item>
         <widget class="QGroupBox" name="groupBox">
@@ -93,16 +96,30 @@
           <item>
            <layout class="QFormLayout" name="formLayout">
             <item row="0" column="0">
-             <widget class="QLabel" name="label_3">
+             <widget class="QLabel" name="pooplerLabel">
+              <property name="text">
+               <string>Poopler path </string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QLineEdit" name="pooplerLineEdit">
+              <property name="text">
+               <string>pdftoppm</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="tesseractLabel">
               <property name="text">
                <string>Tesseract path</string>
               </property>
              </widget>
             </item>
-            <item row="0" column="1">
-             <widget class="QLineEdit" name="lineEdit">
+            <item row="1" column="1">
+             <widget class="QLineEdit" name="tesseractLineEdit">
               <property name="text">
-               <string>tesseract-ocr</string>
+               <string>tesseract</string>
               </property>
               <property name="echoMode">
                <enum>QLineEdit::Normal</enum>
@@ -115,15 +132,15 @@
               </property>
              </widget>
             </item>
-            <item row="1" column="0">
-             <widget class="QLabel" name="label_2">
+            <item row="2" column="0">
+             <widget class="QLabel" name="dpiLabel">
               <property name="text">
                <string>DPI</string>
               </property>
              </widget>
             </item>
-            <item row="1" column="1">
-             <widget class="QSpinBox" name="spinBox">
+            <item row="2" column="1">
+             <widget class="QSpinBox" name="dpiSpinBox">
               <property name="prefix">
                <string/>
               </property>
@@ -141,26 +158,10 @@
               </property>
              </widget>
             </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="label_4">
-              <property name="text">
-               <string>Шрифт</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <widget class="QFontComboBox" name="fontComboBox">
-              <property name="currentFont">
-               <font>
-                <family>DejaVu Sans</family>
-               </font>
-              </property>
-             </widget>
-            </item>
            </layout>
           </item>
           <item>
-           <widget class="QCheckBox" name="checkBox">
+           <widget class="QCheckBox" name="debugCheckBox">
             <property name="enabled">
              <bool>false</bool>
             </property>
@@ -198,9 +199,21 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QToolButton" name="addButton">
+       <property name="contextMenuPolicy">
+        <enum>Qt::ActionsContextMenu</enum>
+       </property>
        <property name="text">
         <string>Добавить...</string>
+       </property>
+       <property name="autoRepeat">
+        <bool>false</bool>
+       </property>
+       <property name="popupMode">
+        <enum>QToolButton::InstantPopup</enum>
+       </property>
+       <property name="toolButtonStyle">
+        <enum>Qt::ToolButtonTextOnly</enum>
        </property>
       </widget>
      </item>
@@ -218,21 +231,21 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton_4">
+      <widget class="QPushButton" name="stopButton">
        <property name="text">
         <string>Остановить</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton_3">
+      <widget class="QPushButton" name="importButton">
        <property name="text">
         <string>Импорт</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton_2">
+      <widget class="QPushButton" name="cancelButton">
        <property name="text">
         <string>Отмена</string>
        </property>
@@ -243,5 +256,22 @@
   </layout>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>cancelButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ImportDialog</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>476</x>
+     <y>317</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>263</x>
+     <y>169</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

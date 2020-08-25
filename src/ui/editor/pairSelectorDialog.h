@@ -32,7 +32,7 @@ private:
 
     QSharedPointer<Schedule> schedule_;
     ScheduleIndex index_;
-    QVector<Pair> pairs_;
+    std::vector<Pair> pairs_;
 };
 
 #endif // PAIRSELECTORDIALOG_H

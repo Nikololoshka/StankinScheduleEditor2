@@ -23,7 +23,7 @@ QJsonArray ScheduleDay::toJson() const
 void ScheduleDay::add(const Pair &pair)
 {
     isAddCheck(pair); // throw std::logic_error
-    pairs_.append({index_++, pair});
+    pairs_.emplace_back(PairData {index_++, pair});
     reallocate();
 }
 
@@ -55,7 +55,7 @@ void ScheduleDay::changePair(const std::optional<Pair> &oldPair,
 {
     possibleChange(oldPair, newPair);
 
-    pairs_.append({index_++, *newPair});
+    pairs_.emplace_back(PairData {index_++, *newPair});
     if (oldPair.has_value()) {
         remove(*oldPair);
     }
@@ -104,9 +104,9 @@ ScheduleCell ScheduleDay::pairsTextByIndex(const ScheduleIndex &index) const
 
     int columnSpan = 1;
     int rowSpan = 1;
-    if (!pairs.isEmpty()) {
-        columnSpan = pairs.first().time().duration();
-        rowSpan = computeRowSpan(pairs.first().time().duration(), index);
+    if (!pairs.empty()) {
+        columnSpan = pairs.front().time().duration();
+        rowSpan = computeRowSpan(pairs.front().time().duration(), index);
     } else {
         rowSpan = computeRowSpan(1, index);
     }
@@ -118,16 +118,16 @@ ScheduleCell ScheduleDay::pairsTextByIndex(const ScheduleIndex &index) const
     };
 }
 
-QVector<Pair> ScheduleDay::pairsByIndex(const ScheduleIndex &index) const
+std::vector<Pair> ScheduleDay::pairsByIndex(const ScheduleIndex &index) const
 {
     auto& row = rows_.at(index.innerRow);
     auto& cell = row.at(index.number);
     return fromCell(cell);
 }
 
-QVector<Pair> ScheduleDay::fromCell(const Cell &cell) const
+std::vector<Pair> ScheduleDay::fromCell(const Cell &cell) const
 {
-    QVector<Pair> pairs;
+    std::vector<Pair> pairs;
 
     if (cell.isEmpty()) {
         return pairs;
@@ -136,7 +136,7 @@ QVector<Pair> ScheduleDay::fromCell(const Cell &cell) const
     for (auto& data : pairs_) {
         for (auto id : cell) {
             if (data.id == id) {
-                pairs.append(data.pair);
+                pairs.emplace_back(data.pair);
             }
         }
     }
@@ -174,8 +174,8 @@ void ScheduleDay::reallocate()
             Cell cell = row[pair.time().number()];
             auto pairs = this->fromCell(cell);
 
-            if (!pairs.isEmpty() &&
-                pairs.first().time().duration() == pair.time().duration()) {
+            if (!pairs.empty() &&
+                pairs.front().time().duration() == pair.time().duration()) {
                 cell.append(id);
                 insert = true;
                 break;
@@ -184,7 +184,7 @@ void ScheduleDay::reallocate()
                 bool free = true;
                 for (auto& rowCell : row) {
                     auto rowPairs = this->fromCell(rowCell);
-                    if (!rowPairs.isEmpty() && rowPairs.first().time().intersect(pair.time())) {
+                    if (!rowPairs.empty() && rowPairs.front().time().intersect(pair.time())) {
                         free = false;
                         break;
                     }
@@ -230,8 +230,8 @@ int ScheduleDay::computeRowSpan(int duration, const ScheduleIndex &index) const
 
         for (int j = 0; j < row.size(); ++j) {
             auto pairs = fromCell(row[j]);
-            if (!pairs.isEmpty()) {
-                auto time = pairs.first().time();
+            if (!pairs.empty()) {
+                auto time = pairs.front().time();
                 for (int k = 0; k < time.duration(); ++k) {
                     freeRow[time.number() + k] = false;
                 }

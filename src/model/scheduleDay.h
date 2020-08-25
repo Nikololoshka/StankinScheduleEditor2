@@ -42,8 +42,8 @@ public:
                         const std::optional<Pair> &newPair) const;
 
     ScheduleCell pairsTextByIndex(const ScheduleIndex &index) const;
-    QVector<Pair> pairsByIndex(const ScheduleIndex &index) const;
-    QVector<Pair> fromCell(const Cell &cell) const;
+    std::vector<Pair> pairsByIndex(const ScheduleIndex &index) const;
+    std::vector<Pair> fromCell(const Cell &cell) const;
 
 private:
     void isAddCheck(const Pair &pair) const;
@@ -59,7 +59,7 @@ private:
 
     unsigned int index_;
     QVector<QVector<Cell>> rows_;
-    QVector<PairData> pairs_;
+    std::vector<PairData> pairs_;
 
     static unsigned int EMPTY;
 };

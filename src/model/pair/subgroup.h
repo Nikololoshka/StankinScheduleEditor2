@@ -8,7 +8,7 @@ class Subgroup
 {
 public:
     static Subgroup fromString(const QString &value);
-    static QVector<Subgroup> list();
+    static std::vector<Subgroup> list();
 
     static Subgroup getA();
     static Subgroup getB();

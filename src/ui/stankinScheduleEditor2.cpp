@@ -16,6 +16,7 @@ StankinScheduleEditor2::StankinScheduleEditor2(QWidget *parent)
     initStatusBar();
     initTable();
 
+
     connect(ui->actionCreate, &QAction::triggered,
             this, &StankinScheduleEditor2::onNewFileClicked);
     connect(ui->actionOpen, &QAction::triggered,

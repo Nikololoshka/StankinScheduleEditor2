@@ -14,7 +14,7 @@ Type Type::fromString(const QString &value)
     throw std::invalid_argument("Can't parse type: " + value.toStdString());
 }
 
-QVector<Type> Type::list()
+std::vector<Type> Type::list()
 {
     return {
         Type::getLecture(), Type::getSeminar(), Type::getLaboratory()

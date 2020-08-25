@@ -8,7 +8,7 @@ class Type
 {
 public:
     static Type fromString(const QString &value);
-    static QVector<Type> list();
+    static std::vector<Type> list();
 
     static Type getLecture();
     static Type getSeminar();

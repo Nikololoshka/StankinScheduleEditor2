@@ -29,7 +29,7 @@ public:
 
     ScheduleCell pairsTextByIndex(const ScheduleIndex &index) const;
     ScheduleCell pairsTextByIndex(int row, int column) const;
-    QVector<Pair> pairsByIndex(const ScheduleIndex &index) const;
+    std::vector<Pair> pairsByIndex(const ScheduleIndex &index) const;
 
     ScheduleIndex transform(int row, int column) const;
     void print();

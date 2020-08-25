@@ -93,7 +93,7 @@ void PairSelectorDialog::updateList()
     pairs_ = schedule_->pairsByIndex(index_);
 
     ui->list->clear();
-    for (auto& pair : pairs_) {
+    for (const auto& pair : pairs_) {
         ui->list->addItem(pair.toString());
     }
 
