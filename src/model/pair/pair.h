@@ -16,7 +16,7 @@ public:
     static Pair fromJson(const QJsonObject &value);
 
     Pair(const QString &title, const QString &lecturer, const QString &classroom,
-         const Type &type, const Subgroup &subgroup, const Time_ &time);
+         const Type &type, const Subgroup &subgroup, const Time_ &time, const Date &date = Date());
     Pair(const Pair &pair);
     Pair(Pair &&pair);
 

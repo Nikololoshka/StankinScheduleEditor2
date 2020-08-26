@@ -74,6 +74,7 @@ void ParseWorker::startParsing(const QString &pdfFilePath,
     Mat image = imread(imageFilePath.toStdString());
     if (image.data == nullptr) {
         qDebug() << "File not open or find:" << imageFilePath;
+        throw std::logic_error("File not open or find: " + imageFilePath.toStdString());
     }
 
     auto height = image.rows;
@@ -138,16 +139,34 @@ void ParseWorker::startParsing(const QString &pdfFilePath,
         }
     }
 
-    qDebug() << timeCells.size();
+    imwrite(imageFilePath.toStdString(), image);
 
-    imwrite(imageFilePath.replace(".jpg", "2.jpg").toStdString(), image);
+    if (timeCells.size() != Time_::startTime().size()) {
+        throw std::logic_error("No found time cells!");
+    }
+
+    std::vector<Pair> schedulePairs;
+    for (auto &cell : pairCells) {
+        // пропуск ячееек с днями недели
+        if (qAbs(cell.end - timeCells[0].start) < qAbs(cell.start < timeCells[0].start)) {
+            continue;
+        }
+
+        try {
+            auto pairs = parsePairs(cell, timeCells);
+            std::copy(pairs.begin(), pairs.end(), std::back_inserter(schedulePairs));
+
+        } catch (...) {
+            // TODO("Exception...")
+        }
+    }
 }
 
-QVector<Pair> ParseWorker::parsePairs(const QString &text)
+std::vector<Pair> ParseWorker::parsePairs(const ParseCell &cell, const QMap<int, ParseCell> &timeCells)
 {
-    QRegularExpression regDivider(PATTERN_DIVIDER);
+    std::vector<Pair> pairs;
 
-    auto it = regDivider.globalMatch(text);
+    auto it = QRegularExpression(PATTERN_DIVIDER).globalMatch(cell.text);
     while (it.hasNext()) {
         auto pairPart = it.next();
         auto pairText = pairPart.captured();
@@ -177,11 +196,12 @@ QVector<Pair> ParseWorker::parsePairs(const QString &text)
         auto datesMatch = pairMatch.captured(7);
         auto dates = parseDates(datesMatch);
 
-        // Pair pair(title, lecturer, classroom, type, subgroup, time);
-        // pair.setDates(dates);
+        auto time = computeTime(timeCells, cell);
+
+        pairs.emplace_back(title, lecturer, classroom, type, subgroup, time, dates);
     }
 
-    return {};
+    return pairs;
 }
 
 QString ParseWorker::patternCommon() const
@@ -328,4 +348,30 @@ QDate ParseWorker::parseDate(const QString &dateString) const
 {
     int year = QDate::currentDate().year();
     return QDate::fromString(dateString + "." + QString::number(year), "dd.MM.yyyy");
+}
+
+Time_ ParseWorker::computeTime(const QMap<int, ParseCell> &timeCells, const ParseCell &cell) const
+{
+    const int TIME_COUNT = Time_::startTime().size();
+
+    int diffStart = qAbs(cell.start - timeCells.first().start);
+    int diffEnd = qAbs(cell.end - timeCells.first().end);
+    int start = 0;
+    int end = 0;
+
+    for (int i = 0; i < TIME_COUNT; ++i) {
+        int diff = qAbs(cell.start - timeCells[i].start);
+        if (diff < diffStart) {
+            diffStart = diff;
+            start = i;
+        }
+
+        diff = qAbs(cell.end - timeCells[i].end);
+        if (diff < diffEnd) {
+            diffEnd = diff;
+            end = i;
+        }
+    }
+
+    return Time_(Time_::startTime()[start], Time_::endTime()[end]);
 }

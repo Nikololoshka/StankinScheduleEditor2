@@ -10,8 +10,8 @@
 
 struct ParseCell {
     QString text;
-    int first;
-    int second;
+    int start;
+    int end;
 };
 
 class ParseWorker : public QRunnable
@@ -35,7 +35,7 @@ public:
     void startParsing(const QString &pdfFilePath,
                       std::unique_ptr<PooplerWrapper> &poopler,
                       std::unique_ptr<TesseractWrapper> &tesseract);
-    QVector<Pair> parsePairs(const QString &text);
+    std::vector<Pair> parsePairs(const ParseCell &cell, const QMap<int, ParseCell> &timeCells);
     QString patternCommon() const;
 
     QString parseTitle(const QString &titleMatch) const;
@@ -45,6 +45,8 @@ public:
     QString parseClassroom(const QString &classroomMatch) const;
     Date parseDates(const QString &datesMatch) const;
     QDate parseDate(const QString &dateString) const;
+
+    Time_ computeTime(const QMap<int, ParseCell> &timeCells, const ParseCell &cell) const;
 
 private:    
     int id_;

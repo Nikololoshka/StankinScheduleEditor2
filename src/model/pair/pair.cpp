@@ -21,13 +21,14 @@ Pair Pair::fromJson(const QJsonObject &value)
 }
 
 Pair::Pair(const QString &title, const QString &lecturer, const QString &classroom,
-           const Type &type, const Subgroup &subgroup, const Time_ &time)
+           const Type &type, const Subgroup &subgroup, const Time_ &time, const Date &date)
     : title_(title),
       lecturer_(lecturer),
       classroom_(classroom),
       type_(type),
       subgroup_(subgroup),
-      time_(time)
+      time_(time),
+      date_(date)
 {
 
 }

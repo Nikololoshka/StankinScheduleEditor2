@@ -3,9 +3,9 @@
 ParseWorkerManager::ParseWorkerManager(int workerCount)
     : workerCount_(workerCount)
 {
-    readData("titles.txt", titles_);
-    readData("lecturers.txt", lecturers_);
-    readData("classrooms.txt", classrooms_);
+    readData("sets/titles.txt", titles_);
+    readData("sets/lecturers.txt", lecturers_);
+    readData("sets/classrooms.txt", classrooms_);
 }
 
 QString ParseWorkerManager::nextSchedule()

@@ -101,6 +101,20 @@ include_directories("${SOURCE_DIR}/view")
 add_executable(${PROJECT_NAME} ${list_app_src} ${list_app_res})
 target_include_directories(${PROJECT_NAME} PUBLIC ${BINARY_DIR})
 
+# Copy resources
+# *********************************************************************
+if(APPLE)
+    execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${MACOSX_BUNDLE_RESOURCES})
+    execute_process(COMMAND ${CMAKE_COMMAND} -E copy_if_different ${MACOSX_BUNDLE_ICON} ${MACOSX_BUNDLE_RESOURCES})
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND}
+        -E copy_directory "${ROOT_DIR}/res/sets" ${BUILD_DIR}/${PROJECT_NAME}.app/contents/sets)
+else()
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND}
+        -E copy_directory "${ROOT_DIR}/res/sets" ${BUILD_DIR}/sets)
+    add_custom_target(CopyResources ALL COMMAND ${CMAKE_COMMAND}
+        -E copy_directory "${ROOT_DIR}/res/sets" ${BUILD_DIR}/sets)
+endif()
+
 # Link
 # *********************************************************************
 target_link_libraries(${PROJECT_NAME}
