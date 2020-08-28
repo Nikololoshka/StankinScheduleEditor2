@@ -4,7 +4,7 @@
 #include <QtWidgets>
 #include "parseWorker.h"
 #include "parseWorkerManager.h"
-
+#include "confuseDialog.h"
 
 namespace Ui {
 class ImportDialog;
@@ -27,6 +27,9 @@ public slots:
     void onAddFilesClicked();
     void onAddFolderClicked();
 
+    void onTransitionButtonClicked();
+    void onSetsButtonClicked();
+
 private:
     bool isWorkPooplerAndTesseract();
     QStringList recursiveFind(QString rootDir) const;
@@ -40,6 +43,7 @@ private:
     Ui::ImportDialog *ui;
 
     QTimer *workerTimer_;
+    ConfuseDialog *confuseDialog_;
 
     QThreadPool workerPool_;
     QVector<ParseWorker*> workers_;

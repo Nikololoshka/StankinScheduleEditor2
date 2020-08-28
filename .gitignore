@@ -3,6 +3,7 @@
 
 # User settings
 include/
+build/
 
 ### C++ ###
 # Prerequisites

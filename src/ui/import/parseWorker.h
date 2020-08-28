@@ -7,9 +7,11 @@
 #include "pooplerWrapper.h"
 #include "tesseractWrapper.h"
 #include "parseWorkerManager.h"
+#include "parseFileException.h"
 
 struct ParseCell {
     QString text;
+    int number;
     int start;
     int end;
 };
@@ -31,12 +33,19 @@ public:
     const static QString PATTERN_DATE_SINGLE;
     const static QString PATTERN_DIVIDER;
 
-// private:
+    static QString patternCommon();
+
+private:
     void startParsing(const QString &pdfFilePath,
                       std::unique_ptr<PooplerWrapper> &poopler,
                       std::unique_ptr<TesseractWrapper> &tesseract);
-    std::vector<Pair> parsePairs(const ParseCell &cell, const QMap<int, ParseCell> &timeCells);
-    QString patternCommon() const;
+    std::vector<Pair> parsePairs(const QString &data,
+                                 const ParseCell &cell,
+                                 const QMap<int, ParseCell> &timeCells);
+    QString confuseLoop(ParseFileException &e,
+                        const QString &data,
+                        int number,
+                        const QString &imagePath) const;
 
     QString parseTitle(const QString &titleMatch) const;
     QString parseLecturer(const QString &lecturerMatch) const;

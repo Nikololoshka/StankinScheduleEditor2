@@ -161,8 +161,11 @@ void ScheduleDay::reallocate()
         if (first.pair.time().duration() == second.pair.time().duration()) {
             return first.pair.before(second.pair);
         }
-        return first.pair.time().duration() < second.pair.time().duration();
+        return first.pair.time().duration() > second.pair.time().duration();
     });
+
+    rows_.clear();
+    rows_.fill(QVector<Cell>(8), 1);
 
     for (auto& data : pairs_) {
         auto& id = data.id;
@@ -171,7 +174,7 @@ void ScheduleDay::reallocate()
         bool insert = false;
 
         for (auto& row : rows_) {
-            Cell cell = row[pair.time().number()];
+            Cell &cell = row[pair.time().number()];
             auto pairs = this->fromCell(cell);
 
             if (!pairs.empty() &&
@@ -201,7 +204,7 @@ void ScheduleDay::reallocate()
         if (!insert) {
             QVector<Cell> row(column(), Cell());
 
-            for (int i = 0; i < pair.time().duration(); ++i) {
+            for (int i = 0; i < 1 /* pair.time().duration() */; ++i) {
                 row[pair.time().number()].append(id);
             }
             rows_.append(row);

@@ -10,8 +10,10 @@ DayOfWeek DateUtils::of(const QDate &date)
         case Qt::DayOfWeek::Friday: return DayOfWeek::Friday;
         case Qt::DayOfWeek::Saturday: return DayOfWeek::Saturday;
     }
-    throw std::invalid_argument("Date with unsupported day of week: "
-                                + date.toString().toStdString());
+
+    qDebug() << date << date.isValid() << date.isNull();
+    throw std::invalid_argument("Date with unsupported day of week: '"
+                                + date.toString().toStdString() + "'");
 }
 
 

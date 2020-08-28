@@ -256,8 +256,12 @@ void StankinScheduleEditor2::resizeTable()
 
 void StankinScheduleEditor2::updateStatusBarCoords(int row, int column)
 {
-    auto index = schedule_->transform(row, column);
+    auto index = schedule_->transform(row, column);    
     labelCoords_->setText(index.toString());
+
+    for (auto& p:  schedule_->pairsByIndex(index)) {
+         qDebug() << p.toString();
+    }
 }
 
 QFont StankinScheduleEditor2::fontForText(const QString &text, int width, int height,

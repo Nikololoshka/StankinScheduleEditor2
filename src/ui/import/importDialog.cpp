@@ -2,7 +2,8 @@
 #include "ui_importDialog.h"
 
 #include "parseFileException.h"
-
+#include "setsDialog.h"
+#include "transitionDialog.h"
 
 ImportDialog::ImportDialog(QWidget *parent) :
       QDialog(parent),
@@ -44,6 +45,7 @@ ImportDialog::ImportDialog(QWidget *parent) :
 //    }
 
     workerTimer_ = new QTimer(this);
+    confuseDialog_ = new ConfuseDialog(this);
 
     QAction *actionAddFiles = new QAction("Файлы", ui->addButton);
     ui->addButton->addAction(actionAddFiles);
@@ -61,6 +63,10 @@ ImportDialog::ImportDialog(QWidget *parent) :
             this, &ImportDialog::onImportButtonClicked);
     connect(ui->stopButton, &QPushButton::clicked,
             this, &ImportDialog::onStopButtonClicked);
+    connect(ui->setsButton, &QPushButton::clicked,
+            this, &ImportDialog::onSetsButtonClicked);
+    connect(ui->transitionButton, &QPushButton::clicked,
+            this, &ImportDialog::onTransitionButtonClicked);
 }
 
 ImportDialog::~ImportDialog()
@@ -105,7 +111,8 @@ void ImportDialog::onImportButtonClicked()
 
 void ImportDialog::onStopButtonClicked()
 {
-
+    workerPool_.clear();
+    enableUI(true);
 }
 
 void ImportDialog::onAddFilesClicked()
@@ -132,6 +139,18 @@ void ImportDialog::onAddFolderClicked()
 
     auto paths = recursiveFind(path);
     updateFilesList(paths);
+}
+
+void ImportDialog::onTransitionButtonClicked()
+{
+    auto dialog = new TransitionDialog(workerManager_, this);
+    dialog->show();
+}
+
+void ImportDialog::onSetsButtonClicked()
+{
+    auto dialog = new SetsDialog(workerManager_, this);
+    dialog->show();
 }
 
 bool ImportDialog::isWorkPooplerAndTesseract()
@@ -204,11 +223,23 @@ void ImportDialog::enableUI(bool enable)
 
 void ImportDialog::workerLoop()
 {
+    if (confuseDialog_->status() == ConfuseStatus::Solved) {
+        int id = confuseDialog_->info().id;
+        workerManager_->setSolve(id, confuseDialog_->solve());
+    }
+
     auto texts = workerManager_->progressTexts();
     auto values = workerManager_->progressValues();
+    auto statuses = workerManager_->workerStatuses();
+    auto info = workerManager_->confuseInfo();
+
     for (int i = 0; i < workerProgressBars_.size(); ++i) {
         workerProgressBars_[i]->setFormat(texts[i]);
         workerProgressBars_[i]->setValue(values[i]);
+
+        if (statuses[i] == WorkerStatus::Confused && confuseDialog_->status() == ConfuseStatus::Wait) {
+            confuseDialog_->start(info[i]);
+        }
     }
 
     if (std::any_of(values.begin(), values.end(), [](int value){ return value != 100; })) {

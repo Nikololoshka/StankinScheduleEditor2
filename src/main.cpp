@@ -1,7 +1,8 @@
 #include "ui/stankinScheduleEditor2.h"
 
 #include <QApplication>
-#include <opencv2/opencv.hpp>
+// #include <opencv2/opencv.hpp>
+// #include "difflib.h"
 
 int main(int argc, char *argv[])
 {

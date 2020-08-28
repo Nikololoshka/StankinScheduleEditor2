@@ -4,6 +4,7 @@
 #include <opencv2/core.hpp>
 #include <opencv2/highgui.hpp>
 
+#include "schedule.h"
 #include "pair/dateRange.h"
 #include "pair/dateSingle.h"
 #include "pair/time_.h"
@@ -37,6 +38,16 @@ const QString ParseWorker::PATTERN_DATE = "(\\[((\\,)|(\\s?"
 const QString ParseWorker::PATTERN_DATE_RANGE = "(\\s?(\\d{2}\\.\\d{2})\\-(\\d{2}\\.\\d{2})\\s*?([чкЧК]\\.[нН]\\.{1,2}))";
 const QString ParseWorker::PATTERN_DATE_SINGLE = "(\\s?(\\d{2}\\.\\d{2}))";
 const QString ParseWorker::PATTERN_DIVIDER = "(.*?\\])";
+
+QString ParseWorker::patternCommon()
+{
+    return QStringList({ PATTERN_TITLE,
+                         PATTERN_LECTURER,
+                         PATTERN_TYPE,
+                         PATTERN_SUBGROUP,
+                         PATTERN_CLASSROOM,
+                         PATTERN_DATE }).join("\\s?");
+}
 
 void ParseWorker::run()
 {
@@ -103,7 +114,7 @@ void ParseWorker::startParsing(const QString &pdfFilePath,
     QStringList times = Time_::timeList();
 
     int number = 0;
-    for (int i = 0; i < contours.size(); ++i) {
+    for (size_t i = 0; i < contours.size(); ++i) {
         auto &contour = contours[i];
         auto rect = minAreaRect(contour);
         auto area = rect.size.width * rect.size.height;
@@ -114,19 +125,19 @@ void ParseWorker::startParsing(const QString &pdfFilePath,
             auto tempImage = sourseImage.copy(bounding.x, bounding.y, bounding.width, bounding.height);
             tempImage.save(tempFilePath);
 
-            auto text = tesseract->imageToString(tempFilePath).trimmed();
+            auto text = tesseract->imageToString(tempFilePath).simplified();
 
             bool timeFind = false;
-            for (int i = 0; i < times.size(); ++i) {
-                if (text == times[i]) {
-                    timeCells[i] = { text, bounding.x, bounding.x + bounding.width };
+            for (int j = 0; j < times.size(); ++j) {
+                if (text == times[j]) {
+                    timeCells[j] = { text, number, bounding.x, bounding.x + bounding.width };
                     timeFind = true;
                     break;
                 }
             }
 
             if (!timeFind) {
-                pairCells.append({ text, bounding.x, bounding.x + bounding.width });
+                pairCells.append({ text, number, bounding.x, bounding.x + bounding.width });
             }
 
             drawContours(image, Contours({ contour }), 0, color, 2);
@@ -135,7 +146,7 @@ void ParseWorker::startParsing(const QString &pdfFilePath,
         }
 
         if (i % 100 == 0) {
-            workerManager_->setProgressValue(id_, i * 70.0 / contours.size());
+            workerManager_->setProgressValue(id_, static_cast<int>(i * 70.0 / contours.size()));
         }
     }
 
@@ -146,27 +157,55 @@ void ParseWorker::startParsing(const QString &pdfFilePath,
     }
 
     std::vector<Pair> schedulePairs;
-    for (auto &cell : pairCells) {
+    for (int i = 0; i < pairCells.size(); ++i) {
+        auto& cell = pairCells[i];
         // пропуск ячееек с днями недели
         if (qAbs(cell.end - timeCells[0].start) < qAbs(cell.start < timeCells[0].start)) {
             continue;
         }
 
-        try {
-            auto pairs = parsePairs(cell, timeCells);
-            std::copy(pairs.begin(), pairs.end(), std::back_inserter(schedulePairs));
+        QString data = cell.text;
+        while (true) {
+            try {
+                auto pairs = parsePairs(data, cell, timeCells);
+                std::copy(pairs.begin(), pairs.end(), std::back_inserter(schedulePairs));
+                break;
 
-        } catch (...) {
-            // TODO("Exception...")
+            } catch (ParseFileException &e) {
+                data = confuseLoop(e, data, cell.number, imageFilePath);
+
+            } catch (std::exception &e) {
+                qCritical() << e.what();
+                throw e;
+            }
         }
+
+        workerManager_->setProgressValue(id_, static_cast<int>(i * 30.0 / pairCells.size() + 70));
     }
+
+    Schedule schedule;
+    for (auto& pair : schedulePairs) {
+        schedule.addPair(pair);
+    }
+
+    QFile file(pdfFilePath.left(pdfFilePath.size() - 3) + "json");
+    if (file.open(QIODevice::WriteOnly)) {
+        auto json = schedule.toJson();
+        QJsonDocument doc(json);
+        file.write(doc.toJson(QJsonDocument::Indented));
+        file.close();
+    }
+
+    workerManager_->setProgressValue(id_, 100);
 }
 
-std::vector<Pair> ParseWorker::parsePairs(const ParseCell &cell, const QMap<int, ParseCell> &timeCells)
+std::vector<Pair> ParseWorker::parsePairs(const QString &data,
+                                          const ParseCell &cell,
+                                          const QMap<int, ParseCell> &timeCells)
 {
     std::vector<Pair> pairs;
 
-    auto it = QRegularExpression(PATTERN_DIVIDER).globalMatch(cell.text);
+    auto it = QRegularExpression(PATTERN_DIVIDER).globalMatch(data);
     while (it.hasNext()) {
         auto pairPart = it.next();
         auto pairText = pairPart.captured();
@@ -204,45 +243,57 @@ std::vector<Pair> ParseWorker::parsePairs(const ParseCell &cell, const QMap<int,
     return pairs;
 }
 
-QString ParseWorker::patternCommon() const
+QString ParseWorker::confuseLoop(ParseFileException &e, const QString &data, int number, const QString &imagePath) const
 {
-    return QStringList({ PATTERN_TITLE,
-                         PATTERN_LECTURER,
-                         PATTERN_TYPE,
-                         PATTERN_SUBGROUP,
-                         PATTERN_CLASSROOM,
-                         PATTERN_DATE }).join("\\s?");
+    ConfuseInfo info = { id_, number, e.type(), e.maybe(), e.confuse(), data, imagePath };
+    workerManager_->setConfuseInfo(id_, info);
+
+    while (true) {
+        if (workerManager_->status(id_) == WorkerStatus::ConfuseSolved) {
+            return workerManager_->solve(id_);
+        }
+        QThread::sleep(1);
+    }
+
+    qCritical() << "Unknown error (ConfuseLoop)";
+    return "";
 }
 
 QString ParseWorker::parseTitle(const QString &titleMatch) const
 {
     auto title = titleMatch.left(titleMatch.size() - 1).trimmed();
-    if (!workerManager_->hasTitle(title)) {
+    auto info = workerManager_->hasTitle(title);
+    if (!info.valid) {
         throw ParseFileException("Неизвесная дисциплина",
-                                 "null",
+                                 info.data,
                                  title);
     }
 
-    return title;
+    return info.data;
 }
 
 QString ParseWorker::parseLecturer(const QString &lecturerMatch) const
 {
     auto lecturer = lecturerMatch.left(lecturerMatch.size() - 1).trimmed();
-    if (!workerManager_->hasLecturer(lecturer)) {
+    if (lecturer.isEmpty()) {
+        return "";
+    }
+
+    auto info = workerManager_->hasLecturer(lecturer);
+    if (!info.valid) {
         throw ParseFileException("Неизвесный преподаватель",
-                                 "null",
+                                 info.data,
                                  lecturer);
     }
 
-    return lecturer;
+    return info.data;
 }
 
 Type ParseWorker::parseType(const QString &typeMatch) const
 {
     auto typeString = typeMatch.left(typeMatch.size() - 1).trimmed().toLower();
 
-    if (typeString == "лекция") {
+    if (typeString == "лекции") {
         return Type::getLecture();
     } else if (typeString == "семинар") {
         return Type::getSeminar();
@@ -280,13 +331,14 @@ QString ParseWorker::parseClassroom(const QString &classroomMatch) const
         return classroom;
     }
 
-    if (!workerManager_->hasClassroom(classroom)) {
+    auto info = workerManager_->hasClassroom(classroom);
+    if (!info.valid) {
         throw ParseFileException("Неизвесная аудитория",
-                                 "null",
+                                 info.data,
                                  classroom);
     }
 
-    return classroom;
+    return info.data;
 }
 
 Date ParseWorker::parseDates(const QString &datesMatch) const
@@ -306,7 +358,7 @@ Date ParseWorker::parseDates(const QString &datesMatch) const
 
             auto frequency = Frequency::getOnce();
 
-            auto frequencyString = rangeMatch.captured(4).toLower();
+            auto frequencyString = rangeMatch.captured(4).toLower().replace("..", ".");
             if (frequencyString == "к.н.") {
                 frequency = Frequency::getEvery();
             } else if (frequencyString == "ч.н.") {
@@ -347,7 +399,7 @@ Date ParseWorker::parseDates(const QString &datesMatch) const
 QDate ParseWorker::parseDate(const QString &dateString) const
 {
     int year = QDate::currentDate().year();
-    return QDate::fromString(dateString + "." + QString::number(year), "dd.MM.yyyy");
+    return QDate::fromString(dateString.trimmed() + "." + QString::number(year), "dd.MM.yyyy");
 }
 
 Time_ ParseWorker::computeTime(const QMap<int, ParseCell> &timeCells, const ParseCell &cell) const
