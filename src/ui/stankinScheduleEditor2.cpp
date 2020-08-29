@@ -3,6 +3,9 @@
 
 #include "editor/pairSelectorDialog.h"
 #include "import/importDialog.h"
+#include "import/transitionDialog.h"
+#include "import/setsDialog.h"
+#include "import/parseWorkerManager.h"
 
 StankinScheduleEditor2::StankinScheduleEditor2(QWidget *parent)
     : QMainWindow(parent),
@@ -27,6 +30,10 @@ StankinScheduleEditor2::StankinScheduleEditor2(QWidget *parent)
             this, &StankinScheduleEditor2::onSaveAsFileClicked);
     connect(ui->actionImport, &QAction::triggered,
             this, &StankinScheduleEditor2::onImportClicked);
+    connect(ui->actionSets, &QAction::triggered,
+            this, &StankinScheduleEditor2::onSetsButtonClicked);
+    connect(ui->actionTransition, &QAction::triggered,
+            this, &StankinScheduleEditor2::onTransitionButtonClicked);
 }
 
 StankinScheduleEditor2::~StankinScheduleEditor2()
@@ -116,6 +123,20 @@ void StankinScheduleEditor2::onImportClicked()
 {
     auto import = new ImportDialog(this);
     import->show();
+}
+
+void StankinScheduleEditor2::onTransitionButtonClicked()
+{
+    auto workerManager = QSharedPointer<ParseWorkerManager>::create();
+    auto dialog = new TransitionDialog(workerManager, this);
+    dialog->show();
+}
+
+void StankinScheduleEditor2::onSetsButtonClicked()
+{
+    auto workerManager = QSharedPointer<ParseWorkerManager>::create(0);
+    auto dialog = new SetsDialog(workerManager, this);
+    dialog->show();
 }
 
 void StankinScheduleEditor2::onTableCellDoubleClicked(int row, int column)

@@ -20,6 +20,7 @@ TransitionDialog::TransitionDialog(const QSharedPointer<ParseWorkerManager> &wor
         ui->tableWidget->setItem(i, 0, itemSource);
         ui->tableWidget->setItem(i, 1, itemTransition);
     }
+    ui->tableWidget->sortItems(0);
 
     connect(ui->okButton, &QPushButton::clicked,
             this, &TransitionDialog::onOkButtonClicked);

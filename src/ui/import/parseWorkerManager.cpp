@@ -13,11 +13,18 @@ ParseWorkerManager::ParseWorkerManager(int workerCount)
 
 QString ParseWorkerManager::nextSchedule()
 {
-    const std::unique_lock lock(mutex_);
+    std::unique_lock lock(mutex_);
+
     if (!schedules_.isEmpty()) {
+        ++currentCount_;
         return schedules_.takeFirst();
     }
     return "";
+}
+
+ProgressData ParseWorkerManager::currentProgress() const
+{
+    return { currentCount_, totalCount_ };
 }
 
 ValidData ParseWorkerManager::hasTitle(const QString &title) const
@@ -159,6 +166,8 @@ void ParseWorkerManager::setConfuseInfo(int id, const ConfuseInfo &info)
 void ParseWorkerManager::setSchedules(const QStringList &schedules)
 {
     schedules_ = schedules;
+    currentCount_ = 0;
+    totalCount_ = schedules_.size();
 }
 
 QString ParseWorkerManager::pooplerPath() const

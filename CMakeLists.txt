@@ -126,5 +126,7 @@ target_link_libraries(${PROJECT_NAME}
     PUBLIC Qt5::Widgets
     PUBLIC Qt5::Gui
     ${OpenCV_LIBS}
+    tesseract
+    lept
 )
 

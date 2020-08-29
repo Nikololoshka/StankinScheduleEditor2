@@ -25,6 +25,8 @@ public slots:
     void onSaveAsFileClicked();
 
     void onImportClicked();
+    void onTransitionButtonClicked();
+    void onSetsButtonClicked();
 
     void onTableCellDoubleClicked(int row, int column);
     void updateTable();

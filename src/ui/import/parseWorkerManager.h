@@ -3,7 +3,6 @@
 
 #include <QtWidgets>
 #include <shared_mutex>
-#include "confuseDialog.h"
 
 enum class WorkerStatus {
     Stay,
@@ -19,12 +18,29 @@ struct ValidData {
     bool valid;
 };
 
+struct ConfuseInfo {
+    int id;
+    int cellNumber;
+    QString type;
+    QString maybe;
+    QString confuse;
+    QString context;
+    QString imagePath;
+};
+
+struct ProgressData {
+    int current;
+    int total;
+};
+
 class ParseWorkerManager
 {
 public:
 
-    ParseWorkerManager(int workerCount);
+    ParseWorkerManager(int workerCount = 0);
+
     QString nextSchedule();
+    ProgressData currentProgress() const;
 
     ValidData hasTitle(const QString &title) const;
     ValidData hasLecturer(const QString &lecturer) const;
@@ -94,11 +110,14 @@ private:
     QMap<int, QString> solves_;
 
     QStringList schedules_;
+    int currentCount_;
+    int totalCount_;
+
     QString pooplerPath_;
     QString tesseractPath_;
     int dpi_;
 
-    std::mutex mutex_;
+    mutable std::mutex mutex_;
     mutable std::shared_mutex sharedMutex_;
 };
 

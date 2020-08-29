@@ -73,6 +73,7 @@ void SetsDialog::updateTable(const QVector<QString> &list, QTableWidget *table)
         auto item = new QTableWidgetItem(list[i]);
         table->setItem(i, 0, item);
     }
+    table->sortItems(0);
 }
 
 QTableWidget *SetsDialog::currectTable()

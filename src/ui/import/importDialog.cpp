@@ -33,19 +33,8 @@ ImportDialog::ImportDialog(QWidget *parent) :
         }
     }
 
-    // Test
-//    try {
-//        ParseWorker worker(workerManager_, -1);
-//        auto pairText = "Информатика. Шибаева А.Н. Лабораторные занятия. (А). 210. [18.03, 15.04-27.05 ч.н.] "
-//                        "Материаловедение и технология конструкционных материалов. Красновский А.Н. Лабораторные занятия. (Б). 201. [19.02-01.04 ч.н.]";
-//        worker.parsePairs(pairText);
-
-//    } catch (ParseFileException &e) {
-//        qDebug() << e.toString();
-//    }
-
     workerTimer_ = new QTimer(this);
-    confuseDialog_ = new ConfuseDialog(this);
+    confuseDialog_ = new ConfuseDialog(workerManager_, this);
 
     QAction *actionAddFiles = new QAction("Файлы", ui->addButton);
     ui->addButton->addAction(actionAddFiles);
@@ -106,6 +95,10 @@ void ImportDialog::onImportButtonClicked()
     }
 
     enableUI(false);
+
+    ui->mainProgressBar->setRange(0, files.size());
+    ui->mainProgressBar->setFormat("%v/%m");
+
     workerTimer_->start(500);
 }
 
@@ -223,28 +216,42 @@ void ImportDialog::enableUI(bool enable)
 
 void ImportDialog::workerLoop()
 {
+    // была решена задача
     if (confuseDialog_->status() == ConfuseStatus::Solved) {
         int id = confuseDialog_->info().id;
         workerManager_->setSolve(id, confuseDialog_->solve());
     }
 
+    // получение актуальной информации.
     auto texts = workerManager_->progressTexts();
     auto values = workerManager_->progressValues();
     auto statuses = workerManager_->workerStatuses();
     auto info = workerManager_->confuseInfo();
+    auto progress = workerManager_->currentProgress();
 
+    ui->mainProgressBar->setValue(progress.current);
+
+    // обход потоков
     for (int i = 0; i < workerProgressBars_.size(); ++i) {
         workerProgressBars_[i]->setFormat(texts[i]);
         workerProgressBars_[i]->setValue(values[i]);
 
-        if (statuses[i] == WorkerStatus::Confused && confuseDialog_->status() == ConfuseStatus::Wait) {
+        if (statuses[i] == WorkerStatus::Complete) {
+            workerProgressBars_[i]->setFormat("Завершено");
+        } else if (statuses[i] == WorkerStatus::Confused &&
+                   confuseDialog_->status() == ConfuseStatus::Wait) {
             confuseDialog_->start(info[i]);
         }
     }
 
-    if (std::any_of(values.begin(), values.end(), [](int value){ return value != 100; })) {
+    const auto cmp = [](const WorkerStatus &status) {
+        return status != WorkerStatus::Complete || status != WorkerStatus::Error;
+    };
+
+    if (std::any_of(statuses.begin(), statuses.end(), cmp)) {
         workerTimer_->start(500);
     } else {
         enableUI(true);
+        ui->mainProgressBar->setFormat("Завершено");
     }
 }

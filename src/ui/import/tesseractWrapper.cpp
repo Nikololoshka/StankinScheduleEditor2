@@ -1,64 +1,73 @@
 #include "tesseractWrapper.h"
 
 TesseractWrapper::TesseractWrapper(const QString &program)
-    : program_(program)
 {
-    tesseract_ = new QProcess();
+    tesseract_ = std::make_unique<tesseract::TessBaseAPI>();
+    tesseract_->Init(nullptr, "rus");
 }
 
 TesseractWrapper::~TesseractWrapper()
 {
-    delete tesseract_;
+    tesseract_->End();
 }
 
 QString TesseractWrapper::imageToString(const QString &imagePath) const
 {
-    QStringList arguments = {
-        imagePath,
-        "stdout",
-        "-l",
-        "rus"
-    };
+    auto image = std::unique_ptr<Pix>(pixRead(imagePath.toStdString().c_str()));
+    tesseract_->SetImage(image.get());
+    return tesseract_->GetUTF8Text();
 
-    tesseract_->start(program_, arguments, QIODevice::ReadOnly);
-    tesseract_->waitForStarted();
-    tesseract_->waitForFinished();
+//    QStringList arguments = {
+//        imagePath,
+//        "stdout",
+//        "-l",
+//        "rus"
+//    };
 
-    if (tesseract_->exitStatus() != QProcess::NormalExit) {
-        throw std::logic_error(("Tesseract error: " + imagePath +
-                                "\n"
-                                "Status: " + QString::number(tesseract_->exitStatus()) +
-                                "\n" +
-                                "Error: " + tesseract_->errorString()).toStdString());
-    }
+//    qDebug() << "Start:" << imagePath;
+
+//    tesseract_->start(program_, arguments, QIODevice::ReadOnly);
+//    tesseract_->waitForStarted();
+//    tesseract_->waitForFinished();
+
+//    qDebug() << "End:" << imagePath;
+
+//    if (tesseract_->exitStatus() != QProcess::NormalExit) {
+//        throw std::logic_error(("Tesseract error: " + imagePath +
+//                                "\n"
+//                                "Status: " + QString::number(tesseract_->exitStatus()) +
+//                                "\n" +
+//                                "Error: " + tesseract_->errorString()).toStdString());
+//    }
 
 
 
-    return tesseract_->readAllStandardOutput();
+//    return tesseract_->readAllStandardOutput();
 }
 
 QString TesseractWrapper::checkTesseract() const
 {
-    QStringList arguments = {
-        "--help"
-    };
+    return "";
+//    QStringList arguments = {
+//        "--help"
+//    };
 
-    QString command = "$" + program_ + " " + arguments.join(' ');
-    try {
-        tesseract_->start(program_, arguments, QIODevice::ReadOnly);
-        tesseract_->waitForStarted();
-        tesseract_->waitForFinished();
+//    QString command = "$" + program_ + " " + arguments.join(' ');
+//    try {
+//        tesseract_->start(program_, arguments, QIODevice::ReadOnly);
+//        tesseract_->waitForStarted();
+//        tesseract_->waitForFinished();
 
-        if (tesseract_->exitStatus() == QProcess::NormalExit) {
-            return "";
-        }
+//        if (tesseract_->exitStatus() == QProcess::NormalExit) {
+//            return "";
+//        }
 
-    } catch (std::exception &e) {
-        return command + "\nException: " + e.what();
-    }
+//    } catch (std::exception &e) {
+//        return command + "\nException: " + e.what();
+//    }
 
-    return command + "\n" +
-           "Code: " + QString::number(tesseract_->exitCode()) +
-           "\n" +
-           "Error: " + tesseract_->errorString();
+//    return command + "\n" +
+//           "Code: " + QString::number(tesseract_->exitCode()) +
+//           "\n" +
+//           "Error: " + tesseract_->errorString();
 }

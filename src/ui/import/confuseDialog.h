@@ -2,20 +2,11 @@
 #define CONFUSEDIALOG_H
 
 #include <QtWidgets>
+#include "parseWorkerManager.h"
 
 namespace Ui {
 class ConfuseDialog;
 }
-
-struct ConfuseInfo {
-    int id;
-    int cellNumber;
-    QString type;
-    QString maybe;
-    QString confuse;
-    QString context;
-    QString imagePath;
-};
 
 enum ConfuseStatus {
     Wait,
@@ -29,7 +20,7 @@ class ConfuseDialog : public QDialog
 
 public:
 
-    ConfuseDialog(QWidget *parent = nullptr);
+    ConfuseDialog(const QSharedPointer<ParseWorkerManager> &workerManager, QWidget *parent = nullptr);
     ~ConfuseDialog();
 
     void start(const ConfuseInfo &info);
@@ -42,6 +33,9 @@ public slots:
     void onOkButtonClicked();
     void onZoomInClicked();
     void onZoomOutClicked();
+
+    void onTransitionButtonClicked();
+    void onSetsButtonClicked();
 
 protected:
     void closeEvent(QCloseEvent *event) override;
@@ -56,6 +50,8 @@ private:
     double scaleFactor_;
     QLabel *previewImage_;
     QScrollArea *scrollArea_;
+
+    QSharedPointer<ParseWorkerManager> workerManager_;
 
     ConfuseInfo info_;
     ConfuseStatus status_;

@@ -2,13 +2,16 @@
 #include "ui_confuseDialog.h"
 
 #include "parseHighlighter.h"
+#include "transitionDialog.h"
+#include "setsDialog.h"
 
-ConfuseDialog::ConfuseDialog(QWidget *parent) :
+ConfuseDialog::ConfuseDialog(const QSharedPointer<ParseWorkerManager> &workerManager, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::ConfuseDialog),
     scaleFactor_(1),
     previewImage_(new QLabel()),
-    scrollArea_(new QScrollArea())
+    scrollArea_(new QScrollArea()),
+    workerManager_(workerManager)
 {
     ui->setupUi(this);
     resize(qApp->primaryScreen()->size() * 3 / 5);
@@ -30,6 +33,10 @@ ConfuseDialog::ConfuseDialog(QWidget *parent) :
             this, &ConfuseDialog::onZoomOutClicked);
     connect(ui->okButton, &QPushButton::clicked,
             this, &ConfuseDialog::onOkButtonClicked);
+    connect(ui->setsButton, &QPushButton::clicked,
+            this, &ConfuseDialog::onSetsButtonClicked);
+    connect(ui->transitionButton, &QPushButton::clicked,
+            this, &ConfuseDialog::onTransitionButtonClicked);
 }
 
 ConfuseDialog::~ConfuseDialog()
@@ -92,6 +99,18 @@ void ConfuseDialog::onZoomInClicked()
 void ConfuseDialog::onZoomOutClicked()
 {
     scaleImage(0.75);
+}
+
+void ConfuseDialog::onTransitionButtonClicked()
+{
+    auto dialog = new TransitionDialog(workerManager_, this);
+    dialog->show();
+}
+
+void ConfuseDialog::onSetsButtonClicked()
+{
+    auto dialog = new SetsDialog(workerManager_, this);
+    dialog->show();
 }
 
 void ConfuseDialog::closeEvent(QCloseEvent *event)
