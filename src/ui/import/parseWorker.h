@@ -39,9 +39,13 @@ private:
     void startParsing(const QString &pdfFilePath,
                       std::unique_ptr<PooplerWrapper> &poopler,
                       std::unique_ptr<TesseractWrapper> &tesseract);
+
     std::vector<Pair> parsePairs(const QString &data,
                                  const ParseCell &cell,
                                  const QMap<int, ParseCell> &timeCells);
+
+    QString separateByLines(const QString &text) const;
+
     QString confuseLoop(ParseFileException &e,
                         const QString &data,
                         int number,

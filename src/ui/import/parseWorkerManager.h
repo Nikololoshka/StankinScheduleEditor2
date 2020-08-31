@@ -55,6 +55,7 @@ public:
                     QVector<QString> &classrooms);
 
     const QMap<QString, QString>& transitions() const;
+    void transitionData(QString &data) const;
     void updateTransition(QMap<QString, QString> &transitions);
 
     QVector<QString> progressTexts() const;

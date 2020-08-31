@@ -77,6 +77,14 @@ const QMap<QString, QString>& ParseWorkerManager::transitions() const
     return transitions_;
 }
 
+void ParseWorkerManager::transitionData(QString &data) const
+{
+    std::shared_lock lock(sharedMutex_);
+    for (auto it = transitions_.begin(); it != transitions_.end(); ++it) {
+        data.replace(it.key(), it.value());
+    }
+}
+
 void ParseWorkerManager::updateTransition(QMap<QString, QString> &transitions)
 {
     std::unique_lock lock(sharedMutex_);

@@ -69,7 +69,7 @@ void ParseWorker::run()
 
         } catch (std::exception &e) {
             workerManager_->setWorkerStatus(id_, WorkerStatus::Error);
-            qCritical() << e.what();
+            qCritical() << e.what() << path;
         }
     }
 
@@ -165,6 +165,8 @@ void ParseWorker::startParsing(const QString &pdfFilePath,
         }
 
         QString data = cell.text;
+        data = separateByLines(data);
+        workerManager_->transitionData(data);
         while (true) {
             try {
                 auto pairs = parsePairs(data, cell, timeCells);
@@ -241,6 +243,19 @@ std::vector<Pair> ParseWorker::parsePairs(const QString &data,
     }
 
     return pairs;
+}
+
+QString ParseWorker::separateByLines(const QString &text) const
+{
+    QString result = "";
+    auto it = QRegularExpression(PATTERN_DIVIDER).globalMatch(text);
+    while (it.hasNext()) {
+        result += it.next().captured() + "\n";
+    }
+    if (result.isEmpty()) {
+        return text;
+    }
+    return result;
 }
 
 QString ParseWorker::confuseLoop(ParseFileException &e, const QString &data, int number, const QString &imagePath) const
