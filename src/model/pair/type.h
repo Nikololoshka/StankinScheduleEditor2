@@ -3,27 +3,57 @@
 
 #include <QtWidgets>
 
+/**
+ * @brief Тип пары.
+ */
+class Type {
 
-class Type
-{
 public:
-    static Type fromString(const QString &value);
+    /**
+     * @brief Возвращает тип пары из строки.
+     * @param value строка с парой.
+     */
+    static Type fromString(const QString& value);
+    /**
+     * @brief Список всех возможных типов пары.
+     */
     static std::vector<Type> list();
 
+    /**
+     * @brief Возвращает тип лекции.
+     */
     static Type getLecture();
+    /**
+     * @brief Возвращает тип семинара.
+     */
     static Type getSeminar();
+    /**
+     * @brief Возвращает тип лабораторной.
+     */
     static Type getLaboratory();
 
-    bool operator==(const Type &type) const;
+    /**
+     * @brief Сравнивает типы на равенство.
+     * @param type другой тип пары.
+     */
+    bool operator==(const Type& type) const;
 
+    /**
+     * @brief Возвращает тэг типа в json файле.
+     */
     QString tag() const;
+    /**
+     * @brief Возвращает человеко-читаемый текстовое представление типа.
+     */
     QString text() const;
 
 private:
-    Type(QString tag, QString text);
+    Type(const QString& tag, const QString& text);
 
 private:
+    //! Тэг типа в json файле.
     QString tag_;
+    //! Человеко-читаемый текстовое представление типа.
     QString text_;
 };
 

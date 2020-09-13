@@ -1,21 +1,21 @@
 #include "dateSingle.h"
 #include "dateRange.h"
 
-DateSingle::DateSingle(const QDate &date)
-    : DateItem(Frequency::getOnce()),
-      date_(date)
+DateSingle::DateSingle(const QDate& date)
+    : DateItem(Frequency::getOnce())
+    , date_(date)
 {
 }
 
-DateSingle::DateSingle(const QJsonObject &item)
+DateSingle::DateSingle(const QJsonObject& item)
     : DateItem(Frequency::getOnce())
 {
     date_ = QDate::fromString(item["date"].toString(), DateItem::FULL_FORMAT);
 }
 
-DateSingle::DateSingle(const DateSingle &date)
-    : DateItem(date.frequency_),
-      date_(date.date_)
+DateSingle::DateSingle(const DateSingle& date)
+    : DateItem(date.frequency_)
+    , date_(date.date_)
 {
 }
 
@@ -26,10 +26,10 @@ QDate DateSingle::date() const
 
 QJsonObject DateSingle::toJson() const
 {
-    return QJsonObject({
+    return {
         { "date", date_.toString(DateItem::FULL_FORMAT) },
         { "frequency", frequency_.tag() }
-    });
+    };
 }
 
 DayOfWeek DateSingle::dayOfWeek() const
@@ -37,7 +37,7 @@ DayOfWeek DateSingle::dayOfWeek() const
     return DateUtils::of(date_);
 }
 
-bool DateSingle::contains(const DateItem *item) const
+bool DateSingle::contains(const DateItem* item) const
 {
     auto dateRange = dynamic_cast<const DateRange*>(item);
     if (dateRange != nullptr) {
@@ -52,7 +52,7 @@ bool DateSingle::contains(const DateItem *item) const
     throw std::invalid_argument("Can't compare dates");
 }
 
-bool DateSingle::before(const DateItem *item) const
+bool DateSingle::before(const DateItem* item) const
 {
     auto dateRange = dynamic_cast<const DateRange*>(item);
     if (dateRange != nullptr) {
@@ -77,9 +77,7 @@ QString DateSingle::toString() const
     return date_.toString(DateItem::PRINT_FORMAT);
 }
 
-bool DateSingle::operator==(const QDate &date) const
+bool DateSingle::operator==(const QDate& date) const
 {
     return date_ == date;
 }
-
-

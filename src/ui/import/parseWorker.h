@@ -1,13 +1,13 @@
 #ifndef PARSEWORKER_H
 #define PARSEWORKER_H
 
-#include <QtWidgets>
 #include "pair/pair.h"
+#include <QtWidgets>
 
+#include "parseFileException.h"
+#include "parseWorkerManager.h"
 #include "pooplerWrapper.h"
 #include "tesseractWrapper.h"
-#include "parseWorkerManager.h"
-#include "parseFileException.h"
 
 struct ParseCell {
     QString text;
@@ -16,10 +16,9 @@ struct ParseCell {
     int end;
 };
 
-class ParseWorker : public QRunnable
-{
+class ParseWorker : public QRunnable {
 public:
-    ParseWorker(const QSharedPointer<ParseWorkerManager> &workerManager, int id);
+    ParseWorker(const QSharedPointer<ParseWorkerManager>& workerManager, int id);
 
     void run() override;
 
@@ -36,32 +35,32 @@ public:
     static QString patternCommon();
 
 private:
-    void startParsing(const QString &pdfFilePath,
-                      std::unique_ptr<PooplerWrapper> &poopler,
-                      std::unique_ptr<TesseractWrapper> &tesseract);
+    void startParsing(const QString& pdfFilePath,
+        std::unique_ptr<PooplerWrapper>& poopler,
+        std::unique_ptr<TesseractWrapper>& tesseract);
 
-    std::vector<Pair> parsePairs(const QString &data,
-                                 const ParseCell &cell,
-                                 const QMap<int, ParseCell> &timeCells);
+    std::vector<Pair> parsePairs(const QString& data,
+        const ParseCell& cell,
+        const QMap<int, ParseCell>& timeCells);
 
-    QString separateByLines(const QString &text) const;
+    QString separateByLines(const QString& text) const;
 
-    QString confuseLoop(ParseFileException &e,
-                        const QString &data,
-                        int number,
-                        const QString &imagePath) const;
+    QString confuseLoop(ParseFileException& e,
+        const QString& data,
+        int number,
+        const QString& imagePath) const;
 
-    QString parseTitle(const QString &titleMatch) const;
-    QString parseLecturer(const QString &lecturerMatch) const;
-    Type parseType(const QString &typeMatch) const;
-    Subgroup parseSubgroup(const QString &subgroupMatch) const;
-    QString parseClassroom(const QString &classroomMatch) const;
-    Date parseDates(const QString &datesMatch) const;
-    QDate parseDate(const QString &dateString) const;
+    QString parseTitle(const QString& titleMatch) const;
+    QString parseLecturer(const QString& lecturerMatch) const;
+    Type parseType(const QString& typeMatch) const;
+    Subgroup parseSubgroup(const QString& subgroupMatch) const;
+    QString parseClassroom(const QString& classroomMatch) const;
+    Date parseDates(const QString& datesMatch) const;
+    QDate parseDate(const QString& dateString) const;
 
-    Time_ computeTime(const QMap<int, ParseCell> &timeCells, const ParseCell &cell) const;
+    Time_ computeTime(const QMap<int, ParseCell>& timeCells, const ParseCell& cell) const;
 
-private:    
+private:
     int id_;
     QSharedPointer<ParseWorkerManager> workerManager_;
 };

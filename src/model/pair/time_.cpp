@@ -1,9 +1,9 @@
 #include "time_.h"
 
-Time_ Time_::fromJson(const QJsonObject &value)
+Time_ Time_::fromJson(const QJsonObject& value)
 {
     return Time_(QTime::fromString(value["start"].toString(), PATTERN),
-            QTime::fromString(value["end"].toString(), PATTERN));
+        QTime::fromString(value["end"].toString(), PATTERN));
 }
 
 const QString Time_::PATTERN = "h:mm";
@@ -11,7 +11,7 @@ const QString Time_::PATTERN = "h:mm";
 QVector<QTime> Time_::startTime()
 {
     return {
-        QTime( 8, 30), QTime(10, 20), QTime(12, 20), QTime(14, 10),
+        QTime(8, 30), QTime(10, 20), QTime(12, 20), QTime(14, 10),
         QTime(16, 00), QTime(18, 00), QTime(19, 40), QTime(21, 20)
     };
 }
@@ -37,28 +37,28 @@ QStringList Time_::timeList()
     return list;
 }
 
-Time_::Time_(const QTime &start, const QTime &end)
-    : start_(start),
-      end_(end)
+Time_::Time_(const QTime& start, const QTime& end)
+    : start_(start)
+    , end_(end)
 {
     init();
 }
 
-Time_::Time_(const QString &start, const QString &end)
+Time_::Time_(const QString& start, const QString& end)
     : Time_(QTime::fromString(start, PATTERN),
-            QTime::fromString(end, PATTERN))
+        QTime::fromString(end, PATTERN))
 {
 }
 
 void Time_::init()
 {
-    int startIndex  = startTime().indexOf(start_);
+    int startIndex = startTime().indexOf(start_);
     int endIndex = endTime().indexOf(end_);
 
     if (startIndex == -1 || endIndex == -1 || endIndex < startIndex) {
-        throw std::invalid_argument(("Not correct time: '" +
-                                     start_.toString()
-                                     + "', '" + end_.toString() + "'").toStdString());
+        throw std::invalid_argument(("Not correct time: '" + start_.toString()
+            + "', '" + end_.toString() + "'")
+                                        .toStdString());
     }
 
     number_ = startIndex;
@@ -75,19 +75,17 @@ QString Time_::end() const
     return end_.toString(PATTERN);
 }
 
-bool Time_::intersect(const Time_ &time) const
+bool Time_::intersect(const Time_& time) const
 {
-    return (start_ >= time.start_ && end_ <= time.end_) ||
-           (start_ <= time.start_ && end_ >= time.end_) ||
-           (start_ <= time.end_ && end_ >= time.end_);
+    return (start_ >= time.start_ && end_ <= time.end_)
+        || (start_ <= time.start_ && end_ >= time.end_)
+        || (start_ <= time.end_ && end_ >= time.end_);
 }
 
 QJsonObject Time_::toJson() const
 {
-    return QJsonObject({
-        { "start", start_.toString(PATTERN) },
-        { "end", end_.toString(PATTERN) }
-    });
+    return QJsonObject({ { "start", start_.toString(PATTERN) },
+        { "end", end_.toString(PATTERN) } });
 }
 
 int Time_::number() const
@@ -100,7 +98,7 @@ int Time_::duration() const
     return duration_;
 }
 
-bool Time_::operator==(const Time_ &time) const
+bool Time_::operator==(const Time_& time) const
 {
     return start_ == time.start_ && end_ == time.end_;
 }

@@ -6,8 +6,8 @@ bool ScheduleCell::isSpanValid() const
 }
 
 ScheduleDay::ScheduleDay()
-    : index_(1),
-      rows_(1, QVector<Cell>(8))
+    : index_(1)
+    , rows_(1, QVector<Cell>(8))
 {
 }
 
@@ -20,18 +20,19 @@ QJsonArray ScheduleDay::toJson() const
     return array;
 }
 
-void ScheduleDay::add(const Pair &pair)
+void ScheduleDay::add(const Pair& pair)
 {
     isAddCheck(pair); // throw std::logic_error
-    pairs_.emplace_back(PairData {index_++, pair});
+    pairs_.emplace_back(PairData { index_++, pair });
     reallocate();
 }
 
-void ScheduleDay::remove(const Pair &pair)
+void ScheduleDay::remove(const Pair& pair)
 {
-    pairs_.erase(std::remove_if(pairs_.begin(), pairs_.end(), [&pair](const PairData &data){
+    pairs_.erase(std::remove_if(pairs_.begin(), pairs_.end(), [&pair](const PairData& data) {
         return pair == data.pair;
-    }), pairs_.end());
+    }),
+        pairs_.end());
     reallocate();
 }
 
@@ -50,12 +51,12 @@ int ScheduleDay::column() const
     return 8;
 }
 
-void ScheduleDay::changePair(const std::optional<Pair> &oldPair,
-                             const std::optional<Pair> &newPair)
+void ScheduleDay::changePair(const std::optional<Pair>& oldPair,
+    const std::optional<Pair>& newPair)
 {
     possibleChange(oldPair, newPair);
 
-    pairs_.emplace_back(PairData {index_++, *newPair});
+    pairs_.emplace_back(PairData { index_++, *newPair });
     if (oldPair.has_value()) {
         remove(*oldPair);
     }
@@ -63,15 +64,15 @@ void ScheduleDay::changePair(const std::optional<Pair> &oldPair,
     reallocate();
 }
 
-void ScheduleDay::possibleChange(const std::optional<Pair> &oldPair,
-                                 const std::optional<Pair> &newPair) const
+void ScheduleDay::possibleChange(const std::optional<Pair>& oldPair,
+    const std::optional<Pair>& newPair) const
 {
     bool isNull = true;
     if (oldPair.has_value()) {
         if (oldPair->dayOfWeek() != newPair->dayOfWeek()) {
-            throw std::logic_error(("Wrong day of the week: " +
-                                    DateUtils::toString(oldPair->dayOfWeek()) + " and " +
-                                    DateUtils::toString(newPair->dayOfWeek())).toStdString());
+            throw std::logic_error(("Wrong day of the week: "
+                + DateUtils::toString(oldPair->dayOfWeek()) + " and " + DateUtils::toString(newPair->dayOfWeek()))
+                                       .toStdString());
         }
 
         isNull = false;
@@ -83,14 +84,14 @@ void ScheduleDay::possibleChange(const std::optional<Pair> &oldPair,
         }
 
         if (newPair->intersect(data.pair) && !newPair->separate(data.pair)) {
-            throw std::logic_error(("There can't be two pairs at the same time: '" +
-                                    newPair->toString() + "' and '" +
-                                    data.pair.toString() + "'").toStdString());
+            throw std::logic_error(("There can't be two pairs at the same time: '"
+                + newPair->toString() + "' and '" + data.pair.toString() + "'")
+                                       .toStdString());
         }
     }
 }
 
-ScheduleCell ScheduleDay::pairsTextByIndex(const ScheduleIndex &index) const
+ScheduleCell ScheduleDay::pairsTextByIndex(const ScheduleIndex& index) const
 {
     auto& row = rows_.at(index.innerRow);
     auto& cell = row.at(index.number);
@@ -118,14 +119,14 @@ ScheduleCell ScheduleDay::pairsTextByIndex(const ScheduleIndex &index) const
     };
 }
 
-std::vector<Pair> ScheduleDay::pairsByIndex(const ScheduleIndex &index) const
+std::vector<Pair> ScheduleDay::pairsByIndex(const ScheduleIndex& index) const
 {
     auto& row = rows_.at(index.innerRow);
     auto& cell = row.at(index.number);
     return fromCell(cell);
 }
 
-std::vector<Pair> ScheduleDay::fromCell(const Cell &cell) const
+std::vector<Pair> ScheduleDay::fromCell(const Cell& cell) const
 {
     std::vector<Pair> pairs;
 
@@ -144,20 +145,20 @@ std::vector<Pair> ScheduleDay::fromCell(const Cell &cell) const
     return pairs;
 }
 
-void ScheduleDay::isAddCheck(const Pair &pair) const
+void ScheduleDay::isAddCheck(const Pair& pair) const
 {
-    for (const auto& data : pairs_ ) {
+    for (const auto& data : pairs_) {
         if (pair.intersect(data.pair) && !pair.separate(data.pair)) {
-            throw std::logic_error(("There can't be two pairs at the same time: '" +
-                                    pair.toString() + "' and '" +
-                                    data.pair.toString() + "'").toStdString());
+            throw std::logic_error(("There can't be two pairs at the same time: '"
+                + pair.toString() + "' and '" + data.pair.toString() + "'")
+                                       .toStdString());
         }
     }
 }
 
 void ScheduleDay::reallocate()
 {
-    std::sort(pairs_.begin(), pairs_.end(), [](const PairData &first, const PairData &second) {
+    std::sort(pairs_.begin(), pairs_.end(), [](const PairData& first, const PairData& second) {
         if (first.pair.time().duration() == second.pair.time().duration()) {
             return first.pair.before(second.pair);
         }
@@ -174,11 +175,10 @@ void ScheduleDay::reallocate()
         bool insert = false;
 
         for (auto& row : rows_) {
-            Cell &cell = row[pair.time().number()];
+            Cell& cell = row[pair.time().number()];
             auto pairs = this->fromCell(cell);
 
-            if (!pairs.empty() &&
-                pairs.front().time().duration() == pair.time().duration()) {
+            if (!pairs.empty() && pairs.front().time().duration() == pair.time().duration()) {
                 cell.append(id);
                 insert = true;
                 break;
@@ -222,7 +222,7 @@ int ScheduleDay::find(unsigned int id) const
     return -1;
 }
 
-int ScheduleDay::computeRowSpan(int duration, const ScheduleIndex &index) const
+int ScheduleDay::computeRowSpan(int duration, const ScheduleIndex& index) const
 {
     int rowSpanCount = 1;
 
@@ -257,11 +257,10 @@ int ScheduleDay::computeRowSpan(int duration, const ScheduleIndex &index) const
     return rowSpanCount;
 }
 
-unsigned int ScheduleDay::EMPTY = 0;
-
-
 QString ScheduleIndex::toString() const
 {
     return QString("Координаты: (%1; %2; %3)")
-        .arg(row).arg(number).arg(innerRow);
+        .arg(row)
+        .arg(number)
+        .arg(innerRow);
 }

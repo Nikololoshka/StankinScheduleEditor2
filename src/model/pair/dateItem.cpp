@@ -1,9 +1,9 @@
 #include "dateItem.h"
 
-#include "dateSingle.h"
 #include "dateRange.h"
+#include "dateSingle.h"
 
-std::unique_ptr<DateItem> DateItem::fromJson(const QJsonObject &item)
+std::unique_ptr<DateItem> DateItem::fromJson(const QJsonObject& item)
 {
     auto frequency = Frequency::fromString(item["frequency"].toString());
     if (frequency == Frequency::getOnce()) {
@@ -13,7 +13,7 @@ std::unique_ptr<DateItem> DateItem::fromJson(const QJsonObject &item)
     return std::make_unique<DateRange>(item, frequency);
 }
 
-DateItem::DateItem(const Frequency &frequency)
+DateItem::DateItem(const Frequency& frequency)
     : frequency_(frequency)
 {
 }

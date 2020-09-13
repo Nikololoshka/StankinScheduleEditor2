@@ -1,21 +1,26 @@
 #include "dayOfWeek.h"
 
-DayOfWeek DateUtils::of(const QDate &date)
+DayOfWeek DateUtils::of(const QDate& date)
 {
     switch (date.dayOfWeek()) {
-        case Qt::DayOfWeek::Monday: return DayOfWeek::Monday;
-        case Qt::DayOfWeek::Tuesday: return DayOfWeek::Tuesday;
-        case Qt::DayOfWeek::Wednesday: return DayOfWeek::Wednesday;
-        case Qt::DayOfWeek::Thursday: return DayOfWeek::Thursday;
-        case Qt::DayOfWeek::Friday: return DayOfWeek::Friday;
-        case Qt::DayOfWeek::Saturday: return DayOfWeek::Saturday;
+    case Qt::DayOfWeek::Monday:
+        return DayOfWeek::Monday;
+    case Qt::DayOfWeek::Tuesday:
+        return DayOfWeek::Tuesday;
+    case Qt::DayOfWeek::Wednesday:
+        return DayOfWeek::Wednesday;
+    case Qt::DayOfWeek::Thursday:
+        return DayOfWeek::Thursday;
+    case Qt::DayOfWeek::Friday:
+        return DayOfWeek::Friday;
+    case Qt::DayOfWeek::Saturday:
+        return DayOfWeek::Saturday;
     }
 
     qDebug() << date << date.isValid() << date.isNull();
     throw std::invalid_argument("Date with unsupported day of week: '"
-                                + date.toString().toStdString() + "'");
+        + date.toString().toStdString() + "'");
 }
-
 
 QStringList DateUtils::dayOfWeekList()
 {
@@ -39,15 +44,22 @@ QStringList DateUtils::dayOfWeekMiniList()
 DayOfWeek DateUtils::of(int number)
 {
     switch (number) {
-    case 0: return DayOfWeek::Monday;
-    case 1: return DayOfWeek::Tuesday;
-    case 2: return DayOfWeek::Wednesday;
-    case 3: return DayOfWeek::Thursday;
-    case 4: return DayOfWeek::Friday;
-    case 5: return DayOfWeek::Saturday;
+    case 0:
+        return DayOfWeek::Monday;
+    case 1:
+        return DayOfWeek::Tuesday;
+    case 2:
+        return DayOfWeek::Wednesday;
+    case 3:
+        return DayOfWeek::Thursday;
+    case 4:
+        return DayOfWeek::Friday;
+    case 5:
+        return DayOfWeek::Saturday;
     }
     throw std::invalid_argument(("Number day of week unsupported: "
-                                 + QString::number(number)).toStdString());
+        + QString::number(number))
+                                    .toStdString());
 }
 
 QString DateUtils::toString(DayOfWeek dayOfWeek)

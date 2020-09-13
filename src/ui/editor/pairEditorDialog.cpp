@@ -119,7 +119,7 @@ void PairEditorDialog::onStartTimeChanged(int index)
 void PairEditorDialog::onDateItemDoubleClicked(const QModelIndex &index)
 {
     int row = index.row();
-    auto item = date_.at(row);
+    auto item = date_.copy(row);
     editDate(item);
 }
 
@@ -132,7 +132,7 @@ void PairEditorDialog::onEditDateClicked()
 {
     int row = ui->dateList->currentRow();
     if (row >= 0) {
-        auto item = date_.at(row);
+        auto item = date_.copy(row);
         editDate(item);
     }
 }
@@ -141,7 +141,7 @@ void PairEditorDialog::onRemoveDateClicked()
 {
     int row = ui->dateList->currentRow();
     if (row >= 0) {
-        auto item = date_.at(row);
+        auto item = date_.copy(row);
         date_.removeDate(item);
         updateDateList();
     }

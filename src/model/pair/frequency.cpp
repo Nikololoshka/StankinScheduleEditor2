@@ -1,6 +1,6 @@
 #include "frequency.h"
 
-Frequency Frequency::fromString(const QString &value)
+Frequency Frequency::fromString(const QString& value)
 {
     if (value == "once") {
         return getOnce();
@@ -43,10 +43,11 @@ int Frequency::delta() const
     return delta_;
 }
 
-Frequency::Frequency(const int delta, const QString tag, const QString text)
-    : delta_(delta), tag_(tag), text_(text)
+Frequency::Frequency(const int delta, const QString& tag, const QString& text)
+    : delta_(delta)
+    , tag_(tag)
+    , text_(text)
 {
-
 }
 
 QString Frequency::tag() const
@@ -59,9 +60,9 @@ QString Frequency::text() const
     return text_;
 }
 
-bool Frequency::operator==(const Frequency &other) const
+bool Frequency::operator==(const Frequency& other) const
 {
     return delta_ == other.delta_
-           && tag_ == other.tag_
-           && text_ == other.text_;
+        && tag_ == other.tag_
+        && text_ == other.text_;
 }

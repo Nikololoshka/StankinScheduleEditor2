@@ -1,6 +1,5 @@
 #include "schedule.h"
 
-
 Schedule::Schedule()
 {
     for (auto& day : DateUtils::list()) {
@@ -8,7 +7,7 @@ Schedule::Schedule()
     }
 }
 
-Schedule::Schedule(const QJsonDocument &value)
+Schedule::Schedule(const QJsonDocument& value)
     : Schedule()
 {
     QJsonArray pairs = value.array();
@@ -30,12 +29,12 @@ QJsonArray Schedule::toJson() const
     return array;
 }
 
-void Schedule::addPair(const Pair &pair)
+void Schedule::addPair(const Pair& pair)
 {
     days_[pair.dayOfWeek()].add(pair);
 }
 
-void Schedule::remove(const Pair &pair)
+void Schedule::remove(const Pair& pair)
 {
     days_[pair.dayOfWeek()].remove(pair);
 }
@@ -65,19 +64,19 @@ int Schedule::column() const
     return 8;
 }
 
-void Schedule::changePair(const std::optional<Pair> &oldPair,
-                          const std::optional<Pair> &newPair)
+void Schedule::changePair(const std::optional<Pair>& oldPair,
+    const std::optional<Pair>& newPair)
 {
     days_[newPair->dayOfWeek()].changePair(oldPair, newPair);
 }
 
-void Schedule::possibleChange(const std::optional<Pair> &oldPair,
-                              const std::optional<Pair> &newPair) const
+void Schedule::possibleChange(const std::optional<Pair>& oldPair,
+    const std::optional<Pair>& newPair) const
 {
     days_[newPair->dayOfWeek()].possibleChange(oldPair, newPair);
 }
 
-ScheduleCell Schedule::pairsTextByIndex(const ScheduleIndex &index) const
+ScheduleCell Schedule::pairsTextByIndex(const ScheduleIndex& index) const
 {
     return days_[DateUtils::of(index.row)].pairsTextByIndex(index);
 }
@@ -87,7 +86,7 @@ ScheduleCell Schedule::pairsTextByIndex(int row, int column) const
     return pairsTextByIndex(transform(row, column));
 }
 
-std::vector<Pair> Schedule::pairsByIndex(const ScheduleIndex &index) const
+std::vector<Pair> Schedule::pairsByIndex(const ScheduleIndex& index) const
 {
     return days_[DateUtils::of(index.row)].pairsByIndex(index);
 }
@@ -110,7 +109,7 @@ ScheduleIndex Schedule::transform(int row, int column) const
 
 void Schedule::print()
 {
-    for (auto &pair : pairs_) {
+    for (auto& pair : pairs_) {
         qDebug() << pair.toString();
     }
 }

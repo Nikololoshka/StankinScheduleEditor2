@@ -1,6 +1,6 @@
 #include "type.h"
 
-Type Type::fromString(const QString &value)
+Type Type::fromString(const QString& value)
 {
     if (value == "Lecture") {
         return getLecture();
@@ -33,10 +33,10 @@ Type Type::getSeminar()
 
 Type Type::getLaboratory()
 {
-    return Type("Laboratory", "Лабораторная работа");
+    return Type("Laboratory", "Лабораторное занятие");
 }
 
-bool Type::operator==(const Type &type) const
+bool Type::operator==(const Type& type) const
 {
     return tag_ == type.tag_;
 }
@@ -51,9 +51,8 @@ QString Type::tag() const
     return tag_;
 }
 
-
-Type::Type(QString tag, QString text)
-    : tag_(tag), text_(text)
+Type::Type(const QString& tag, const QString& text)
+    : tag_(tag)
+    , text_(text)
 {
-
 }

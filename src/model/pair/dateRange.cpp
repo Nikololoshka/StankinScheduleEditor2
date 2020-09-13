@@ -1,14 +1,13 @@
 #include "dateRange.h"
 #include "dateSingle.h"
 
-
-DateRange::DateRange(const QDate &start, const QDate &end, const Frequency &frequency)
+DateRange::DateRange(const QDate& start, const QDate& end, const Frequency& frequency)
     : DateItem(frequency)
 {
     init(start, end, frequency);
 }
 
-DateRange::DateRange(const QJsonObject &item, const Frequency &frequency)
+DateRange::DateRange(const QJsonObject& item, const Frequency& frequency)
     : DateItem(frequency)
 {
     auto dateString = item["date"].toString();
@@ -16,7 +15,7 @@ DateRange::DateRange(const QJsonObject &item, const Frequency &frequency)
     auto list = dateString.split("-");
     if (list.size() != 2) {
         throw std::invalid_argument("Date range is invald: "
-                                    + dateString.toStdString());
+            + dateString.toStdString());
     }
 
     QDate start = QDate::fromString(list[0], DateItem::FULL_FORMAT);
@@ -25,26 +24,28 @@ DateRange::DateRange(const QJsonObject &item, const Frequency &frequency)
     init(start, end, frequency);
 }
 
-DateRange::DateRange(const DateRange &date)
-    : DateItem(date.frequency_),
-      start_(date.start_),
-      end_(date.end_)
+DateRange::DateRange(const DateRange& date)
+    : DateItem(date.frequency_)
+    , start_(date.start_)
+    , end_(date.end_)
 {
 }
 
-void DateRange::init(const QDate &start, const QDate &end, const Frequency &frequency)
+void DateRange::init(const QDate& start, const QDate& end, const Frequency& frequency)
 {
     qint64 days = start.daysTo(end);
     if ((days % frequency.delta() != 0) || (days <= 0)) {
         throw std::invalid_argument(("Date range is not correct: "
-                                     + start.toString() + " - " + end.toString() + ", "
-                                     + frequency.tag()).toStdString());
+            + start.toString() + " - " + end.toString() + ", "
+            + frequency.tag())
+                                        .toStdString());
     }
 
     if (DateUtils::of(start) != DateUtils::of(end)) {
         throw std::invalid_argument(("Date range day of week is not correct: "
-                                     + start.toString() + " - " + end.toString() + ", "
-                                     + frequency.tag()).toStdString());
+            + start.toString() + " - " + end.toString() + ", "
+            + frequency.tag())
+                                        .toStdString());
     }
 
     start_ = start;
@@ -63,11 +64,10 @@ QDate DateRange::end() const
 
 QJsonObject DateRange::toJson() const
 {
-    return QJsonObject({
-        { "date", start_.toString(DateItem::FULL_FORMAT)
-                     + "-" + end_.toString(DateItem::FULL_FORMAT) },
+    return {
+        { "date", start_.toString(DateItem::FULL_FORMAT) + "-" + end_.toString(DateItem::FULL_FORMAT) },
         { "frequency", frequency_.tag() }
-    });
+    };
 }
 
 DayOfWeek DateRange::dayOfWeek() const
@@ -75,7 +75,7 @@ DayOfWeek DateRange::dayOfWeek() const
     return DateUtils::of(start_);
 }
 
-bool DateRange::contains(const DateItem *item) const
+bool DateRange::contains(const DateItem* item) const
 {
     auto dateRange = dynamic_cast<const DateRange*>(item);
     if (dateRange != nullptr) {
@@ -102,7 +102,7 @@ bool DateRange::contains(const DateItem *item) const
     throw std::invalid_argument("Can't compare dates");
 }
 
-bool DateRange::before(const DateItem *item) const
+bool DateRange::before(const DateItem* item) const
 {
     auto dateRange = dynamic_cast<const DateRange*>(item);
     if (dateRange != nullptr) {
@@ -125,7 +125,7 @@ std::unique_ptr<DateItem> DateRange::copy() const
 QString DateRange::toString() const
 {
     return start_.toString(DateItem::PRINT_FORMAT)
-            + "-" + end_.toString(DateItem::PRINT_FORMAT);
+        + "-" + end_.toString(DateItem::PRINT_FORMAT);
 }
 
 qint64 DateRange::count() const
@@ -136,8 +136,9 @@ qint64 DateRange::count() const
 QDate DateRange::at(const int index) const
 {
     if (index >= count() || index < 0) {
-        throw std::out_of_range(("DateRange index not found: index: " + QString::number(index) +
-                                 ", count: " + QString::number(count())).toStdString());
+        throw std::out_of_range(("DateRange index not found: index: "
+            + QString::number(index) + ", count: " + QString::number(count()))
+                                    .toStdString());
     }
     return start_.addDays(frequency_.delta() * index);
 }
@@ -146,6 +147,3 @@ QDate DateRange::operator[](const int index) const
 {
     return start_.addDays(frequency_.delta() * index);
 }
-
-
-

@@ -5,28 +5,47 @@
 
 #include "dateItem.h"
 
+/**
+ * Класс даты с диапазоном.
+ */
 class DateRange;
 
-class DateSingle : public DateItem
-{
-public:
-    DateSingle(const QDate &date);
-    DateSingle(const QJsonObject &item);
-    DateSingle(const DateSingle &date);
+/**
+ * @brief Единождная дата пары.
+ */
+class DateSingle : public DateItem {
 
+public:
+    /**
+     * @brief Конструктор из объекта даты.
+     */
+    DateSingle(const QDate& date);
+    /**
+     * @brief Конструктор из json объекта с датой.
+     */
+    DateSingle(const QJsonObject& item);
+    /**
+     * @brief Конструктор копирования.
+     */
+    DateSingle(const DateSingle& date);
+
+    /**
+     * @brief Возвращает объект даты.
+     */
     QDate date() const;
 
     QJsonObject toJson() const override;
     DayOfWeek dayOfWeek() const override;
-    bool contains(const DateItem *item) const override;
-    bool before(const DateItem *item) const override;
+    bool contains(const DateItem* item) const override;
+    bool before(const DateItem* item) const override;
     std::unique_ptr<DateItem> copy() const override;
 
     QString toString() const override;
 
-    bool operator==(const QDate &date) const;
+    bool operator==(const QDate& date) const;
 
 private:
+    //! дата
     QDate date_;
 
     friend DateRange;
