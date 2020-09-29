@@ -8,6 +8,9 @@ namespace Ui {
 class ConfuseDialog;
 }
 
+/**
+ * @brief The ConfuseStatus enum
+ */
 enum ConfuseStatus {
     Wait,
     Work,
@@ -31,6 +34,7 @@ public:
 
 public slots:
     void onOkButtonClicked();
+    void onRetryButtonClicked();
     void onZoomInClicked();
     void onZoomOutClicked();
 

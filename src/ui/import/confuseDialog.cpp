@@ -33,6 +33,8 @@ ConfuseDialog::ConfuseDialog(const QSharedPointer<ParseWorkerManager> &workerMan
             this, &ConfuseDialog::onZoomOutClicked);
     connect(ui->okButton, &QPushButton::clicked,
             this, &ConfuseDialog::onOkButtonClicked);
+    connect(ui->retryButton, &QPushButton::clicked,
+            this, &ConfuseDialog::onRetryButtonClicked);
     connect(ui->setsButton, &QPushButton::clicked,
             this, &ConfuseDialog::onSetsButtonClicked);
     connect(ui->transitionButton, &QPushButton::clicked,
@@ -59,6 +61,8 @@ void ConfuseDialog::start(const ConfuseInfo &info)
         context.replace(info.confuse, info.maybe);
     }
     ui->solveEdit->setPlainText(context);
+
+    ui->retryButton->setToolTip(info.context);
 
     previewImage_->setPixmap(QPixmap(info.imagePath));
     previewImage_->resize(previewImage_->pixmap()->size() / 12);
@@ -89,6 +93,12 @@ void ConfuseDialog::onOkButtonClicked()
 {
     status_ = ConfuseStatus::Solved;
     close();
+}
+
+void ConfuseDialog::onRetryButtonClicked()
+{
+    ui->solveEdit->setPlainText(info_.context);
+    onOkButtonClicked();
 }
 
 void ConfuseDialog::onZoomInClicked()
