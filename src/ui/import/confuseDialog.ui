@@ -130,6 +130,13 @@
       </widget>
      </item>
      <item>
+      <widget class="QPushButton" name="contextButton">
+       <property name="text">
+        <string>Контекст</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="retryButton">
        <property name="text">
         <string>Повторить</string>

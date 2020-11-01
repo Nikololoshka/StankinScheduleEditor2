@@ -35,6 +35,8 @@ ConfuseDialog::ConfuseDialog(const QSharedPointer<ParseWorkerManager> &workerMan
             this, &ConfuseDialog::onOkButtonClicked);
     connect(ui->retryButton, &QPushButton::clicked,
             this, &ConfuseDialog::onRetryButtonClicked);
+    connect(ui->contextButton, &QPushButton::clicked,
+            this, &ConfuseDialog::onContextButtonClicked);
     connect(ui->setsButton, &QPushButton::clicked,
             this, &ConfuseDialog::onSetsButtonClicked);
     connect(ui->transitionButton, &QPushButton::clicked,
@@ -99,6 +101,11 @@ void ConfuseDialog::onRetryButtonClicked()
 {
     ui->solveEdit->setPlainText(info_.context);
     onOkButtonClicked();
+}
+
+void ConfuseDialog::onContextButtonClicked()
+{
+    ui->solveEdit->setPlainText(info_.context);
 }
 
 void ConfuseDialog::onZoomInClicked()

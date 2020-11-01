@@ -229,8 +229,7 @@ void ImportDialog::workerLoop()
     auto info = workerManager_->confuseInfo();
     auto progress = workerManager_->currentProgress();
 
-    ui->mainProgressBar->setValue(progress.current);
-
+    int workComplite = 0;
     // обход потоков
     for (int i = 0; i < workerProgressBars_.size(); ++i) {
         workerProgressBars_[i]->setFormat(texts[i]);
@@ -238,11 +237,14 @@ void ImportDialog::workerLoop()
 
         if (statuses[i] == WorkerStatus::Complete) {
             workerProgressBars_[i]->setFormat("Завершено");
+            ++workComplite;
         } else if (statuses[i] == WorkerStatus::Confused &&
                    confuseDialog_->status() == ConfuseStatus::Wait) {
             confuseDialog_->start(info[i]);
         }
     }
+
+    ui->mainProgressBar->setValue(progress.current + (workComplite - 4));
 
     const auto cmp = [](const WorkerStatus &status) {
         return status != WorkerStatus::Complete || status != WorkerStatus::Error;

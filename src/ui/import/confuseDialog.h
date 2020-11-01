@@ -35,6 +35,7 @@ public:
 public slots:
     void onOkButtonClicked();
     void onRetryButtonClicked();
+    void onContextButtonClicked();
     void onZoomInClicked();
     void onZoomOutClicked();
 
