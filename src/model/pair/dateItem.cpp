@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "dateItem.h"
 
 #include "dateRange.h"

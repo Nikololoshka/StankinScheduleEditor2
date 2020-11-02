@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "parseWorker.h"
 
 #include <opencv2/core.hpp>
@@ -158,7 +159,7 @@ void ParseWorker::startParsing(const QString& pdfFilePath,
     for (int i = 0; i < pairCells.size(); ++i) {
         auto& cell = pairCells[i];
         // пропуск ячееек с днями недели
-        if (qAbs(cell.end - timeCells[0].start) < qAbs(cell.start < timeCells[0].start)) {
+        if (std::abs(cell.end - timeCells[0].start) < std::abs(cell.start < timeCells[0].start)) {
             continue;
         }
 

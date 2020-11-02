@@ -1,8 +1,8 @@
 #ifndef PARSEWORKER_H
 #define PARSEWORKER_H
 
+#include "stdafx.h"
 #include "pair/pair.h"
-#include <QtWidgets>
 
 #include "parseFileException.h"
 #include "parseWorkerManager.h"

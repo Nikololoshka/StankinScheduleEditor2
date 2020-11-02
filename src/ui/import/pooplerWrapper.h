@@ -1,7 +1,7 @@
 #ifndef POOPLERWRAPPER_H
 #define POOPLERWRAPPER_H
 
-#include <QtWidgets>
+#include "stdafx.h"
 
 class PooplerWrapper
 {

@@ -1,7 +1,7 @@
 #ifndef DATEEDITORDIALOG_H
 #define DATEEDITORDIALOG_H
 
-#include <QtWidgets>
+#include "stdafx.h"
 #include "schedule.h"
 
 namespace Ui {
@@ -10,7 +10,7 @@ class DateEditorDialog;
 
 class DateEditorDialog : public QDialog
 {
-    Q_OBJECT
+    // Q_OBJECT
 
 public:
     DateEditorDialog(const Date &date, const std::unique_ptr<DateItem> &item,

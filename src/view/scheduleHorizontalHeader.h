@@ -1,7 +1,7 @@
 #ifndef SCHEDULEHORIZONTALHEADER_H
 #define SCHEDULEHORIZONTALHEADER_H
 
-#include <QtWidgets>
+#include "stdafx.h"
 
 class ScheduleHorizontalHeader : public QHeaderView
 {

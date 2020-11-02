@@ -1,7 +1,7 @@
 #ifndef TYPE_H
 #define TYPE_H
 
-#include <QtWidgets>
+#include "stdafx.h"
 
 /**
  * @brief Тип пары.

@@ -1,7 +1,7 @@
 #ifndef PAIREXCEPTION_H
 #define PAIREXCEPTION_H
 
-#include <QException>
+#include "stdafx.h"
 
 class InvalidAddDateException : public QException
 {

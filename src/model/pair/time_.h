@@ -1,7 +1,7 @@
 #ifndef TIME_H
 #define TIME_H
 
-#include <QtWidgets>
+#include "stdafx.h"
 
 /**
  * @brief Время пары.

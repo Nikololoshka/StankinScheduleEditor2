@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "scheduleDay.h"
 
 bool ScheduleCell::isSpanValid() const

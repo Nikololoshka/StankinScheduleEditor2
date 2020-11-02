@@ -1,7 +1,7 @@
 #ifndef TRANSITIONDIALOG_H
 #define TRANSITIONDIALOG_H
 
-#include <QtWidgets>
+#include "stdafx.h"
 #include "parseWorkerManager.h"
 
 namespace Ui {
@@ -10,7 +10,7 @@ class TransitionDialog;
 
 class TransitionDialog : public QDialog
 {
-    Q_OBJECT
+    // Q_OBJECT
 
 public:
     TransitionDialog(const QSharedPointer<ParseWorkerManager> &workerManager,

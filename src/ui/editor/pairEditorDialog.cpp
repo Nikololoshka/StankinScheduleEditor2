@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "pairEditorDialog.h"
 #include "ui_pairEditorDialog.h"
 

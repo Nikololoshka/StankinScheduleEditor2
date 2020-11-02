@@ -1,9 +1,8 @@
 #ifndef DATE_H
 #define DATE_H
 
+#include "stdafx.h"
 #include "dateItem.h"
-#include <QtWidgets>
-#include <vector>
 
 /**
  * @brief Дата пары.

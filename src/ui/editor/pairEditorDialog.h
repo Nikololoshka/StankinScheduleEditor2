@@ -1,9 +1,8 @@
 #ifndef PAIREDITORDIALOG_H
 #define PAIREDITORDIALOG_H
 
-#include <QtWidgets>
+#include "stdafx.h"
 #include "schedule.h"
-
 
 namespace Ui {
 class PairEditorDialog;
@@ -11,7 +10,7 @@ class PairEditorDialog;
 
 class PairEditorDialog : public QDialog
 {
-    Q_OBJECT
+    // Q_OBJECT
 
 public:
     PairEditorDialog(const QSharedPointer<Schedule> &schedule,

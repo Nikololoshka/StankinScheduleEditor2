@@ -1,6 +1,5 @@
+#include "stdafx.h"
 #include "ui/stankinScheduleEditor2.h"
-
-#include <QApplication>
 // #include <opencv2/opencv.hpp>
 // #include "difflib.h"
 

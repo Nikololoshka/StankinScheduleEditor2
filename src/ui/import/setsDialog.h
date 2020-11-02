@@ -1,7 +1,7 @@
 #ifndef SETSDIALOG_H
 #define SETSDIALOG_H
 
-#include <QtWidgets>
+#include "stdafx.h"
 #include "parseWorkerManager.h"
 
 namespace Ui {
@@ -10,7 +10,7 @@ class SetsDialog;
 
 class SetsDialog : public QDialog
 {
-    Q_OBJECT
+    // Q_OBJECT
 
 public:
     SetsDialog(const QSharedPointer<ParseWorkerManager> &workerManager, QWidget *parent = nullptr);

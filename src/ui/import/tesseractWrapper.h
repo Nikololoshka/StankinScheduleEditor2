@@ -1,7 +1,7 @@
 #ifndef TESSERACTWRAPPER_H
 #define TESSERACTWRAPPER_H
 
-#include <QtWidgets>
+#include "stdafx.h"
 #include <tesseract/baseapi.h>
 #include <leptonica/allheaders.h>
 

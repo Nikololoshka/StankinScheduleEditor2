@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "schedule.h"
 
 Schedule::Schedule()

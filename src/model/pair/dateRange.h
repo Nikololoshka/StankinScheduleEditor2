@@ -1,7 +1,7 @@
 #ifndef DATERANGE_H
 #define DATERANGE_H
 
-#include <QtWidgets>
+#include "stdafx.h"
 
 #include "dateItem.h"
 

@@ -1,7 +1,7 @@
 #ifndef SCHEDULEVERTICALHEADER_H
 #define SCHEDULEVERTICALHEADER_H
 
-#include <QtWidgets>
+#include "stdafx.h"
 
 
 class ScheduleVerticalHeader : public QHeaderView

@@ -1,10 +1,11 @@
 #ifndef STANKINSCHEDULEEDITOR2
 #define STANKINSCHEDULEEDITOR2
 
-#include <QtWidgets>
+#include "stdafx.h"
 #include "scheduleHorizontalHeader.h"
 #include "scheduleVerticalHeader.h"
 #include "schedule.h"
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class StankinScheduleEditor2; }
@@ -12,7 +13,7 @@ QT_END_NAMESPACE
 
 class StankinScheduleEditor2 : public QMainWindow
 {
-    Q_OBJECT
+    // Q_OBJECT
 
 public:
     StankinScheduleEditor2(QWidget *parent = nullptr);

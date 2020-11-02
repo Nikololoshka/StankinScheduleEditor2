@@ -1,7 +1,7 @@
 #ifndef IMPORTDIALOG_H
 #define IMPORTDIALOG_H
 
-#include <QtWidgets>
+#include "stdafx.h"
 #include "parseWorker.h"
 #include "parseWorkerManager.h"
 #include "confuseDialog.h"
@@ -12,7 +12,7 @@ class ImportDialog;
 
 class ImportDialog : public QDialog
 {
-    Q_OBJECT
+    // Q_OBJECT
 
 public:
     explicit ImportDialog(QWidget *parent = nullptr);

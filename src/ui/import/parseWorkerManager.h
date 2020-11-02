@@ -1,8 +1,7 @@
 #ifndef PARSEWORKERMANAGER_H
 #define PARSEWORKERMANAGER_H
 
-#include <QtWidgets>
-#include <shared_mutex>
+#include "stdafx.h"
 
 enum class WorkerStatus {
     Stay,

@@ -1,7 +1,7 @@
 #ifndef CONFUSEDIALOG_H
 #define CONFUSEDIALOG_H
 
-#include <QtWidgets>
+#include "stdafx.h"
 #include "parseWorkerManager.h"
 
 namespace Ui {
@@ -19,7 +19,7 @@ enum ConfuseStatus {
 
 class ConfuseDialog : public QDialog
 {
-    Q_OBJECT
+    // Q_OBJECT
 
 public:
 

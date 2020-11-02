@@ -1,7 +1,7 @@
 #ifndef PARSEHIGHLIGHTER_H
 #define PARSEHIGHLIGHTER_H
 
-#include <QtWidgets>
+#include "stdafx.h"
 
 
 class ParseHighlighter : QSyntaxHighlighter

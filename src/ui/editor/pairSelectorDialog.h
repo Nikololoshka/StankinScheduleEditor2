@@ -1,7 +1,7 @@
 #ifndef PAIRSELECTORDIALOG_H
 #define PAIRSELECTORDIALOG_H
 
-#include <QtWidgets>
+#include "stdafx.h"
 #include "schedule.h"
 
 namespace Ui {
@@ -10,7 +10,7 @@ class PairSelectorDialog;
 
 class PairSelectorDialog : public QDialog
 {
-    Q_OBJECT
+    // Q_OBJECT
 
 public:
     PairSelectorDialog(const QSharedPointer<Schedule> &schedule,

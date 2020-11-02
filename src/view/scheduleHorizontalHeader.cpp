@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "scheduleHorizontalHeader.h"
 
 ScheduleHorizontalHeader::ScheduleHorizontalHeader(QWidget *parent)

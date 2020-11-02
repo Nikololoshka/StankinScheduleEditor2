@@ -1,7 +1,7 @@
 #ifndef DATEITEM_H
 #define DATEITEM_H
 
-#include <QtWidgets>
+#include "stdafx.h"
 
 #include "dayOfWeek.h"
 #include "frequency.h"

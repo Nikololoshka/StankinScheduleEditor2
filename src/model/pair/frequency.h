@@ -1,7 +1,7 @@
 #ifndef FREQUENCY_H
 #define FREQUENCY_H
 
-#include <QtWidgets>
+#include "stdafx.h"
 
 /**
  * @brief Периодичность даты.

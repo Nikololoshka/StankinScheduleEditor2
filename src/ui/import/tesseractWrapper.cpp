@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "tesseractWrapper.h"
 
 TesseractWrapper::TesseractWrapper(const QString &program)

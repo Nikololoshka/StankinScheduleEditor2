@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "type.h"
 
 Type Type::fromString(const QString& value)

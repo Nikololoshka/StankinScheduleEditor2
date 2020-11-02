@@ -1,7 +1,7 @@
 #ifndef DATESINGLE_H
 #define DATESINGLE_H
 
-#include <QtWidgets>
+#include "stdafx.h"
 
 #include "dateItem.h"
 

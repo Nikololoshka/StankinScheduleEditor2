@@ -1,7 +1,7 @@
 #ifndef PARSEFILEEXCEPTION_H
 #define PARSEFILEEXCEPTION_H
 
-#include <QtWidgets>
+#include "stdafx.h"
 
 
 class ParseFileException : public QException

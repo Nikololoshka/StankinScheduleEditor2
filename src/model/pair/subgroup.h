@@ -1,7 +1,7 @@
 #ifndef SUBGROUP_H
 #define SUBGROUP_H
 
-#include <QtWidgets>
+#include "stdafx.h"
 
 /**
  * @brief Подгруппа пары.

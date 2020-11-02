@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "parseHighlighter.h"
 
 #include "parseWorker.h"

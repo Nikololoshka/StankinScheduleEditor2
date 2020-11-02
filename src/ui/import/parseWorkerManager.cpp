@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "parseWorkerManager.h"
 
 #include "difflib.h"

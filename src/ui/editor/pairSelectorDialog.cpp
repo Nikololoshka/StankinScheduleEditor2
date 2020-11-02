@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "pairSelectorDialog.h"
 #include "ui_pairSelectorDialog.h"
 

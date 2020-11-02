@@ -1,5 +1,8 @@
+#include "stdafx.h"
 #include "confuseDialog.h"
 #include "ui_confuseDialog.h"
+
+#include <QGuiApplication>
 
 #include "parseHighlighter.h"
 #include "transitionDialog.h"

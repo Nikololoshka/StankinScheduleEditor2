@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "transitionDialog.h"
 #include "ui_transitionDialog.h"
 

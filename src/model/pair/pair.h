@@ -1,8 +1,7 @@
 #ifndef PAIR_H
 #define PAIR_H
 
-#include <QtWidgets>
-#include <vector>
+#include "stdafx.h"
 
 #include "date.h"
 #include "subgroup.h"

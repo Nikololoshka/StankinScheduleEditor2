@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "importDialog.h"
 #include "ui_importDialog.h"
 

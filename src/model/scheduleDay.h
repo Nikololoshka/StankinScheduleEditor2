@@ -1,8 +1,9 @@
 #ifndef SCHEDULEDAY_H
 #define SCHEDULEDAY_H
 
+#include "stdafx.h"
 #include "pair/pair.h"
-#include <QtWidgets>
+
 
 /**
  * Псевдоним для ячейки в дне расписания.

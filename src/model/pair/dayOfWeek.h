@@ -1,7 +1,7 @@
 #ifndef DAYOFWEEK_H
 #define DAYOFWEEK_H
 
-#include <QtWidgets>
+#include "stdafx.h"
 
 /**
  * @brief Перечисление с днями недели в расписании.
