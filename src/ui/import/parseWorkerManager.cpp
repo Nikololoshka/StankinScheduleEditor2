@@ -256,7 +256,7 @@ void ParseWorkerManager::saveData(const QString &filePath, const QVector<QString
 
     QTextStream out(&file);
     for (const auto& value : data) {
-        out << value << endl;
+        out << value << Qt::endl;
     }
 }
 
@@ -270,7 +270,7 @@ void ParseWorkerManager::saveData(const QString &filePath, const QMap<QString, Q
 
     QTextStream out(&file);
     for (auto it = data.begin(); it != data.end(); ++it) {
-        out << it.key() << " -> " << it.value() << endl;
+        out << it.key() << " -> " << it.value() << Qt::endl;
     }
 }
 

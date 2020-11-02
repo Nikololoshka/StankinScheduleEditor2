@@ -1,6 +1,6 @@
 # Project StankinScheduleEditor2
 # ******************************************************************************
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.16)
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/functions.cmake)
 
@@ -54,11 +54,12 @@ set(CMAKE_AUTORCC ON)
 
 # OpenCV
 # ******************************************************************************
-if (WIN32)
-    set(OpenCV_DIR "D:/opencv/install")
-endif()
-
 find_package(OpenCV REQUIRED)
+
+
+# Tesseract
+# ******************************************************************************
+# find_package(Tesseract CONFIG REQUIRED)
 
 # Configure files
 # ******************************************************************************
@@ -98,6 +99,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 include_directories("${SOURCE_DIR}/model")
 include_directories("${SOURCE_DIR}/view")
 include_directories("${ROOT_DIR}/lib")
+include_directories("${ROOT_DIR}/include")
 
 add_executable(${PROJECT_NAME} ${list_app_src} ${list_app_res})
 target_include_directories(${PROJECT_NAME} PUBLIC ${BINARY_DIR})
@@ -130,3 +132,6 @@ target_link_libraries(${PROJECT_NAME}
     lept
 )
 
+target_precompile_headers(${PROJECT_NAME}
+    PUBLIC "${ROOT_DIR}/include/stdafx.h"
+)
