@@ -2,4 +2,12 @@
     <qresource prefix="/icon">
         <file alias="app">icons/app.ico</file>
     </qresource>
+    <qresource prefix="/sets">
+        <file alias="classrooms.txt">sets/classrooms.txt</file>
+        <file alias="lecturers.txt">sets/lecturers.txt</file>
+        <file alias="titles.txt">sets/titles.txt</file>
+    </qresource>
+    <qresource prefix="/transition">
+        <file alias="transition.txt">transition/transition.txt</file>
+    </qresource>
 </RCC>

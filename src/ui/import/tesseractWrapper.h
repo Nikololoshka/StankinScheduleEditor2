@@ -16,9 +16,7 @@ public:
 
 private:
     std::unique_ptr<tesseract::TessBaseAPI> tesseract_;
-
-//    QString program_;
-//    QProcess *tesseract_;
+    bool initSuccess_;
 };
 
 #endif // TESSERACTWRAPPER_H

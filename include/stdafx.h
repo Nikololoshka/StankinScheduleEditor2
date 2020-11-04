@@ -43,5 +43,6 @@
 #include <vector>
 #include <shared_mutex>
 #include <optional>
+#include <locale>
 
 #endif // STDAFX_H

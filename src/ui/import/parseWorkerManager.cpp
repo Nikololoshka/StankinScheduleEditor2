@@ -211,13 +211,20 @@ void ParseWorkerManager::setDpi(int dpi)
 
 void ParseWorkerManager::readData(const QString &filePath, QVector<QString> &data) const
 {
-    QFile file(filePath);
+    QFile file(qApp->applicationDirPath() + "/" + filePath);    
+    if (!file.exists()) {
+        QFileInfo info(file);
+        QDir().mkdir(info.absolutePath());
+        QFile::copy(":/" + filePath, qApp->applicationDirPath() + "/" + filePath);
+    }
+
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qDebug() << file.errorString();
         return;
     }
 
     QTextStream in(&file);
+    in.setCodec("UTF-8");
     while (!in.atEnd()) {
         auto line = in.readLine().trimmed();
         if (!line.isEmpty()) {
@@ -228,13 +235,20 @@ void ParseWorkerManager::readData(const QString &filePath, QVector<QString> &dat
 
 void ParseWorkerManager::readData(const QString &filePath, QMap<QString, QString> &data) const
 {
-    QFile file(filePath);
+    QFile file(qApp->applicationDirPath() + "/" + filePath);
+    if (!file.exists()) {
+        QFileInfo info(file);
+        QDir().mkdir(info.absolutePath());
+        QFile::copy(":/" + filePath, qApp->applicationDirPath() + "/" + filePath);
+    }
+
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qDebug() << file.errorString();
         return;
     }
 
     QTextStream in(&file);
+    in.setCodec("UTF-8");
     while (!in.atEnd()) {
         auto line = in.readLine().trimmed();
         if (!line.isEmpty()) {
@@ -255,6 +269,7 @@ void ParseWorkerManager::saveData(const QString &filePath, const QVector<QString
     }
 
     QTextStream out(&file);
+    out.setCodec("UTF-8");
     for (const auto& value : data) {
         out << value << Qt::endl;
     }
@@ -269,6 +284,7 @@ void ParseWorkerManager::saveData(const QString &filePath, const QMap<QString, Q
     }
 
     QTextStream out(&file);
+    out.setCodec("UTF-8");
     for (auto it = data.begin(); it != data.end(); ++it) {
         out << it.key() << " -> " << it.value() << Qt::endl;
     }
