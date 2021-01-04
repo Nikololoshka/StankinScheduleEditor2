@@ -41,12 +41,22 @@ set(TEMPLATE_VERSION_PATCH "0" CACHE STRING "Version Patch")
 set(TEMPLATE_ORGANIZATION "Nikolay Vereshchagin" CACHE STRING "Organization")
 set(TEMPLATE_DOMAIN "github.com/nikololoshka" CACHE STRING "Domain")
 
-# Qt
+# Qt 5
 # ******************************************************************************
-set(TEMPLATE_QT_VERSION "5.15.0" CACHE STRING "Qt Version")
-set(TEMPLATE_QT_MODULES Core Gui Widgets)
+if(WIN32)
+    set(TEMPLATE_QT_VERSION "5.15.1" CACHE STRING "Qt Version")
+else()
+    set(TEMPLATE_QT_VERSION "5.15.0" CACHE STRING "Qt Version")
+endif()
 
-find_package(Qt5 ${TEMPLATE_QT_VERSION} EXACT CONFIG REQUIRED ${TEMPLATE_QT_MODULES})
+set(TEMPLATE_QT_MODULES Core Gui Widgets)
+#set(CMAKE_PREFIX_PATH "C:\\Qt\\5.15.1\\msvc2019_64\\lib\\cmake\\Qt5")
+
+if(WIN32)
+    set(Qt5_DIR "C:/Qt/5.15.1/msvc2019_64/lib/cmake/Qt5" CACHE STRING "Qt5 Windows Dir")
+endif()
+
+find_package(Qt5 ${TEMPLATE_QT_VERSION} EXACT CONFIG REQUIRED ${TEMPLATE_QT_MODULES} )
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
@@ -54,12 +64,13 @@ set(CMAKE_AUTORCC ON)
 
 # OpenCV
 # ******************************************************************************
-find_package(OpenCV REQUIRED)
-
+find_package(OpenCV CONFIG REQUIRED)
 
 # Tesseract
 # ******************************************************************************
-# find_package(Tesseract CONFIG REQUIRED)
+if(WIN32)
+    find_package(Tesseract CONFIG REQUIRED)
+endif()
 
 # Configure files
 # ******************************************************************************
@@ -121,16 +132,29 @@ if (COPY_RES)
     endif()
 endif()
 
+message(DEBUG "Paths:")
+message(DEBUG "${Tesseract_LIBS}")
+message(DEBUG "${Leptonica_LIBS}")
+
 # Link
 # *********************************************************************
 target_link_libraries(${PROJECT_NAME}
-    PUBLIC Qt5::Core
-    PUBLIC Qt5::Widgets
-    PUBLIC Qt5::Gui
-    ${OpenCV_LIBS}
-    tesseract
-    lept
+    PRIVATE Qt5::Core
+    PRIVATE Qt5::Widgets
+    PRIVATE Qt5::Gui
+    PRIVATE ${OpenCV_LIBS}
 )
+
+if(WIN32)
+    target_link_libraries(${PROJECT_NAME}
+        PRIVATE libtesseract
+    )
+else()
+    target_link_libraries(${PROJECT_NAME}
+        PRIVATE tesseract
+        PRIVATE lept
+    )
+endif()
 
 target_precompile_headers(${PROJECT_NAME}
     PUBLIC "${ROOT_DIR}/include/stdafx.h"
