@@ -191,12 +191,12 @@ void ParseWorkerManager::setPooplerPath(const QString &pooplerPath)
 
 QString ParseWorkerManager::tesseractPath() const
 {
-    return tesseractPath_;
+    return "";
 }
 
 void ParseWorkerManager::setTesseractPath(const QString &tesseractPath)
 {
-    tesseractPath_ = tesseractPath;
+
 }
 
 int ParseWorkerManager::dpi() const

@@ -156,7 +156,7 @@ bool ImportDialog::isWorkPooplerAndTesseract()
         return false;
     }
 
-    auto messageTesseract = TesseractWrapper(workerManager_->tesseractPath())
+    auto messageTesseract = TesseractWrapper()
             .checkTesseract();
     if (!messageTesseract.isEmpty()) {
         QMessageBox::critical(this, "Ошибка Tesseract", messageTesseract);

@@ -49,7 +49,7 @@ void ParseWorker::run()
 {
     auto poopler = make_unique<PooplerWrapper>(workerManager_->pooplerPath(),
         workerManager_->dpi());
-    auto tesseract = make_unique<TesseractWrapper>(workerManager_->tesseractPath());
+    auto tesseract = make_unique<TesseractWrapper>();
 
     workerManager_->setWorkerStatus(id_, WorkerStatus::Running);
     // Цикл обработки задач
@@ -362,7 +362,7 @@ Date ParseWorker::parseDates(const QString& datesMatch) const
         auto rangeMatch = regRange.match(dateString);
         if (rangeMatch.hasMatch()) {
             auto frequency = Frequency::getOnce();
-
+            
             auto frequencyString = rangeMatch.captured(4).toLower().replace("..", ".");
             if (frequencyString == "к.н.") {
                 frequency = Frequency::getEvery();

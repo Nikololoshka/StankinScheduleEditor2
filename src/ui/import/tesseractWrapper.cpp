@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "tesseractWrapper.h"
 
-TesseractWrapper::TesseractWrapper(const QString &program)
+TesseractWrapper::TesseractWrapper()
 {
     tesseract_ = std::make_unique<tesseract::TessBaseAPI>();
     initSuccess_ = tesseract_->Init(nullptr, "rus");
