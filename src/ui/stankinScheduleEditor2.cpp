@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "stankinScheduleEditor2.h"
 #include "ui_stankinScheduleEditor2.h"
 
@@ -7,6 +6,8 @@
 #include "import/transitionDialog.h"
 #include "import/setsDialog.h"
 #include "import/parseWorkerManager.h"
+#include "export/exportDialog.h"
+
 
 StankinScheduleEditor2::StankinScheduleEditor2(QWidget *parent)
     : QMainWindow(parent),
@@ -20,7 +21,6 @@ StankinScheduleEditor2::StankinScheduleEditor2(QWidget *parent)
     initStatusBar();
     initTable();
 
-
     connect(ui->actionCreate, &QAction::triggered,
             this, &StankinScheduleEditor2::onNewFileClicked);
     connect(ui->actionOpen, &QAction::triggered,
@@ -31,6 +31,8 @@ StankinScheduleEditor2::StankinScheduleEditor2(QWidget *parent)
             this, &StankinScheduleEditor2::onSaveAsFileClicked);
     connect(ui->actionImport, &QAction::triggered,
             this, &StankinScheduleEditor2::onImportClicked);
+    connect(ui->actionExport, &QAction::triggered,
+            this, &StankinScheduleEditor2::onExportClicked);
     connect(ui->actionSets, &QAction::triggered,
             this, &StankinScheduleEditor2::onSetsButtonClicked);
     connect(ui->actionTransition, &QAction::triggered,
@@ -124,6 +126,12 @@ void StankinScheduleEditor2::onImportClicked()
 {
     auto import = new ImportDialog(this);
     import->show();
+}
+
+void StankinScheduleEditor2::onExportClicked()
+{
+    auto export_ = new ExportDialog(this);
+    export_->show();
 }
 
 void StankinScheduleEditor2::onTransitionButtonClicked()

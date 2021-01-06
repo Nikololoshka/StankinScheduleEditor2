@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "dateSingle.h"
 #include "dateRange.h"
 

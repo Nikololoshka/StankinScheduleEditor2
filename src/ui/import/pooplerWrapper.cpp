@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "pooplerWrapper.h"
 
 PooplerWrapper::PooplerWrapper(const QString &program, int dpi)

@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "pair.h"
 #include "pairException.h"
 

@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "ui/stankinScheduleEditor2.h"
 
 

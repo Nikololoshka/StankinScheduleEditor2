@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "parseFileException.h"
 
 ParseFileException::ParseFileException(const QString &type,

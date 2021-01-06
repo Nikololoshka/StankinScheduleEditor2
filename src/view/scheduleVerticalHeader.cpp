@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "scheduleVerticalHeader.h"
 
 ScheduleVerticalHeader::ScheduleVerticalHeader(QWidget *parent)

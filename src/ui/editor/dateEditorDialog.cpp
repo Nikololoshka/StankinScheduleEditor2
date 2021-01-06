@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "dateEditorDialog.h"
 #include "ui_dateEditorDialog.h"
 

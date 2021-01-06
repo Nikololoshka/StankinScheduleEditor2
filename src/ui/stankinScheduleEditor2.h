@@ -26,6 +26,7 @@ public slots:
     void onSaveAsFileClicked();
 
     void onImportClicked();
+    void onExportClicked();
     void onTransitionButtonClicked();
     void onSetsButtonClicked();
 

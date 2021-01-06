@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "parseWorker.h"
 
 #include <opencv2/core.hpp>

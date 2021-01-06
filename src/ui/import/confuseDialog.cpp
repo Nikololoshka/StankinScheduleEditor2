@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "confuseDialog.h"
 #include "ui_confuseDialog.h"
 

@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "frequency.h"
 
 Frequency Frequency::fromString(const QString& value)

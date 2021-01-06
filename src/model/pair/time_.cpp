@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "time_.h"
 
 Time_ Time_::fromJson(const QJsonObject& value)

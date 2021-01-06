@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "dayOfWeek.h"
 
 DayOfWeek DateUtils::of(const QDate& date)

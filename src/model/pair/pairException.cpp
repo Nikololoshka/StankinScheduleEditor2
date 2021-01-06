@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "pairException.h"
 
 InvalidAddDateException::InvalidAddDateException(const QString &msg)

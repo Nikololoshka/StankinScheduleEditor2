@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "subgroup.h"
 
 Subgroup Subgroup::fromString(const QString& value)

@@ -44,16 +44,16 @@ set(TEMPLATE_DOMAIN "github.com/nikololoshka" CACHE STRING "Domain")
 # Qt 5
 # ******************************************************************************
 if(WIN32)
-    set(TEMPLATE_QT_VERSION "5.15.1" CACHE STRING "Qt Version")
+    set(TEMPLATE_QT_VERSION "5.15.2" CACHE STRING "Qt Version")
 else()
     set(TEMPLATE_QT_VERSION "5.15.0" CACHE STRING "Qt Version")
 endif()
 
-set(TEMPLATE_QT_MODULES Core Gui Widgets)
+set(TEMPLATE_QT_MODULES Core Gui Widgets PrintSupport)
 #set(CMAKE_PREFIX_PATH "C:\\Qt\\5.15.1\\msvc2019_64\\lib\\cmake\\Qt5")
 
 if(WIN32)
-    set(Qt5_DIR "C:/Qt/5.15.1/msvc2019_64/lib/cmake/Qt5" CACHE STRING "Qt5 Windows Dir")
+    set(Qt5_DIR "C:/Qt/5.15.2/msvc2019_64/lib/cmake/Qt5" CACHE STRING "Qt5 Windows Dir")
 endif()
 
 find_package(Qt5 ${TEMPLATE_QT_VERSION} EXACT CONFIG REQUIRED ${TEMPLATE_QT_MODULES} )
@@ -93,6 +93,7 @@ AddSources("${SOURCE_DIR}/model/pair" "pair" list_app_src)
 AddSources("${SOURCE_DIR}/ui" "ui" list_app_src)
 AddSources("${SOURCE_DIR}/ui/editor" "editor" list_app_src)
 AddSources("${SOURCE_DIR}/ui/import" "import" list_app_src)
+AddSources("${SOURCE_DIR}/ui/export" "export" list_app_src)
 
 set(list_app_res "res/res.qrc")
 
@@ -142,6 +143,7 @@ target_link_libraries(${PROJECT_NAME}
     PRIVATE Qt5::Core
     PRIVATE Qt5::Widgets
     PRIVATE Qt5::Gui
+    PRIVATE Qt5::PrintSupport 
     PRIVATE ${OpenCV_LIBS}
 )
 

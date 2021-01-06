@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "setsDialog.h"
 #include "ui_setsDialog.h"
 
