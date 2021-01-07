@@ -2,6 +2,7 @@
 #define EXPORTDIALOG_H
 
 #include "stdafx.h"
+#include "exportWorkerManager.h"
 
 
 enum class PrintType
@@ -47,6 +48,9 @@ private:
 
 private:
     Ui::exportDialog *ui;
+
+    QThreadPool workerPool_;
+    QSharedPointer<ExportWorkerManager> workManager_;
 };
 
 #endif // EXPORTDIALOG_H

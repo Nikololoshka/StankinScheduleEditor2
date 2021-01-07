@@ -1,7 +1,8 @@
 #include "exportDialog.h"
 #include "ui_exportDialog.h"
 
-#include "exporter.h"
+#include "exportWorker.h"
+#include <QProgressDialog>
 
 
 ExportDialog::ExportDialog(QWidget *parent) :
@@ -9,6 +10,10 @@ ExportDialog::ExportDialog(QWidget *parent) :
       ui(new Ui::exportDialog)
 {
     ui->setupUi(this);
+
+    int maxWorkers = QThreadPool::globalInstance()->maxThreadCount();
+    workerPool_.setMaxThreadCount(maxWorkers);
+    workManager_ = QSharedPointer<ExportWorkerManager>::create();
 
     initMainSetting();
     initPrintSetting();
@@ -25,6 +30,8 @@ ExportDialog::ExportDialog(QWidget *parent) :
             this, &ExportDialog::onAddFilesClicked);
     connect(folderAction, &QAction::triggered,
             this, &ExportDialog::onAddFolderClicked);
+    connect(ui->exportButton, &QPushButton::clicked,
+            this, &ExportDialog::onExportButtonClicked);
 }
 
 ExportDialog::~ExportDialog()
@@ -61,6 +68,30 @@ void ExportDialog::onAddFolderClicked()
 void ExportDialog::onExportButtonClicked()
 {
 
+    int scheduleCount = ui->scheduleListWidget->count();
+    QProgressDialog *progressDialog = new QProgressDialog("Экспорт расписаний",
+                                                          "Отмена",
+                                                          0,
+                                                          scheduleCount,
+                                                          this);
+    progressDialog->setWindowModality(Qt::WindowModal);
+
+    QStringList paths;
+    for (int i = 0; i < scheduleCount; ++i) {
+        paths << ui->scheduleListWidget->item(i)->data(PATH_ROLE).toString();
+    }
+    workManager_->setSchedules(paths);
+
+    for (int i = 0; i < 4; ++i) {
+        ExportWorker *worker = new ExportWorker(workManager_);
+        worker->setAutoDelete(true);
+        workerPool_.start(worker);
+    }
+
+    connect(workManager_.get(), &ExportWorkerManager::changedProgress,
+            progressDialog, &QProgressDialog::setValue);
+
+    progressDialog->show();
 }
 
 void ExportDialog::onStartDateChanged(const QDate &newDate)

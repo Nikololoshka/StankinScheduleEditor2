@@ -13,7 +13,6 @@ ImportDialog::ImportDialog(QWidget *parent) :
 
     int maxWorkers = QThreadPool::globalInstance()->maxThreadCount();
     workerPool_.setMaxThreadCount(maxWorkers);
-
     workerManager_ = QSharedPointer<ParseWorkerManager>::create(maxWorkers);
 
     int columns = 2;

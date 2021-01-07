@@ -13,7 +13,7 @@ ParseWorkerManager::ParseWorkerManager(int workerCount)
 
 QString ParseWorkerManager::nextSchedule()
 {
-    std::unique_lock lock(mutex_);
+    std::unique_lock<std::mutex> lock(mutex_);
 
     if (!schedules_.isEmpty()) {
         ++currentCount_;
@@ -59,7 +59,7 @@ const QVector<QString>& ParseWorkerManager::titles() const
 
 void ParseWorkerManager::updateSets(QVector<QString> &titles, QVector<QString> &lecturers, QVector<QString> &classrooms)
 {
-    std::unique_lock lock(sharedMutex_);
+    std::unique_lock<std::shared_mutex> lock(sharedMutex_);
 
     titles_.swap(titles);
     lecturers_.swap(lecturers);
@@ -72,14 +72,14 @@ void ParseWorkerManager::updateSets(QVector<QString> &titles, QVector<QString> &
 
 const QMap<QString, QString>& ParseWorkerManager::transitions() const
 {
-    std::shared_lock lock(sharedMutex_);
+    std::shared_lock<std::shared_mutex> lock(sharedMutex_);
 
     return transitions_;
 }
 
 void ParseWorkerManager::transitionData(QString &data) const
 {
-    std::shared_lock lock(sharedMutex_);
+    std::shared_lock<std::shared_mutex> lock(sharedMutex_);
     for (auto it = transitions_.begin(); it != transitions_.end(); ++it) {
         data.replace(it.key(), it.value());
     }
@@ -87,7 +87,7 @@ void ParseWorkerManager::transitionData(QString &data) const
 
 void ParseWorkerManager::updateTransition(QMap<QString, QString> &transitions)
 {
-    std::unique_lock lock(sharedMutex_);
+    std::unique_lock<std::shared_mutex> lock(sharedMutex_);
 
     transitions_.swap(transitions);
     saveData("transition/transition.txt", transitions_);
@@ -296,7 +296,7 @@ double ParseWorkerManager::compare(const QString &first, const QString &second) 
 
 ValidData ParseWorkerManager::hasValid(const QString &value, const QVector<QString> &values) const
 {
-    std::shared_lock lock(sharedMutex_);
+    std::shared_lock<std::shared_mutex> lock(sharedMutex_);
 
     QString maybe = "";
     double score = 0.0;
