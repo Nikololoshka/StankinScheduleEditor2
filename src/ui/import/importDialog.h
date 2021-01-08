@@ -16,7 +16,7 @@ class ImportDialog : public QDialog
 
 public:
     explicit ImportDialog(QWidget *parent = nullptr);
-    ~ImportDialog();
+    ~ImportDialog() override;
 
     const static int PATH_ROLE = Qt::UserRole + 1;
 

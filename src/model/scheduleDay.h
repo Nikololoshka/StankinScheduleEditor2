@@ -44,6 +44,12 @@ struct ScheduleIndex {
     QString toString() const;
 };
 
+struct ScheduleDrawingCell {
+    int row;
+    int column;
+    ScheduleCell cell;
+};
+
 /**
  * @brief День с парами в расписании.
  */
@@ -109,6 +115,8 @@ public:
      * @brief Возвращает список пар из ячейки в дне расписания.
      */
     std::vector<Pair> fromCell(const Cell& cell) const;
+
+    QVector<ScheduleDrawingCell> pairsForDrawing() const;
 
 private:
     /**

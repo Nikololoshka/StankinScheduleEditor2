@@ -10,7 +10,7 @@ class ExportWorkerManager : public QObject
     Q_OBJECT
 
 public:
-    ExportWorkerManager();
+    explicit ExportWorkerManager(int workerCount);
 
     QString nextSchedulePath();
     void setSchedules(QStringList &schedules);
@@ -19,10 +19,14 @@ public:
     int totalCount() const;
 
     void addCompleteCount();
+    void addWorkDone();
     bool isDone() const;
 
     bool stopExport() const;
     void setStopExport(bool stopExport);
+
+public slots:
+    void onCancelWork();
 
 signals:
     void changedProgress(int progress);
@@ -30,8 +34,10 @@ signals:
 
 private:
     bool stopExport_;
+    int workerCount_;
     int currentCount_;
     int totalCount_;
+    int runningWorkerCount_;
 
     QStringList schedules_;
 

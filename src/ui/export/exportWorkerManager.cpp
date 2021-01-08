@@ -1,10 +1,12 @@
 #include "exportWorkerManager.h"
 
-ExportWorkerManager::ExportWorkerManager()
+ExportWorkerManager::ExportWorkerManager(int workerCount)
     : QObject(),
       stopExport_(false),
+      workerCount_(workerCount),
       currentCount_(-1),
-      totalCount_(-1)
+      totalCount_(-1),
+      runningWorkerCount_(0)
 {
 }
 
@@ -21,7 +23,9 @@ void ExportWorkerManager::setSchedules(QStringList &schedules)
 {
     schedules_.swap(schedules);
     currentCount_ = 0;
+    runningWorkerCount_ = workerCount_;
     totalCount_ = schedules_.size();
+    stopExport_ = false;
 }
 
 int ExportWorkerManager::currentCount() const
@@ -34,12 +38,22 @@ int ExportWorkerManager::totalCount() const
     return totalCount_;
 }
 
-void ExportWorkerManager::addCompliteCount()
+void ExportWorkerManager::addCompleteCount()
 {
     std::unique_lock<std::mutex> lock(mutex_);
     ++currentCount_;
 
     emit changedProgress(currentCount_);
+}
+
+void ExportWorkerManager::addWorkDone()
+{
+    std::unique_lock<std::mutex> lock(mutex_);
+    --runningWorkerCount_;
+
+    if (runningWorkerCount_ <= 0) {
+        emit workComplete();
+    }
 }
 
 bool ExportWorkerManager::isDone() const
@@ -55,5 +69,10 @@ bool ExportWorkerManager::stopExport() const
 void ExportWorkerManager::setStopExport(bool stopExport)
 {
     stopExport_ = stopExport;
+}
+
+void ExportWorkerManager::onCancelWork()
+{
+    stopExport_ = true;
 }
 

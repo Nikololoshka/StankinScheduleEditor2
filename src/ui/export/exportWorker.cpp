@@ -18,6 +18,10 @@ void ExportWorker::run()
         }
 
         QThread::sleep(1);
-        manager_->addCompliteCount();
+
+        if (manager_->stopExport()) {
+            break;
+        }
+        manager_->addCompleteCount();
     }
 }

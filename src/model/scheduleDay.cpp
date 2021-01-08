@@ -112,6 +112,19 @@ ScheduleCell ScheduleDay::pairsTextByIndex(const ScheduleIndex& index) const
         rowSpan = computeRowSpan(1, index);
     }
 
+//    qDebug() << "========== day ============";
+//    for (int i = 0; i < rows_.size(); ++i) {
+//        QString r = "";
+//        for (int j = 0; j < rows_[i].size(); ++j) {
+//            r += "[";
+//            for (int k = 0; k < rows_[i][j].size(); ++k) {
+//                r += QString::number(rows_[i][j][k]) + ", ";
+//            }
+//            r += "] ";
+//        }
+//        qDebug() << r;
+//    }
+
     return {
         texts.join("\n"),
         rowSpan,
@@ -143,6 +156,41 @@ std::vector<Pair> ScheduleDay::fromCell(const Cell& cell) const
     }
 
     return pairs;
+}
+
+QVector<ScheduleDrawingCell> ScheduleDay::pairsForDrawing() const
+{
+    QVector<ScheduleDrawingCell> temps;
+    QVector<ScheduleDrawingCell> empties;
+
+    for (int i = 0; i < rows_.size(); ++i) {
+        for (int j = 0; j < rows_[i].size(); ++j) {
+            auto cell = pairsTextByIndex({-1, j, i});
+            if (cell.text.isEmpty()) {
+                empties.append({i, j, cell});
+            } else {
+                temps.append({i, j, cell});
+            }
+        }
+    }
+
+//    qDebug() << empties.size();
+    for (auto &pair : temps) {
+        int i = 0;
+        while (i < empties.size()) {
+            auto &e = empties[i];
+            if (((pair.row <= e.row) && ((pair.row + pair.cell.rowSpan - 1) >= e.row))
+                && ((pair.column <= e.column) && ((pair.column + pair.cell.columnSpan - 1) >= e.column))) {
+//                qDebug() << pair.cell.text << pair.column << e.column << pair.column + pair.cell.columnSpan << e.column;
+                empties.remove(i);
+            } else {
+                ++i;
+            }
+        }
+    }
+//    qDebug() << empties.size();
+
+    return temps + empties;
 }
 
 void ScheduleDay::isAddCheck(const Pair& pair) const

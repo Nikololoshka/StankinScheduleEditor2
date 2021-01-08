@@ -2,6 +2,7 @@
 #include "ui_exportDialog.h"
 
 #include "exportWorker.h"
+#include "exporter.h"
 #include <QProgressDialog>
 
 
@@ -13,7 +14,7 @@ ExportDialog::ExportDialog(QWidget *parent) :
 
     int maxWorkers = QThreadPool::globalInstance()->maxThreadCount();
     workerPool_.setMaxThreadCount(maxWorkers);
-    workManager_ = QSharedPointer<ExportWorkerManager>::create();
+    workManager_ = QSharedPointer<ExportWorkerManager>::create(maxWorkers);
 
     initMainSetting();
     initPrintSetting();
@@ -32,6 +33,15 @@ ExportDialog::ExportDialog(QWidget *parent) :
             this, &ExportDialog::onAddFolderClicked);
     connect(ui->exportButton, &QPushButton::clicked,
             this, &ExportDialog::onExportButtonClicked);
+
+    // test section
+    QPrinter printer(QPrinter::HighResolution);
+    printer.setOutputFormat(QPrinter::PdfFormat);
+    printer.setPageOrientation(QPageLayout::Landscape);
+    printer.setOutputFileName("test.pdf");
+
+    Exporter exporter;
+    exporter.runExport(printer);
 }
 
 ExportDialog::~ExportDialog()
@@ -74,7 +84,10 @@ void ExportDialog::onExportButtonClicked()
                                                           0,
                                                           scheduleCount,
                                                           this);
+    progressDialog->setWindowTitle("Прогресс экспорта");
     progressDialog->setWindowModality(Qt::WindowModal);
+    progressDialog->setWindowFlag(Qt::WindowCloseButtonHint, false);
+    progressDialog->setAutoClose(false);
 
     QStringList paths;
     for (int i = 0; i < scheduleCount; ++i) {
@@ -82,7 +95,7 @@ void ExportDialog::onExportButtonClicked()
     }
     workManager_->setSchedules(paths);
 
-    for (int i = 0; i < 4; ++i) {
+    for (int i = 0; i < workerPool_.maxThreadCount(); ++i) {
         ExportWorker *worker = new ExportWorker(workManager_);
         worker->setAutoDelete(true);
         workerPool_.start(worker);
@@ -90,8 +103,14 @@ void ExportDialog::onExportButtonClicked()
 
     connect(workManager_.get(), &ExportWorkerManager::changedProgress,
             progressDialog, &QProgressDialog::setValue);
+    connect(workManager_.get(), &ExportWorkerManager::workComplete,
+            progressDialog, &QProgressDialog::close);
+    connect(progressDialog, &QProgressDialog::canceled,
+            workManager_.get(), &ExportWorkerManager::onCancelWork);
 
-    progressDialog->show();
+    enableUI(false);
+    progressDialog->exec();
+    enableUI(true);
 }
 
 void ExportDialog::onStartDateChanged(const QDate &newDate)
@@ -242,4 +261,16 @@ QStringList ExportDialog::recursiveFind(QString rootDir) const
         }
     }
     return paths;
+}
+
+void ExportDialog::enableUI(bool enable) const
+{
+    ui->exportButton->setEnabled(enable);
+    ui->cancelButton->setEnabled(enable);
+    ui->addSchedulesButton->setEnabled(enable);
+    ui->scheduleListWidget->setEnabled(enable);
+    ui->mainGroupBox->setEnabled(enable);
+    ui->printGroupBox->setEnabled(enable);
+    ui->dateGroupBox->setEnabled(enable);
+    ui->subgroupGroupBox->setEnabled(enable);
 }

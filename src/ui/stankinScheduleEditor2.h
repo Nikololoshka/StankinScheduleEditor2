@@ -13,7 +13,7 @@ QT_END_NAMESPACE
 
 class StankinScheduleEditor2 : public QMainWindow
 {
-    // Q_OBJECT
+    Q_OBJECT
 
 public:
     StankinScheduleEditor2(QWidget *parent = nullptr);

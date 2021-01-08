@@ -18,7 +18,7 @@ class exportDialog;
 
 class ExportDialog : public QDialog
 {
-    Q_OBJECT
+    // Q_OBJECT
 
 public:
     explicit ExportDialog(QWidget *parent = nullptr);
@@ -45,6 +45,7 @@ private:
 
     QIcon createColorIcon(const QColor &color);
     QStringList recursiveFind(QString rootDir) const;
+    void enableUI(bool enable) const;
 
 private:
     Ui::exportDialog *ui;

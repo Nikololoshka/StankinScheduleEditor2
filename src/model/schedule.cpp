@@ -76,6 +76,11 @@ void Schedule::possibleChange(const std::optional<Pair>& oldPair,
     days_[newPair->dayOfWeek()].possibleChange(oldPair, newPair);
 }
 
+QVector<ScheduleDrawingCell> Schedule::pairsForDrawByDay(const DayOfWeek &dayOfWeek) const
+{
+    return days_[dayOfWeek].pairsForDrawing();
+}
+
 ScheduleCell Schedule::pairsTextByIndex(const ScheduleIndex& index) const
 {
     return days_[DateUtils::of(index.row)].pairsTextByIndex(index);
