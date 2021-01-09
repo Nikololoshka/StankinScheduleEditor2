@@ -72,7 +72,7 @@ public:
     void possibleChange(const std::optional<Pair>& oldPair,
         const std::optional<Pair>& newPair) const;
 
-    QVector<ScheduleDrawingCell> pairsForDrawByDay(const DayOfWeek &dayOfWeek) const;
+    QVector<ScheduleDrawingCell> pairsForDrawingByDay(const DayOfWeek &dayOfWeek) const;
 
     /**
      * @brief Возвращает объект ячейки расписания для визуального представления.

@@ -160,37 +160,170 @@ std::vector<Pair> ScheduleDay::fromCell(const Cell& cell) const
 
 QVector<ScheduleDrawingCell> ScheduleDay::pairsForDrawing() const
 {
+    struct Temp {
+        Temp(Cell& c, int rowSpan, int columnSpan, int row, int column) {
+            this->c = c;
+            this->rowSpan = rowSpan;
+            this->columnSpan = columnSpan;
+            this->row = row;
+            this->column = column;
+        }
+
+        Cell c;
+        int rowSpan;
+        int columnSpan;
+        int row;
+        int column;
+    };
+    std::vector<Temp> tests;
+
+    QVector<QVector<Cell>> cells = rows_;
+    for (int i = 0; i < cells.size(); ++i) {
+        for (int j = 0; j < cells[i].size(); ++j) {
+            auto currentCell = cells[i][j];
+            if (!currentCell.isEmpty() && std::all_of(tests.begin(), tests.end(), [currentCell](Temp &t) { return t.c != currentCell; })) {
+                auto cell = fromCell(currentCell);
+                int duration = cell.front().time().duration();
+                tests.emplace_back(currentCell, 1, duration, i, j);
+
+                // по гориз. текущую строку
+                bool prevRow = i - 1 >= 0;
+                bool nextRow = i + 1 < cells.size();
+
+                for (int k = 0; k < duration; ++k) {
+                    cells[i][j + k] = currentCell;
+                    if (nextRow && !cells[i + 1][j + k].isEmpty()) {
+                        nextRow = false;
+                    }
+                    if (prevRow && !cells[i - 1][j + k].isEmpty()) {
+                        prevRow = false;
+                    }
+                }
+
+                // дозаполнение сверху
+                int m = i + 1;
+                while (nextRow) {
+                    nextRow = m + 1 < cells.size();
+                    for (int k = 0; k < duration; ++k) {
+                        cells[m][j + k] = currentCell;
+                        if (nextRow && !cells[m + 1][j + k].isEmpty()) {
+                            nextRow = false;
+                        }
+                    }
+                    ++m;
+                    ++tests.back().rowSpan;
+                }
+
+                // дозаполнение снизу
+                int n = i - 1;
+                while (prevRow) {
+                    prevRow = n - 1 >= 0;
+                    for (int k = 0; k < duration; ++k) {
+                        cells[n][j + k] = currentCell;
+                        if (prevRow && !cells[n - 1][j + k].isEmpty()) {
+                            prevRow = false;
+                        }
+                    }
+                    --n;
+                    ++tests.back().rowSpan;
+                    --tests.back().row;
+                }
+            }
+        }
+    }
+
+    qDebug() << "======================";
+    // добавление пустых ячеек
+    unsigned int index = index_;
+    for (int i = 0; i < cells.size(); ++i) {
+        for (int j = 0; j < cells[i].size(); ++j) {
+            if (cells[i][j].isEmpty()) {
+                bool prevRow = i - 1 >= 0;
+                bool nextRow = i + 1 < cells.size();
+
+                cells[i][j].append(index++);
+                tests.emplace_back(cells[i][j], 1, 1, i, j);
+
+                if (nextRow && !cells[i + 1][j].isEmpty()) {
+                    nextRow = false;
+                }
+                if (prevRow && !cells[i - 1][j].isEmpty()) {
+                    prevRow = false;
+                }
+
+                // дозаполнение сверху
+                int m = i + 1;
+                while (nextRow) {
+                    nextRow = m + 1 < cells.size();
+                    cells[m][j] = cells[i][j];
+                    ++tests.back().rowSpan;
+                    ++m;
+                }
+
+                // дозаполнение снизу
+                int n = i - 1;
+                while (prevRow) {
+                    prevRow = n - 1 >= 0;
+                    cells[n][j] = cells[i][j];
+                    ++tests.back().rowSpan;
+                    --tests.back().row;
+                    --n;
+                }
+            }
+        }
+        qDebug() << cells[i];
+    }
+
     QVector<ScheduleDrawingCell> temps;
-    QVector<ScheduleDrawingCell> empties;
-
-    for (int i = 0; i < rows_.size(); ++i) {
-        for (int j = 0; j < rows_[i].size(); ++j) {
-            auto cell = pairsTextByIndex({-1, j, i});
-            if (cell.text.isEmpty()) {
-                empties.append({i, j, cell});
-            } else {
-                temps.append({i, j, cell});
-            }
+    for (auto &t : tests) {
+        QStringList texts;
+        for (auto& pair : fromCell(t.c)) {
+            texts << pair.toString();
         }
+
+        temps.append({
+            t.row,
+            t.column,
+            {
+                texts.join("\n"),
+                t.rowSpan,
+                t.columnSpan
+            }
+        });
     }
 
-//    qDebug() << empties.size();
-    for (auto &pair : temps) {
-        int i = 0;
-        while (i < empties.size()) {
-            auto &e = empties[i];
-            if (((pair.row <= e.row) && ((pair.row + pair.cell.rowSpan - 1) >= e.row))
-                && ((pair.column <= e.column) && ((pair.column + pair.cell.columnSpan - 1) >= e.column))) {
-//                qDebug() << pair.cell.text << pair.column << e.column << pair.column + pair.cell.columnSpan << e.column;
-                empties.remove(i);
-            } else {
-                ++i;
-            }
-        }
-    }
-//    qDebug() << empties.size();
 
-    return temps + empties;
+//    QVector<ScheduleDrawingCell> empties;
+
+//    for (int i = 0; i < rows_.size(); ++i) {
+//        for (int j = 0; j < rows_[i].size(); ++j) {
+//            auto cell = pairsTextByIndex({-1, j, i});
+//            if (cell.text.isEmpty()) {
+//                empties.append({i, j, cell});
+//            } else {
+//                temps.append({i, j, cell});
+//            }
+//        }
+//    }
+
+////    qDebug() << empties.size();
+//    for (auto &pair : temps) {
+//        int i = 0;
+//        while (i < empties.size()) {
+//            auto &e = empties[i];
+//            if (((pair.row <= e.row) && ((pair.row + pair.cell.rowSpan - 1) >= e.row))
+//                && ((pair.column <= e.column) && ((pair.column + pair.cell.columnSpan - 1) >= e.column))) {
+////                qDebug() << pair.cell.text << pair.column << e.column << pair.column + pair.cell.columnSpan << e.column;
+//                empties.remove(i);
+//            } else {
+//                ++i;
+//            }
+//        }
+//    }
+////    qDebug() << empties.size();
+
+//    return temps + empties;
+    return temps;
 }
 
 void ScheduleDay::isAddCheck(const Pair& pair) const
@@ -226,7 +359,7 @@ void ScheduleDay::reallocate()
             Cell& cell = row[pair.time().number()];
             auto pairs = this->fromCell(cell);
 
-            if (!pairs.empty() && pairs.front().time().duration() == pair.time().duration()) {
+            if (!pairs.empty() && pairs.front().time().duration() == pair.time().duration() && isMerge(pairs, pair)) {
                 cell.append(id);
                 insert = true;
                 break;
@@ -303,6 +436,16 @@ int ScheduleDay::computeRowSpan(int duration, const ScheduleIndex& index) const
     }
 
     return rowSpanCount;
+}
+
+bool ScheduleDay::isMerge(const std::vector<Pair> &pairs, const Pair &pair) const
+{
+    for (const auto &p : pairs) {
+        if (p.subgroup() == pair.subgroup()) {
+            return true;
+        }
+    }
+    return false;
 }
 
 QString ScheduleIndex::toString() const

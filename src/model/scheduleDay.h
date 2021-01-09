@@ -140,6 +140,8 @@ private:
      */
     int computeRowSpan(int duration, const ScheduleIndex& index) const;
 
+    bool isMerge(const std::vector<Pair> &pairs, const Pair &pair) const;
+
 private:
     /**
      * @brief Вспомогательная структура для хранения пары.

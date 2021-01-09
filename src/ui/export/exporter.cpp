@@ -10,6 +10,17 @@ Exporter::Exporter()
 
 }
 
+void Exporter::setSchedule(const QString &schedulePath)
+{
+    QFile file(schedulePath);
+    if (!file.open(QIODevice::ReadOnly)) {
+        qDebug() << "Cannot open file!";
+    }
+
+    QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
+    schedule_ = Schedule(doc);
+}
+
 void Exporter::runExport(QPrinter &printer)
 {
     QPainter painter;
@@ -73,74 +84,47 @@ int Exporter::drawTitleText(QPainter &painter, int x, int y, int width, const QS
 
 void Exporter::drawScheduleContent(QPainter &painter, int x, int y, int width, int height)
 {
-    const int ROW_COUNT = 7;
-    const int COLUMN_COUNT = 9;
+    const int ROW_COUNT = 6;
+    const int COLUMN_COUNT = 8;
 
     const int scheduleHeaderSize = painter.fontMetrics().height();
-    const int columnStepSize = (width - scheduleHeaderSize) / (COLUMN_COUNT - 1);
-    const int rowStepSize = (height - scheduleHeaderSize) / (ROW_COUNT - 1);
+    const int columnStepSize = (width - scheduleHeaderSize) / COLUMN_COUNT;
+    const int rowStepSize = (height - scheduleHeaderSize) / ROW_COUNT;
 
-    QFile file("ИДБ-17-09.json");
-    if (!file.open(QIODevice::ReadOnly)) {
-        qDebug() << "Cannot open file!";
-    }
 
-    QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
-    Schedule schedule(doc);
-    auto indexes = schedule.indexes();
-//    int row = 0;
+    // угол расписания
+    painter.drawRect(x, y, scheduleHeaderSize, scheduleHeaderSize);
 
+    // столбец дней недели
     for (int i = 0; i < ROW_COUNT; ++i) {
-        for (int j = 0; j < COLUMN_COUNT; ++j) {
-            if (i == 0 && j == 0) {
-                // пустая угловая ячейка
-                painter.drawRect(x, y, scheduleHeaderSize, scheduleHeaderSize);
-
-            } else if (i == 0) {
-                // строка с временм
-                drawInRectText(painter,
-                               scheduleHeaderSize + x + columnStepSize * (j - 1), y,
-                               columnStepSize, scheduleHeaderSize,
-                               Time_::timeList()[j - 1], true, Qt::AlignCenter, 10);
-
-
-            } else if (j == 0) {
-                // столбец дней недели
-                drawRotateText(painter,
-                               x, scheduleHeaderSize + y + rowStepSize * (i - 1),
-                               scheduleHeaderSize, rowStepSize,
-                               DateUtils::dayOfWeekList()[i - 1], true, Qt::AlignCenter, 10);
-
-            } else {
-                // ячейки с парами
-//                int subRowCount = indexes[i - 1];
-//                int subRowSize = rowStepSize / subRowCount;
-//                for (int k = 0; k < subRowCount; ++k) {
-//                    auto cell = schedule.pairsTextByIndex(row + k, j - 1);
-//                    drawInRectText(painter,
-//                                   scheduleHeaderSize + x + columnStepSize * (j - 1),
-//                                   scheduleHeaderSize + y + rowStepSize * (i - 1) + subRowSize * k,
-//                                   columnStepSize * cell.columnSpan,
-//                                   subRowSize * cell.rowSpan, cell.text, true);
-//                }
-            }
-        }
-//        if (i >= 1) {
-//            row += indexes[i - 1];
-//        }
+        drawRotateText(painter,
+                       x, scheduleHeaderSize + y + rowStepSize * i,
+                       scheduleHeaderSize, rowStepSize,
+                       DateUtils::dayOfWeekList()[i], true, Qt::AlignCenter, 10);
     }
 
+    // строка с временм
+    for (int j = 0; j < COLUMN_COUNT; ++j) {
+        drawInRectText(painter,
+                       scheduleHeaderSize + x + columnStepSize * j, y,
+                       columnStepSize, scheduleHeaderSize,
+                       Time_::timeList()[j], true, Qt::AlignCenter, 10);
+    }
+
+    // ячейки с парами
+    const auto indexes = schedule_.indexes();
     const auto days = DateUtils::list();
     for (int i = 0; i < days.size(); ++i) {
         int subRowCount = indexes[i];
         int subRowSize = rowStepSize / subRowCount;
-        auto pairs = schedule.pairsForDrawByDay(days[i]);
+        auto pairs = schedule_.pairsForDrawingByDay(days[i]);
         for (const auto& pair : pairs) {
             drawInRectText(painter,
                            scheduleHeaderSize + x + columnStepSize * pair.column,
                            scheduleHeaderSize + y + rowStepSize * i + subRowSize * pair.row,
                            columnStepSize * pair.cell.columnSpan,
-                           subRowSize * pair.cell.rowSpan, pair.cell.text,
+                           subRowSize * pair.cell.rowSpan,
+                           pair.cell.text,
                            true,
                            Qt::AlignTop | Qt::AlignLeft | Qt::TextWordWrap,
                            30);
@@ -194,4 +178,24 @@ void Exporter::drawInColoredRectText(QPainter &painter, int x, int y, int width,
     painter.drawRect(x, y, width, height);
     painter.restore();
     drawInRectText(painter, x, y, width, height, text, flags);
+}
+
+void Exporter::setColorSubgroupB(const QColor &colorSubgroupB)
+{
+    colorSubgroupB_ = colorSubgroupB;
+}
+
+void Exporter::setColorSubgroupA(const QColor &colorSubgroupA)
+{
+    colorSubgroupA_ = colorSubgroupA;
+}
+
+void Exporter::setEndDate(const QDate &endDate)
+{
+    endDate_ = endDate;
+}
+
+void Exporter::setStartDate(const QDate &startDate)
+{
+    startDate_ = startDate;
 }

@@ -25,10 +25,20 @@ public:
     Exporter();
 
     /**
+     * @brief setSchedule
+     * @param schedulePath
+     */
+    void setSchedule(const QString &schedulePath);
+    /**
      * @brief runExport
      * @param printer
      */
     void runExport(QPrinter &printer);
+
+    void setStartDate(const QDate &startDate);
+    void setEndDate(const QDate &endDate);
+    void setColorSubgroupA(const QColor &colorSubgroupA);
+    void setColorSubgroupB(const QColor &colorSubgroupB);
 
 protected:
     /**
@@ -101,6 +111,12 @@ protected:
                                const QString& text, const QColor &color,
                                int flags = Qt::AlignTop | Qt::AlignLeft | Qt::TextWordWrap);
 
+private:
+    Schedule schedule_;
+    QDate startDate_;
+    QDate endDate_;
+    QColor colorSubgroupA_;
+    QColor colorSubgroupB_;
 };
 
 

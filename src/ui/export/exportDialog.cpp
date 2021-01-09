@@ -40,8 +40,14 @@ ExportDialog::ExportDialog(QWidget *parent) :
     printer.setPageOrientation(QPageLayout::Landscape);
     printer.setOutputFileName("test.pdf");
 
-    Exporter exporter;
-    exporter.runExport(printer);
+    try {
+        Exporter exporter;
+        exporter.setSchedule("ИДБ-17-09.json");
+        exporter.runExport(printer);
+    }  catch (std::exception &e) {
+        qDebug() << e.what();
+    }
+
 }
 
 ExportDialog::~ExportDialog()
