@@ -52,6 +52,11 @@ bool DateSingle::contains(const DateItem* item) const
     throw std::invalid_argument("Can't compare dates");
 }
 
+bool DateSingle::intersect(const QDate &startDate, const QDate &end) const
+{
+    return startDate <= date_ && date_ <= end;
+}
+
 bool DateSingle::before(const DateItem* item) const
 {
     auto dateRange = dynamic_cast<const DateRange*>(item);

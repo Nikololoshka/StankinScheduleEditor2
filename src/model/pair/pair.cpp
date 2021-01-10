@@ -197,6 +197,11 @@ bool Pair::intersect(const Pair& pair) const
     return false;
 }
 
+bool Pair::intersect(const QDate &startDate, const QDate &endDate) const
+{
+    return date_.intersect(startDate, endDate);
+}
+
 bool Pair::separate(const Pair& pair) const
 {
     return subgroup_.separate(pair.subgroup_);

@@ -102,6 +102,17 @@ bool DateRange::contains(const DateItem* item) const
     throw std::invalid_argument("Can't compare dates");
 }
 
+bool DateRange::intersect(const QDate &startDate, const QDate &endDate) const
+{
+    for (int i = 0; i < count(); ++i) {
+        const auto d = (*this)[i];
+        if (startDate <= d && d <= endDate) {
+            return true;
+        }
+    }
+    return false;
+}
+
 bool DateRange::before(const DateItem* item) const
 {
     auto dateRange = dynamic_cast<const DateRange*>(item);

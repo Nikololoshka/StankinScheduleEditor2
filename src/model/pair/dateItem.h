@@ -41,6 +41,12 @@ public:
      */
     virtual bool contains(const DateItem* item) const = 0;
     /**
+     * @brief Проверяет находиться ли дата в заданном промежутке дат.
+     * @param startDate начало промежутка.
+     * @param endDate конец промежутка.
+     */
+    virtual bool intersect(const QDate &startDate, const QDate &end) const = 0;
+    /**
      * @brief Определяет, идет ли по порядку дата раньше другой.
      * @param item другая дата.
      */

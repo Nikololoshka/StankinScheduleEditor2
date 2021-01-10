@@ -35,6 +35,8 @@ public:
      */
     void remove(const Pair& pair);
 
+    Schedule slice(const QDate &startDate, const QDate &endDate) const;
+
     /**
      * @brief Возвращает список индексов (строк) расписания по дням.
      *

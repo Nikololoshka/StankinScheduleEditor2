@@ -36,7 +36,7 @@ void ScheduleDay::remove(const Pair& pair)
     reallocate();
 }
 
-int ScheduleDay::size() const
+size_t ScheduleDay::size() const
 {
     return pairs_.size();
 }
@@ -181,7 +181,8 @@ QVector<ScheduleDrawingCell> ScheduleDay::pairsForDrawing() const
     for (int i = 0; i < cells.size(); ++i) {
         for (int j = 0; j < cells[i].size(); ++j) {
             auto currentCell = cells[i][j];
-            if (!currentCell.isEmpty() && std::all_of(tests.begin(), tests.end(), [currentCell](Temp &t) { return t.c != currentCell; })) {
+            if (!currentCell.isEmpty() && std::all_of(tests.begin(), tests.end(),
+                                                      [currentCell](Temp &t) { return t.c != currentCell; })) {
                 auto cell = fromCell(currentCell);
                 int duration = cell.front().time().duration();
                 tests.emplace_back(currentCell, 1, duration, i, j);
@@ -232,7 +233,7 @@ QVector<ScheduleDrawingCell> ScheduleDay::pairsForDrawing() const
         }
     }
 
-    qDebug() << "======================";
+//    qDebug() << "======================";
     // добавление пустых ячеек
     unsigned int index = index_;
     for (int i = 0; i < cells.size(); ++i) {
@@ -271,7 +272,7 @@ QVector<ScheduleDrawingCell> ScheduleDay::pairsForDrawing() const
                 }
             }
         }
-        qDebug() << cells[i];
+//        qDebug() << cells[i];
     }
 
     QVector<ScheduleDrawingCell> temps;
@@ -324,6 +325,11 @@ QVector<ScheduleDrawingCell> ScheduleDay::pairsForDrawing() const
 
 //    return temps + empties;
     return temps;
+}
+
+const Pair &ScheduleDay::operator[](size_t index) const
+{
+    return pairs_[index].pair;
 }
 
 void ScheduleDay::isAddCheck(const Pair& pair) const

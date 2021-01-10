@@ -91,16 +91,16 @@
            <widget class="QFontComboBox" name="fontComboBox"/>
           </item>
           <item row="1" column="0">
-           <widget class="QLabel" name="encodingLabel">
+           <widget class="QLabel" name="scheduleNameLabel">
             <property name="text">
-             <string>Кодировка</string>
+             <string>Название</string>
             </property>
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QComboBox" name="encodingComboBox"/>
+           <widget class="QComboBox" name="scheduleNameComboBox"/>
           </item>
-          <item row="3" column="0" colspan="2">
+          <item row="2" column="0" colspan="2">
            <widget class="QCheckBox" name="showDateCheckBox">
             <property name="text">
              <string>Отображать дату на расписании</string>
@@ -109,16 +109,6 @@
              <bool>true</bool>
             </property>
            </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="scheduleNameLabel">
-            <property name="text">
-             <string>Название</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QComboBox" name="scheduleNameComboBox"/>
           </item>
          </layout>
         </widget>

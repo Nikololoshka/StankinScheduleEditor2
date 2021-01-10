@@ -1,5 +1,8 @@
 #include "schedule.h"
 
+#include "dayOfWeek.h"
+#include "dateSingle.h"
+
 Schedule::Schedule()
 {
     for (auto& day : DateUtils::list()) {
@@ -37,6 +40,21 @@ void Schedule::addPair(const Pair& pair)
 void Schedule::remove(const Pair& pair)
 {
     days_[pair.dayOfWeek()].remove(pair);
+}
+
+Schedule Schedule::slice(const QDate &startDate, const QDate &endDate) const
+{
+    Schedule schedule;
+
+    for (auto& day : days_) {
+        for (size_t i = 0; i < day.size(); ++i) {
+            const auto& pair = day[i];
+            if (pair.intersect(startDate, endDate)) {
+                schedule.addPair(pair);
+            }
+        }
+    }
+    return schedule;
 }
 
 QVector<int> Schedule::indexes() const

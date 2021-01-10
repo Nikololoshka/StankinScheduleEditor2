@@ -46,6 +46,7 @@ public:
     QJsonObject toJson() const override;
     DayOfWeek dayOfWeek() const override;
     bool contains(const DateItem* item) const override;
+    bool intersect(const QDate &startDate, const QDate &endDate) const override;
     bool before(const DateItem* item) const override;
     std::unique_ptr<DateItem> copy() const override;
 

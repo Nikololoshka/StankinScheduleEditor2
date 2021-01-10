@@ -25,6 +25,24 @@ public:
     bool stopExport() const;
     void setStopExport(bool stopExport);
 
+    QFont font() const;
+    void setFont(const QFont &font);
+
+    bool showDate() const;
+    void setShowDate(bool showDate);
+
+    QDate startDate() const;
+    void setStartDate(const QDate &startDate);
+
+    QDate endDate() const;
+    void setEndDate(const QDate &endDate);
+
+    QColor colorSubgroupA() const;
+    void setColorSubgroupA(const QColor &colorSubgroupA);
+
+    QColor colorSubgroupB() const;
+    void setColorSubgroupB(const QColor &colorSubgroupB);
+
 public slots:
     void onCancelWork();
 
@@ -40,6 +58,13 @@ private:
     int runningWorkerCount_;
 
     QStringList schedules_;
+    QFont font_;
+    bool showDate_;
+
+    QDate startDate_;
+    QDate endDate_;
+    QColor colorSubgroupA_;
+    QColor colorSubgroupB_;
 
     std::mutex mutex_;
 };

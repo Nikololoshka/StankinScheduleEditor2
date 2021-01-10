@@ -1,10 +1,9 @@
 #ifndef EXPORTER_H
 #define EXPORTER_H
 
-#include "stdafx.h"
 #include "schedule.h"
+#include "stdafx.h"
 #include <QPrinter>
-
 
 /**
  * @brief The ExportType enum
@@ -15,109 +14,134 @@ enum class ExportType {
 };
 
 /**
- * @brief The Exporter class
+ * @brief Экспертер расписания по умолчанию (полного).
  */
 class Exporter {
+
 public:
     /**
-     * @brief Exporter
+     * @brief Конструктор по умолчанию экспортера.
      */
     Exporter();
+    virtual ~Exporter() = default;
 
     /**
-     * @brief setSchedule
-     * @param schedulePath
+     * @brief Устанавливает путь к расписанию, которое надо будет экспортировать.
+     * @param schedulePath путь до расписания.
      */
-    void setSchedule(const QString &schedulePath);
+    void setSchedule(const QString& schedulePath);
     /**
-     * @brief runExport
-     * @param printer
+     * @brief Запускает процесс экспорта.
+     * @param printer устройства вывода печати расписания.
      */
-    void runExport(QPrinter &printer);
+    void runExport(QPrinter& printer);
 
-    void setStartDate(const QDate &startDate);
-    void setEndDate(const QDate &endDate);
-    void setColorSubgroupA(const QColor &colorSubgroupA);
-    void setColorSubgroupB(const QColor &colorSubgroupB);
+    /**
+     * @brief Устанавливает шрифт для печати.
+     * @param font шрифт печати.
+     */
+    void setFont(const QFont& font);
+    /**
+     * @brief Устанавливает, нужно ли отображать в названии расписания его дату (начала и конца).
+     * @param showDate показывать ли дату.
+     */
+    void setShowDate(bool showDate);
 
 protected:
     /**
-     * @brief runExport
-     * @param printer
-     * @param painter
+     * @brief Запускает процесс экспорта.
+     * @param printer устройства вывода печати расписания.
+     * @param painter объект для рисования.
      */
-    void runExport(QPrinter &printer, QPainter &painter);
+    virtual void runExport(QPrinter& printer, QPainter& painter);
 
     /**
-     * @brief drawTitleText
-     * @param painter
-     * @param x
-     * @param y
-     * @param width
-     * @param text
-     * @param flags
-     * @return
+     * @brief Отрисовывает название расписания.
+     * @param painter объект для рисования.
+     * @param x координата по оси асцисс.
+     * @param y координата по оси ординат.
+     * @param width ширина области.
+     * @param text название расписания.
+     * @param flags флаги позиционирования названия внутри области.
+     * @return высота отрисованного названия расписания.
+    */
+    virtual int drawTitleText(QPainter& painter, int x, int y, int width, const QString& text,
+        int flags = Qt::AlignCenter | Qt::AlignHCenter);
+    /**
+     * @brief Отрисовавает расписание.
+     * @param printer устройства вывода печати расписания.
+     * @param painter объект для рисования.
+     * @param x координата по оси асцисс.
+     * @param y координата по оси ординат.
+     * @param width ширина расписания.
+     * @param height высота расписания.
+    */
+    virtual void drawSchedule(QPrinter& printer, QPainter& painter, int x, int y, int width, int height);
+    /**
+     * @brief Отрисовавает непосредственно расписание.
+     * @param painter объект для рисования.
+     * @param schedule расписание.
+     * @param x координата по оси асцисс.
+     * @param y координата по оси ординат.
+     * @param width ширина области.
+     * @param height высота области.
      */
-    int drawTitleText(QPainter &painter, int x, int y, int width, const QString &text,
-                       int flags = Qt::AlignCenter | Qt::AlignHCenter);
-    void drawScheduleContent(QPainter &painter, int x, int y, int width, int height);
+    virtual void drawScheduleContent(QPainter& painter, Schedule& schedule, int x, int y, int width, int height);
 
     /**
-     * @brief adaptFontSize
-     * @param painter
-     * @param boundRect
-     * @param text
-     * @param flags
+     * @brief Подбирает размер шрифта для отрисовки в области.
+     * @param painter объект для рисования.
+     * @param x координата по оси асцисс.
+     * @param y координата по оси ординат.
+     * @param width ширина области.
+     * @param height высота области.
+     * @param text текст.
+     * @param flags флаги позиционирования текста внутри области.
      */
-    void adaptFontSize(QPainter &painter, int x, int y, int width, int height, const QString &text,
-                       int flags = Qt::AlignTop | Qt::AlignLeft | Qt::TextWordWrap);
-    /**
-     * @brief drawRotateText
-     * @param painter
-     * @param x
-     * @param y
-     * @param width
-     * @param height
-     * @param text
-     * @param flags
-     * @param angle
-     */
-    void drawRotateText(QPainter &painter, int x, int y, int width, int height, const QString& text,
-                        bool boundRect = false, int flags = Qt::AlignCenter, int padding = 0);
-    /**
-     * @brief drawInRectText
-     * @param painter
-     * @param x
-     * @param y
-     * @param width
-     * @param height
-     * @param text
-     * @param flags
-     */
-    void drawInRectText(QPainter &painter, int x, int y, int width, int height, const QString& text,
-                        bool boundRect = false, int flags = Qt::AlignTop | Qt::AlignLeft | Qt::TextWordWrap,
-                        int padding = 0);
-    /**
-     * @brief drawInColoredRectText
-     * @param painter
-     * @param x
-     * @param y
-     * @param width
-     * @param height
-     * @param text
-     * @param flags
-     */
-    void drawInColoredRectText(QPainter &painter, int x, int y, int width, int height,
-                               const QString& text, const QColor &color,
-                               int flags = Qt::AlignTop | Qt::AlignLeft | Qt::TextWordWrap);
+    virtual void adaptFontSize(QPainter& painter, int x, int y, int width, int height, const QString& text,
+        int flags = Qt::AlignTop | Qt::AlignLeft | Qt::TextWordWrap);
 
-private:
+    /**
+     * @brief Отрисовавает повернутый текст на 90 градусов против часов стрелки.
+     * @param painter объект для рисования.
+     * @param x координата по оси асцисс.
+     * @param y координата по оси ординат.
+     * @param width ширина области.
+     * @param height высота области.
+     * @param text текст.
+     * @param boundRect нужно ли отрисовывать область, где рисуется текст.
+     * @param flags флаги позиционирования текста внутри области.
+     * @param padding внутренний отступ текста от области.
+     */
+    virtual void drawRotateText(QPainter& painter, int x, int y, int width, int height, const QString& text,
+        bool boundRect = false, int flags = Qt::AlignCenter, int padding = 0);
+    /**
+     * @brief Отрисовавает текст внутри заданной области.
+     * @param painter объект для рисования.
+     * @param x координата по оси асцисс.
+     * @param y координата по оси ординат.
+     * @param width ширина области.
+     * @param height высота области.
+     * @param text текст.
+     * @param boundRect нужно ли отрисовывать область, где рисуется текст.
+     * @param flags флаги позиционирования текста внутри области.
+     * @param padding внутренний отступ текста от области.
+     */
+    virtual void drawInRectText(QPainter& painter, int x, int y, int width, int height, const QString& text,
+        bool boundRect = false, int flags = Qt::AlignTop | Qt::AlignLeft | Qt::TextWordWrap,
+        int padding = 0);
+
+    virtual QString dateToString(const QDate& date) const;
+
+protected:
+    //! расписание для экспорта
     Schedule schedule_;
-    QDate startDate_;
-    QDate endDate_;
-    QColor colorSubgroupA_;
-    QColor colorSubgroupB_;
+    //! название расписания
+    QString scheduleName_;
+    // шрифт для печати
+    QFont font_;
+    // показывать дату расписания
+    bool showDate_;
 };
-
 
 #endif // EXPORTER_H

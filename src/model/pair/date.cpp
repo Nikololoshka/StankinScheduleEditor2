@@ -143,6 +143,16 @@ bool Date::contains(const Date& date) const
     return false;
 }
 
+bool Date::intersect(const QDate &startDate, const QDate &endDate) const
+{
+    for (const auto& date : dates_) {
+        if (date->intersect(startDate, endDate)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 bool Date::before(const Date& date) const
 {
     for (const auto& d : dates_) {

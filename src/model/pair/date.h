@@ -78,6 +78,13 @@ public:
     bool contains(const Date& date) const;
 
     /**
+     * @brief Проверяет находиться ли дата в заданном промежутке дат.
+     * @param startDate начало промежутка.
+     * @param endDate конец промежутка.
+     */
+    bool intersect(const QDate &startDate, const QDate &endDate) const;
+
+    /**
      * @brief Определяет, идет ли по порядку одни даты раньще другой.
      */
     bool before(const Date& date) const;

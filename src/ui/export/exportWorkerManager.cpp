@@ -76,3 +76,63 @@ void ExportWorkerManager::onCancelWork()
     stopExport_ = true;
 }
 
+QColor ExportWorkerManager::colorSubgroupB() const
+{
+    return colorSubgroupB_;
+}
+
+void ExportWorkerManager::setColorSubgroupB(const QColor &colorSubgroupB)
+{
+    colorSubgroupB_ = colorSubgroupB;
+}
+
+QColor ExportWorkerManager::colorSubgroupA() const
+{
+    return colorSubgroupA_;
+}
+
+void ExportWorkerManager::setColorSubgroupA(const QColor &colorSubgroupA)
+{
+    colorSubgroupA_ = colorSubgroupA;
+}
+
+QDate ExportWorkerManager::endDate() const
+{
+    return endDate_;
+}
+
+void ExportWorkerManager::setEndDate(const QDate &endDate)
+{
+    endDate_ = endDate;
+}
+
+QDate ExportWorkerManager::startDate() const
+{
+    return startDate_;
+}
+
+void ExportWorkerManager::setStartDate(const QDate &startDate)
+{
+    startDate_ = startDate;
+}
+
+bool ExportWorkerManager::showDate() const
+{
+    return showDate_;
+}
+
+void ExportWorkerManager::setShowDate(bool showDate)
+{
+    showDate_ = showDate;
+}
+
+QFont ExportWorkerManager::font() const
+{
+    return font_;
+}
+
+void ExportWorkerManager::setFont(const QFont &font)
+{
+    font_ = font;
+}
+

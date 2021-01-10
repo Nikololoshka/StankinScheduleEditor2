@@ -7,18 +7,22 @@
 
 Exporter::Exporter()
 {
-
+    font_ = QApplication::font();
+    showDate_ = true;
 }
+
 
 void Exporter::setSchedule(const QString &schedulePath)
 {
     QFile file(schedulePath);
     if (!file.open(QIODevice::ReadOnly)) {
-        qDebug() << "Cannot open file!";
+        qDebug() << "Cannot open file!" << schedulePath;
+        throw std::logic_error("Cannot open file!");
     }
 
     QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
     schedule_ = Schedule(doc);
+    scheduleName_ = QFileInfo(schedulePath).baseName();
 }
 
 void Exporter::runExport(QPrinter &printer)
@@ -34,16 +38,14 @@ void Exporter::runExport(QPrinter &printer)
 
 void Exporter::runExport(QPrinter &printer, QPainter &painter)
 {
-    // printer.setPageMargins(QMarginsF(0, 0, 0, 0), QPageLayout::Millimeter);
+//    qDebug() << printer.pageLayout().margins(QPageLayout::Millimeter);
+//    qDebug() << printer.pageLayout().minimumMargins();
 
-    qDebug() << printer.pageLayout().margins(QPageLayout::Millimeter);
-    qDebug() << printer.pageLayout().minimumMargins();
-
-    qDebug() << printer.pageLayout().fullRect();
-    qDebug() << printer.pageLayout().paintRect(QPageLayout::Millimeter);
-    qDebug() << printer.pageLayout().paintRectPixels(printer.resolution());
-    qDebug() << printer.pageLayout().paintRectPoints();
-    qDebug() << painter.window();
+//    qDebug() << printer.pageLayout().fullRect();
+//    qDebug() << printer.pageLayout().paintRect(QPageLayout::Millimeter);
+//    qDebug() << printer.pageLayout().paintRectPixels(printer.resolution());
+//    qDebug() << printer.pageLayout().paintRectPoints();
+//    qDebug() << painter.window();
 
     QRectF paintRect = printer.pageLayout().paintRectPixels(printer.resolution());
     int pageX = qRound(paintRect.x());
@@ -55,12 +57,7 @@ void Exporter::runExport(QPrinter &printer, QPainter &painter)
     pen.setWidth(2);
     painter.setPen(pen);
 
-    // отрисовка названия расписания
-    QString title = "Schedule name [date - date]";
-    int titleHeight = drawTitleText(painter, pageX, pageY, pageWidth, title);
-
-    // отрисовка таблицы расписания
-    drawScheduleContent(painter, pageX, pageY + titleHeight, pageWidth, pageHeight - titleHeight);
+    drawSchedule(printer, painter, pageX, pageY, pageWidth, pageHeight);
 }
 
 int Exporter::drawTitleText(QPainter &painter, int x, int y, int width, const QString &text, int flags)
@@ -75,14 +72,26 @@ int Exporter::drawTitleText(QPainter &painter, int x, int y, int width, const QS
 
     int titleHeight = painter.fontMetrics().height();
     drawInRectText(painter, x, y, width, titleHeight, text, false, flags);
-    titleHeight += painter.fontMetrics().descent();
+    titleHeight += titleHeight / 2;
 
     painter.restore();
 
     return titleHeight;
 }
 
-void Exporter::drawScheduleContent(QPainter &painter, int x, int y, int width, int height)
+void Exporter::drawSchedule(QPrinter &printer, QPainter &painter, int x, int y, int width, int height)
+{
+    Q_UNUSED(printer)
+
+    // отрисовка названия расписания
+    QString title = scheduleName_;
+    int titleHeight = drawTitleText(painter, x, y, width, title);
+
+    // отрисовка таблицы расписания
+    drawScheduleContent(painter, schedule_, x, y + titleHeight, width, height - titleHeight);
+}
+
+void Exporter::drawScheduleContent(QPainter &painter, Schedule &schedule, int x, int y, int width, int height)
 {
     const int ROW_COUNT = 6;
     const int COLUMN_COUNT = 8;
@@ -112,12 +121,12 @@ void Exporter::drawScheduleContent(QPainter &painter, int x, int y, int width, i
     }
 
     // ячейки с парами
-    const auto indexes = schedule_.indexes();
+    const auto indexes = schedule.indexes();
     const auto days = DateUtils::list();
     for (int i = 0; i < days.size(); ++i) {
         int subRowCount = indexes[i];
         int subRowSize = rowStepSize / subRowCount;
-        auto pairs = schedule_.pairsForDrawingByDay(days[i]);
+        auto pairs = schedule.pairsForDrawingByDay(days[i]);
         for (const auto& pair : pairs) {
             drawInRectText(painter,
                            scheduleHeaderSize + x + columnStepSize * pair.column,
@@ -170,32 +179,17 @@ void Exporter::drawInRectText(QPainter &painter, int x, int y, int width, int he
     painter.restore();
 }
 
-void Exporter::drawInColoredRectText(QPainter &painter, int x, int y, int width, int height,
-                                     const QString &text, const QColor &color, int flags)
+QString Exporter::dateToString(const QDate &date) const
 {
-    painter.save();
-    painter.setBrush(color);
-    painter.drawRect(x, y, width, height);
-    painter.restore();
-    drawInRectText(painter, x, y, width, height, text, flags);
+    return date.toString("dd.MM.yyyy");
 }
 
-void Exporter::setColorSubgroupB(const QColor &colorSubgroupB)
+void Exporter::setShowDate(bool showDate)
 {
-    colorSubgroupB_ = colorSubgroupB;
+    showDate_ = showDate;
 }
 
-void Exporter::setColorSubgroupA(const QColor &colorSubgroupA)
+void Exporter::setFont(const QFont &font)
 {
-    colorSubgroupA_ = colorSubgroupA;
-}
-
-void Exporter::setEndDate(const QDate &endDate)
-{
-    endDate_ = endDate;
-}
-
-void Exporter::setStartDate(const QDate &startDate)
-{
-    startDate_ = startDate;
+    font_ = font;
 }

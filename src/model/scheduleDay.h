@@ -75,7 +75,7 @@ public:
     /**
      * @brief Возвращает количество пар в дне.
      */
-    int size() const;
+    size_t size() const;
     /**
      * @brief Возвращает количество визуальных строк.
      */
@@ -117,6 +117,8 @@ public:
     std::vector<Pair> fromCell(const Cell& cell) const;
 
     QVector<ScheduleDrawingCell> pairsForDrawing() const;
+
+    const Pair& operator[](size_t index) const;
 
 private:
     /**

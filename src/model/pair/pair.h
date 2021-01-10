@@ -140,6 +140,13 @@ public:
      */
     bool intersect(const Pair& pair) const;
     /**
+     * @brief Проверяет находиться ли пара в заданном промежутке дат.
+     * @param startDate начало промежутка.
+     * @param endDate конец промежутка.
+     */
+    bool intersect(const QDate &startDate, const QDate &endDate) const;
+
+    /**
      * @brief Определяет, возможно ли одновременное
      *        существование пар с установленными подгруппами.
      */

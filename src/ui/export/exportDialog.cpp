@@ -2,7 +2,6 @@
 #include "ui_exportDialog.h"
 
 #include "exportWorker.h"
-#include "exporter.h"
 #include <QProgressDialog>
 
 
@@ -33,21 +32,6 @@ ExportDialog::ExportDialog(QWidget *parent) :
             this, &ExportDialog::onAddFolderClicked);
     connect(ui->exportButton, &QPushButton::clicked,
             this, &ExportDialog::onExportButtonClicked);
-
-    // test section
-    QPrinter printer(QPrinter::HighResolution);
-    printer.setOutputFormat(QPrinter::PdfFormat);
-    printer.setPageOrientation(QPageLayout::Landscape);
-    printer.setOutputFileName("test.pdf");
-
-    try {
-        Exporter exporter;
-        exporter.setSchedule("ИДБ-17-09.json");
-        exporter.runExport(printer);
-    }  catch (std::exception &e) {
-        qDebug() << e.what();
-    }
-
 }
 
 ExportDialog::~ExportDialog()
@@ -100,6 +84,12 @@ void ExportDialog::onExportButtonClicked()
         paths << ui->scheduleListWidget->item(i)->data(PATH_ROLE).toString();
     }
     workManager_->setSchedules(paths);
+    workManager_->setFont(ui->fontComboBox->font());
+    workManager_->setShowDate(ui->showDateCheckBox->isChecked());
+    workManager_->setStartDate(ui->dateStart->date());
+    workManager_->setEndDate(ui->dateEnd->date());
+    workManager_->setColorSubgroupA(ui->subgroupAComboBox->currentData().value<QColor>());
+    workManager_->setColorSubgroupB(ui->subgroupBComboBox->currentData().value<QColor>());
 
     for (int i = 0; i < workerPool_.maxThreadCount(); ++i) {
         ExportWorker *worker = new ExportWorker(workManager_);
@@ -110,7 +100,7 @@ void ExportDialog::onExportButtonClicked()
     connect(workManager_.get(), &ExportWorkerManager::changedProgress,
             progressDialog, &QProgressDialog::setValue);
     connect(workManager_.get(), &ExportWorkerManager::workComplete,
-            progressDialog, &QProgressDialog::close);
+            progressDialog, &QProgressDialog::cancel);
     connect(progressDialog, &QProgressDialog::canceled,
             workManager_.get(), &ExportWorkerManager::onCancelWork);
 
@@ -158,9 +148,6 @@ void ExportDialog::initMainSetting()
 
 void ExportDialog::initPrintSetting()
 {
-    ui->encodingComboBox->addItems({
-       "UTF-8", "CP1251", "Latin-1"
-    });
     ui->scheduleNameComboBox->addItems({
        "Исходя из имени файла"
     });
