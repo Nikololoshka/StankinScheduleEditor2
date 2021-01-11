@@ -52,14 +52,49 @@ void WeeklyExporter::drawSchedule(QPrinter &printer, QPainter &painter, int x, i
     }
 }
 
+void WeeklyExporter::drawScheduleContentPairs(QPainter &painter, Schedule &schedule, int x, int y,
+                                              int rowStepSize, int columnStepSize, int scheduleHeaderSize)
+{
+    const auto indexes = schedule.indexes();
+    const auto days = DateUtils::list();
+    for (int i = 0; i < days.size(); ++i) {
+        int subRowCount = indexes[i];
+        int subRowSize = rowStepSize / subRowCount;
+        auto pairs = schedule.pairsForDrawingByDay(days[i]);
+        for (const auto& pair : pairs) {
+            QColor color;
+            if (pair.text.contains("(А)")) {
+                color = colorSubgroupA_;
+            } else if (pair.text.contains("(Б)")) {
+                color = colorSubgroupB_;
+            } else {
+                color = QColor(-1, -1, -1);
+            }
+
+            drawInColoredRectText(painter,
+                                  scheduleHeaderSize + x + columnStepSize * pair.column,
+                                  scheduleHeaderSize + y + rowStepSize * i + subRowSize * pair.row,
+                                  columnStepSize * pair.columnSpan,
+                                  subRowSize * pair.rowSpan,
+                                  pair.text,
+                                  color,
+                                  true,
+                                  Qt::AlignTop | Qt::AlignLeft | Qt::TextWordWrap,
+                                  30);
+        }
+    }
+}
+
 void WeeklyExporter::drawInColoredRectText(QPainter &painter, int x, int y, int width, int height,
                                            const QString &text, const QColor &color,
                                            bool boundRect, int flags, int padding)
 {
-    painter.save();
-    painter.setBrush(color);
-    painter.drawRect(x, y, width, height);
-    painter.restore();
+    if (color.isValid()) {
+        painter.save();
+        painter.setBrush(color);
+        painter.drawRect(x, y, width, height);
+        painter.restore();
+    }
     drawInRectText(painter, x, y, width, height, text, boundRect, flags, padding);
 }
 

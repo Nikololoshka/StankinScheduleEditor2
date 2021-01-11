@@ -121,6 +121,12 @@ void Exporter::drawScheduleContent(QPainter &painter, Schedule &schedule, int x,
     }
 
     // ячейки с парами
+    drawScheduleContentPairs(painter, schedule, x, y, rowStepSize, columnStepSize, scheduleHeaderSize);
+}
+
+void Exporter::drawScheduleContentPairs(QPainter &painter, Schedule &schedule, int x, int y,
+                                        int rowStepSize, int columnStepSize, int scheduleHeaderSize)
+{
     const auto indexes = schedule.indexes();
     const auto days = DateUtils::list();
     for (int i = 0; i < days.size(); ++i) {
@@ -131,9 +137,9 @@ void Exporter::drawScheduleContent(QPainter &painter, Schedule &schedule, int x,
             drawInRectText(painter,
                            scheduleHeaderSize + x + columnStepSize * pair.column,
                            scheduleHeaderSize + y + rowStepSize * i + subRowSize * pair.row,
-                           columnStepSize * pair.cell.columnSpan,
-                           subRowSize * pair.cell.rowSpan,
-                           pair.cell.text,
+                           columnStepSize * pair.columnSpan,
+                           subRowSize * pair.rowSpan,
+                           pair.text,
                            true,
                            Qt::AlignTop | Qt::AlignLeft | Qt::TextWordWrap,
                            30);
@@ -174,8 +180,10 @@ void Exporter::drawInRectText(QPainter &painter, int x, int y, int width, int he
     if (boundRect) {
         painter.drawRect(x, y, width, height);
     }
-    adaptFontSize(painter, x + padding, y + padding, width - 2 * padding, height - 2 * padding, text, flags);
-    painter.drawText(x + padding, y + padding, width - 2 * padding, height - 2 * padding, flags, text);
+    if (!text.isEmpty()) {
+        adaptFontSize(painter, x + padding, y + padding, width - 2 * padding, height - 2 * padding, text, flags);
+        painter.drawText(x + padding, y + padding, width - 2 * padding, height - 2 * padding, flags, text);
+    }
     painter.restore();
 }
 

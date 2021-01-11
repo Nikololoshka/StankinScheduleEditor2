@@ -44,10 +44,20 @@ struct ScheduleIndex {
     QString toString() const;
 };
 
+/**
+ * @brief Ячейка для отрисовки.
+ */
 struct ScheduleDrawingCell {
+    //! номер строки.
     int row;
+    //! номер столбца.
     int column;
-    ScheduleCell cell;
+    //! отображаемый текст.
+    QString text;
+    //! занимаемое количество строк.
+    int rowSpan;
+    //! занимаемое количество столбцов.
+    int columnSpan;
 };
 
 /**

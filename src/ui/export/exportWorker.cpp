@@ -13,6 +13,9 @@ ExportWorker::ExportWorker(const QSharedPointer<ExportWorkerManager> &manager)
 void ExportWorker::run()
 {
     WeeklyExporter exporter;
+    exporter.setColorSubgroupA(manager_->colorSubgroupA());
+    exporter.setColorSubgroupB(manager_->colorSubgroupB());
+
     try {
         while (true) {
             const QString path = manager_->nextSchedulePath();

@@ -105,7 +105,7 @@ void ExportDialog::onExportButtonClicked()
             workManager_.get(), &ExportWorkerManager::onCancelWork);
 
     enableUI(false);
-    progressDialog->exec();
+    progressDialog->show();
     enableUI(true);
 }
 

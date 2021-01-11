@@ -18,6 +18,8 @@ public:
 
 protected:
     void drawSchedule(QPrinter &printer, QPainter &painter, int x, int y, int width, int height) override;
+    void drawScheduleContentPairs(QPainter &painter, Schedule &schedule, int x, int y,
+                                  int rowStepSize, int columnStepSize, int scheduleHeaderSize) override;
 
 private:
 

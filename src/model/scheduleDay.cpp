@@ -285,11 +285,9 @@ QVector<ScheduleDrawingCell> ScheduleDay::pairsForDrawing() const
         temps.append({
             t.row,
             t.column,
-            {
-                texts.join("\n"),
-                t.rowSpan,
-                t.columnSpan
-            }
+            texts.join("\n"),
+            t.rowSpan,
+            t.columnSpan
         });
     }
 

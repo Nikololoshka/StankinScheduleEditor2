@@ -87,6 +87,18 @@ protected:
      * @param height высота области.
      */
     virtual void drawScheduleContent(QPainter& painter, Schedule& schedule, int x, int y, int width, int height);
+    /**
+     * @brief Отрисовавает ячейки с парами в расписании.
+     * @param painter объект для рисования.
+     * @param schedule расписание.
+     * @param x координата по оси асцисс.
+     * @param y координата по оси ординат.
+     * @param rowStepSize размер строки.
+     * @param columnStepSize размер столбца.
+     * @param scheduleHeaderSize размер заголовка таблицы (дни недели или время пар).
+     */
+    virtual void drawScheduleContentPairs(QPainter &painter, Schedule &schedule,
+                                          int x, int y, int rowStepSize, int columnStepSize, int scheduleHeaderSize);
 
     /**
      * @brief Подбирает размер шрифта для отрисовки в области.
