@@ -147,7 +147,7 @@ void ImportDialog::onSetsButtonClicked()
 
 bool ImportDialog::isWorkPooplerAndTesseract()
 {
-    auto messagePoopler = PooplerWrapper(workerManager_->pooplerPath(), workerManager_->dpi())
+    auto messagePoopler = PopplerWrapper(0, workerManager_->dpi())
             .checkPoopler();
     if (!messagePoopler.isEmpty()) {
         QMessageBox::critical(this, "Ошибка Poopler", messagePoopler);

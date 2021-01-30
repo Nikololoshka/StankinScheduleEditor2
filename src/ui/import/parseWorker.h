@@ -6,7 +6,7 @@
 
 #include "parseFileException.h"
 #include "parseWorkerManager.h"
-#include "pooplerWrapper.h"
+#include "popplerWrapper.h"
 #include "tesseractWrapper.h"
 
 /**
@@ -69,7 +69,7 @@ private:
      * @param tesseract интерфейс для работы с tesseract.
     */
     void startParsing(const QString& pdfFilePath,
-        std::unique_ptr<PooplerWrapper>& poopler,
+        std::unique_ptr<PopplerWrapper>& poopler,
         std::unique_ptr<TesseractWrapper>& tesseract);
 
     /**

@@ -46,8 +46,7 @@ QString ParseWorker::patternCommon()
 
 void ParseWorker::run()
 {
-    auto poopler = make_unique<PooplerWrapper>(workerManager_->pooplerPath(),
-        workerManager_->dpi());
+    auto poopler = make_unique<PopplerWrapper>(this->id_, workerManager_->dpi());
     auto tesseract = make_unique<TesseractWrapper>();
 
     workerManager_->setWorkerStatus(id_, WorkerStatus::Running);
@@ -72,7 +71,7 @@ void ParseWorker::run()
 }
 
 void ParseWorker::startParsing(const QString& pdfFilePath,
-    std::unique_ptr<PooplerWrapper>& poopler,
+    std::unique_ptr<PopplerWrapper>& poopler,
     std::unique_ptr<TesseractWrapper>& tesseract)
 {
     QString imageFilePath = poopler->print(pdfFilePath);
@@ -150,6 +149,7 @@ void ParseWorker::startParsing(const QString& pdfFilePath,
 
     imwrite(imageFilePath.toStdString(), image);
 
+
     if (timeCells.size() != Time_::startTime().size()) {
         throw std::logic_error("No found time cells!");
     }
@@ -190,6 +190,7 @@ void ParseWorker::startParsing(const QString& pdfFilePath,
         schedule.addPair(pair);
     }
 
+    // сохранение расписания
     QFile file(pdfFilePath.left(pdfFilePath.size() - 3) + "json");
     if (file.open(QIODevice::WriteOnly)) {
         auto json = schedule.toJson();
@@ -197,6 +198,11 @@ void ParseWorker::startParsing(const QString& pdfFilePath,
         file.write(doc.toJson(QJsonDocument::Indented));
         file.close();
     }
+
+    // сохранение изображения
+    QString filename = QFileInfo(pdfFilePath).baseName();
+    QFile debugImage(imageFilePath);
+    debugImage.rename(filename + ".jpg");
 
     workerManager_->setProgressValue(id_, 100);
 }
@@ -397,7 +403,7 @@ Date ParseWorker::parseDates(const QString& datesMatch) const
 
 QDate ParseWorker::parseDate(const QString& dateString) const
 {
-    int year = QDate::currentDate().year();
+    int year = QDate::currentDate().year() - 2;
     return QDate::fromString(dateString.trimmed() + "." + QString::number(year),
         "dd.MM.yyyy");
 }

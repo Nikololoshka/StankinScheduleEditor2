@@ -3,10 +3,12 @@
 
 #include "stdafx.h"
 
+#include <poppler/cpp/poppler-page-renderer.h>
+
 /**
  * @brief Класс для работы с poopler (pdftoppm).
 */
-class PooplerWrapper
+class PopplerWrapper
 {
 public:
     /**
@@ -14,8 +16,7 @@ public:
      * @param program путь к внешней программе.
      * @param dpi значение DPI для конвертации.
     */
-    PooplerWrapper(const QString &program, int dpi);
-    ~PooplerWrapper();
+    PopplerWrapper(const int id, int dpi);
 
     /**
      * @brief Конвертирует PDF файл в JPEG файл
@@ -31,10 +32,10 @@ public:
     QString checkPoopler() const;
 
 public:
-    //! путь к внешней программе
-    QString program_;
-    //! процесс poopler'a
-    QProcess* poopler_;
+    //! название промежуточного изображения
+    QString name_;
+    //! объект для рендеринга pdf файла
+    poppler::page_renderer render_;
     //! значение DPI для конвертации
     int dpi_;
 };

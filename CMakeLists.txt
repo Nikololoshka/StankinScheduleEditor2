@@ -72,6 +72,7 @@ if(WIN32)
     find_package(Tesseract CONFIG REQUIRED)
 endif()
 
+
 # Configure files
 # ******************************************************************************
 configure_file(${ROOT_DIR}/cmake/meta.hpp.in ${BINARY_DIR}/meta.hpp)
@@ -136,6 +137,7 @@ endif()
 message(DEBUG "Paths:")
 message(DEBUG "${Tesseract_LIBS}")
 message(DEBUG "${Leptonica_LIBS}")
+message(DEBUG "${PoDoFo_LIBS}")
 
 # Link
 # *********************************************************************
@@ -145,6 +147,7 @@ target_link_libraries(${PROJECT_NAME}
     PRIVATE Qt5::Gui
     PRIVATE Qt5::PrintSupport 
     PRIVATE ${OpenCV_LIBS}
+    PRIVATE "D:/vcpkg/installed/x64-windows/lib/poppler-cpp.lib"
 )
 
 if(WIN32)
