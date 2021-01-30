@@ -139,6 +139,8 @@ message(DEBUG "${Tesseract_LIBS}")
 message(DEBUG "${Leptonica_LIBS}")
 message(DEBUG "${PoDoFo_LIBS}")
 
+set(Poppler_DIR "/home/nikolay/Dropbox/Programms/C++/Qt projects/StankinScheduleEditor2/build/libpoppler-cpp.a")
+
 # Link
 # *********************************************************************
 target_link_libraries(${PROJECT_NAME}
@@ -147,12 +149,13 @@ target_link_libraries(${PROJECT_NAME}
     PRIVATE Qt5::Gui
     PRIVATE Qt5::PrintSupport 
     PRIVATE ${OpenCV_LIBS}
-    PRIVATE "D:/vcpkg/installed/x64-windows/lib/poppler-cpp.lib"
+    PRIVATE poppler-cpp
 )
 
 if(WIN32)
     target_link_libraries(${PROJECT_NAME}
         PRIVATE libtesseract
+        PRIVATE "D:/vcpkg/installed/x64-windows/lib/poppler-cpp.lib"
     )
 else()
     target_link_libraries(${PROJECT_NAME}

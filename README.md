@@ -13,8 +13,7 @@
 - [ ] Генерация расписания (еженедельного и общего).
 
 ## Установка
-Для сборки необходим компилятор, поддерживаем стандарт C++ 17, библиотека Qt5 (Core, Widgets и Gui), TesseractAPI и OpenCV4. В качестве внешней зависимости должен быть установлен poopler (требуется pdftoppm).
-> В будущем возможен переход на PooplerAPI, вместо внешней зависимости.
+Для сборки необходим компилятор, поддерживаем стандарт C++ 17, библиотека Qt5 (Core, Widgets и Gui), TesseractAPI, Poppler-Cpp и OpenCV4.
 
 Для Tesseract необходимо скачать отдельно rustraineddata для русского языка.
 
@@ -26,6 +25,7 @@
 vcpkg install tesseract:x64-windows 
 vcpkg install opencv4:x64-windows
 vcpkg install qt5-base:x64-windows
+vcpkg install poppler:x64-windows
 vcpkg integrate install
 ```
 
@@ -34,5 +34,6 @@ vcpkg integrate install
 sudo apt-get install qt5-default
 sudo apt-get install python3-opencv
 sudo apt-get install libtesseract-dev
+sudo apt-get install libpoppler-dev
 ```
   

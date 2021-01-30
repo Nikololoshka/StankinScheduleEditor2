@@ -5,8 +5,7 @@ TesseractWrapper::TesseractWrapper()
     tesseract_ = std::make_unique<tesseract::TessBaseAPI>();
     // "C:/Program Files/Tesseract-OCR/tessdata";
     initSuccess_ = tesseract_->Init(nullptr, "rus") == 0;
-    qDebug() << initSuccess_;
-    qDebug() << qEnvironmentVariable("TESSDATA_PREFIX");
+    qInfo() << qEnvironmentVariable("TESSDATA_PREFIX");
 }
 
 TesseractWrapper::~TesseractWrapper()

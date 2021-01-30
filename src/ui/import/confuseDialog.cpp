@@ -69,7 +69,8 @@ void ConfuseDialog::start(const ConfuseInfo &info)
     ui->retryButton->setToolTip(info.context);
 
     previewImage_->setPixmap(QPixmap(info.imagePath));
-    previewImage_->resize(previewImage_->pixmap()->size() / 12);
+    auto img = previewImage_->pixmap(Qt::ReturnByValue);
+    previewImage_->resize(img.size() / 12);
     scaleFactor_ = 1.0;
 
     info_ = info;
@@ -144,7 +145,8 @@ void ConfuseDialog::closeEvent(QCloseEvent *event)
 void ConfuseDialog::scaleImage(double factor)
 {
     scaleFactor_ *= factor;
-    previewImage_->resize(scaleFactor_ * previewImage_->pixmap()->size());
+    auto img = previewImage_->pixmap(Qt::ReturnByValue);
+    previewImage_->resize(scaleFactor_ * img.size());
 
     adjustScrollBar(scrollArea_->verticalScrollBar(), factor);
     adjustScrollBar(scrollArea_->horizontalScrollBar(), factor);

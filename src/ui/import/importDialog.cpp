@@ -32,6 +32,8 @@ ImportDialog::ImportDialog(QWidget *parent) :
         }
     }
 
+    ui->yearSpinBox->setValue(QDate::currentDate().year());
+
     workerTimer_ = new QTimer(this);
     confuseDialog_ = new ConfuseDialog(workerManager_, this);
 
@@ -73,9 +75,8 @@ void ImportDialog::onImportButtonClicked()
     }
 
     workerManager_->setSchedules(files);
-    workerManager_->setPooplerPath(ui->pooplerLineEdit->text());
+    workerManager_->setYear(ui->yearSpinBox->value());
     workerManager_->setDpi(ui->dpiSpinBox->value());
-    workerManager_->setTesseractPath(ui->tesseractLineEdit->text());
 
     if (!isWorkPooplerAndTesseract()) {
         return;
@@ -206,8 +207,7 @@ void ImportDialog::updateFilesList(const QStringList &paths)
 void ImportDialog::enableUI(bool enable)
 {
     ui->addButton->setEnabled(enable);
-    ui->pooplerLineEdit->setEnabled(enable);
-    ui->tesseractLineEdit->setEnabled(enable);
+    ui->yearSpinBox->setEnabled(enable);
     ui->dpiSpinBox->setEnabled(enable);
     ui->importButton->setEnabled(enable);
     ui->cancelButton->setEnabled(enable);

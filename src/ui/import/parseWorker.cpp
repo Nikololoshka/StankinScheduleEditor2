@@ -403,7 +403,7 @@ Date ParseWorker::parseDates(const QString& datesMatch) const
 
 QDate ParseWorker::parseDate(const QString& dateString) const
 {
-    int year = QDate::currentDate().year() - 2;
+    int year = workerManager_->year();
     return QDate::fromString(dateString.trimmed() + "." + QString::number(year),
         "dd.MM.yyyy");
 }

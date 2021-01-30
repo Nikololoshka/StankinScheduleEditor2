@@ -180,12 +180,12 @@ void ParseWorkerManager::setSchedules(const QStringList &schedules)
 
 QString ParseWorkerManager::pooplerPath() const
 {
-    return pooplerPath_;
+    return "";
 }
 
 void ParseWorkerManager::setPooplerPath(const QString &pooplerPath)
 {
-    pooplerPath_ = pooplerPath;
+
 }
 
 QString ParseWorkerManager::tesseractPath() const
@@ -317,5 +317,15 @@ ValidData ParseWorkerManager::hasValid(const QString &value, const QVector<QStri
     }
 
     return  { maybe, true };
+}
+
+int ParseWorkerManager::year() const
+{
+    return year_;
+}
+
+void ParseWorkerManager::setYear(int year)
+{
+    year_ = year;
 }
 

@@ -6,34 +6,34 @@
 #include <leptonica/allheaders.h>
 
 /**
- * @brief Класс для работы с Tesseract.
+ * @brief РљР»Р°СЃСЃ РґР»СЏ СЂР°Р±РѕС‚С‹ СЃ Tesseract.
 */
 class TesseractWrapper
 {
 public:
     /**
-     * @brief Конструктор по умолчанию.
+     * @brief РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ.
     */
     TesseractWrapper();
     ~TesseractWrapper();
 
     /**
-     * @brief Распознает текст с изображения.
-     * @param imagePath путь до изображения.
-     * @return текст с изображения.
+     * @brief Р Р°СЃРїРѕР·РЅР°РµС‚ С‚РµРєСЃС‚ СЃ РёР·РѕР±СЂР°Р¶РµРЅРёСЏ.
+     * @param imagePath РїСѓС‚СЊ РґРѕ РёР·РѕР±СЂР°Р¶РµРЅРёСЏ.
+     * @return С‚РµРєСЃС‚ СЃ РёР·РѕР±СЂР°Р¶РµРЅРёСЏ.
     */
     QString imageToString(const QString &imagePath) const;
     /**
-     * @brief Проверяет доступность tesseract'a.
-     * @return если есть доступ к tesseract, то возвращаеться пустая строка. 
-     *         Иначе текст с описанием ошибки.
+     * @brief РџСЂРѕРІРµСЂСЏРµС‚ РґРѕСЃС‚СѓРїРЅРѕСЃС‚СЊ tesseract'a.
+     * @return РµСЃР»Рё РµСЃС‚СЊ РґРѕСЃС‚СѓРї Рє tesseract, С‚Рѕ РІРѕР·РІСЂР°С‰Р°РµС‚СЊСЃСЏ РїСѓСЃС‚Р°СЏ СЃС‚СЂРѕРєР°. 
+     *         РРЅР°С‡Рµ С‚РµРєСЃС‚ СЃ РѕРїРёСЃР°РЅРёРµРј РѕС€РёР±РєРё.
     */
     QString checkTesseract() const;
 
 private:
-    //! объект для доступа к TessractAPI
+    //! РѕР±СЉРµРєС‚ РґР»СЏ РґРѕСЃС‚СѓРїР° Рє TessractAPI
     std::unique_ptr<tesseract::TessBaseAPI> tesseract_;
-    //! успешна ли инициализация
+    //! СѓСЃРїРµС€РЅР° Р»Рё РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ
     bool initSuccess_;
 };
 

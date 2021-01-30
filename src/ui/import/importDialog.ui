@@ -95,51 +95,14 @@
          <layout class="QVBoxLayout" name="verticalLayout">
           <item>
            <layout class="QFormLayout" name="formLayout">
-            <item row="0" column="0">
-             <widget class="QLabel" name="pooplerLabel">
-              <property name="text">
-               <string>Poopler path </string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QLineEdit" name="pooplerLineEdit">
-              <property name="text">
-               <string>pdftoppm</string>
-              </property>
-             </widget>
-            </item>
             <item row="1" column="0">
-             <widget class="QLabel" name="tesseractLabel">
-              <property name="text">
-               <string>Tesseract path</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QLineEdit" name="tesseractLineEdit">
-              <property name="text">
-               <string>tesseract</string>
-              </property>
-              <property name="echoMode">
-               <enum>QLineEdit::Normal</enum>
-              </property>
-              <property name="dragEnabled">
-               <bool>false</bool>
-              </property>
-              <property name="clearButtonEnabled">
-               <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0">
              <widget class="QLabel" name="dpiLabel">
               <property name="text">
                <string>DPI</string>
               </property>
              </widget>
             </item>
-            <item row="2" column="1">
+            <item row="1" column="1">
              <widget class="QSpinBox" name="dpiSpinBox">
               <property name="prefix">
                <string/>
@@ -155,6 +118,26 @@
               </property>
               <property name="value">
                <number>500</number>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QLabel" name="yearLabel">
+              <property name="text">
+               <string>Год дат в расписании</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QSpinBox" name="yearSpinBox">
+              <property name="minimum">
+               <number>2000</number>
+              </property>
+              <property name="maximum">
+               <number>2100</number>
+              </property>
+              <property name="value">
+               <number>2020</number>
               </property>
              </widget>
             </item>
