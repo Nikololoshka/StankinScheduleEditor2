@@ -73,6 +73,13 @@ void ConfuseDialog::start(const ConfuseInfo &info)
     previewImage_->resize(img.size() / 12);
     scaleFactor_ = 1.0;
 
+    onZoomInClicked();
+    onZoomOutClicked();
+    onZoomOutClicked();
+    onZoomOutClicked();
+    onZoomOutClicked();
+    onZoomOutClicked();
+
     info_ = info;
     status_ = ConfuseStatus::Work;
     show();

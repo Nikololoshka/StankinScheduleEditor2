@@ -200,9 +200,10 @@ void ParseWorker::startParsing(const QString& pdfFilePath,
     }
 
     // сохранение изображения
-    QString filename = QFileInfo(pdfFilePath).baseName();
-    QFile debugImage(imageFilePath);
-    debugImage.rename(filename + ".jpg");
+//    QString filename = QFileInfo(pdfFilePath).baseName();
+//    QFile debugImage(imageFilePath);
+//    bool isRename = debugImage.rename(filename + ".jpg");
+//    qDebug() << isRename;
 
     workerManager_->setProgressValue(id_, 100);
 }

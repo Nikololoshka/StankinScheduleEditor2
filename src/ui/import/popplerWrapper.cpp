@@ -16,7 +16,8 @@ PopplerWrapper::PopplerWrapper(const int id, int dpi)
 QString PopplerWrapper::print(const QString pdfPath) const
 {
     QFileInfo pdfFileInfo(pdfPath);
-    QString tempPath = pdfFileInfo.absolutePath() + "/" + name_;
+    QString tempPath = pdfFileInfo.absolutePath() + "/" + pdfFileInfo.baseName() + ".jpg";
+    // qDebug() << tempPath;
 
     std::unique_ptr<poppler::document> doc(poppler::document::load_from_file(pdfPath.toStdString()));
     if (doc && !doc->is_locked()) {
