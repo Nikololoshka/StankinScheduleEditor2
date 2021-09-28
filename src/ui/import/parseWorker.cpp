@@ -25,8 +25,8 @@ ParseWorker::ParseWorker(
 }
 
 const QString ParseWorker::PATTERN_TITLE = "([а-яА-Яa-zA-Z0-9\\s\\,\\-\\(\\)\\/\\:]+?\\.)";
-const QString ParseWorker::PATTERN_LECTURER = "([а-яА-Я\\_]+\\s([а-яА-я]\\.?){1,2})?";
-const QString ParseWorker::PATTERN_TYPE = "([а-яА-я\\s]+?\\.)";
+const QString ParseWorker::PATTERN_LECTURER = "([а-яА-Я\\s\\_]+\\s([а-яА-я]\\.?){1,2})?";
+const QString ParseWorker::PATTERN_TYPE = "\\s([а-яА-я\\s]+?\\.)";
 const QString ParseWorker::PATTERN_SUBGROUP = "(\\([абАБ]\\)\\.)?";
 const QString ParseWorker::PATTERN_CLASSROOM = "([^\\[\\]]+?\\.)";
 const QString ParseWorker::PATTERN_DATE = "(\\[((\\,)|(\\s?"
@@ -221,7 +221,7 @@ std::vector<Pair> ParseWorker::parsePairs(
 
         auto pairMatch = QRegularExpression(patternCommon()).match(pairText);
         if (!pairMatch.hasMatch()) {
-            throw ParseFileException("Неправильная структура пары", "null", pairText);
+            throw ParseFileException(ConfuseType::InvalidPairStruct, "null", pairText);
         }
 
         auto titleMatch = pairMatch.captured(1);
@@ -286,7 +286,7 @@ QString ParseWorker::parseTitle(const QString& titleMatch) const
     auto title = titleMatch.left(titleMatch.size() - 1).trimmed();
     auto info = workerManager_->hasTitle(title);
     if (!info.valid) {
-        throw ParseFileException("Неизвесная дисциплина", info.data, title);
+        throw ParseFileException(ConfuseType::InvalidTitle, info.data, title);
     }
 
     return info.data;
@@ -301,7 +301,7 @@ QString ParseWorker::parseLecturer(const QString& lecturerMatch) const
 
     auto info = workerManager_->hasLecturer(lecturer);
     if (!info.valid) {
-        throw ParseFileException("Неизвесный преподаватель", info.data, lecturer);
+        throw ParseFileException(ConfuseType::InvalidLecturer, info.data, lecturer);
     }
 
     return info.data;
@@ -319,7 +319,7 @@ Type ParseWorker::parseType(const QString& typeMatch) const
         return Type::getLaboratory();
     }
 
-    throw ParseFileException("Неизвесный тип", "null", typeString);
+    throw ParseFileException(ConfuseType::InvalidType, "null", typeString);
 }
 
 Subgroup ParseWorker::parseSubgroup(const QString& subgroupMatch) const
@@ -335,7 +335,7 @@ Subgroup ParseWorker::parseSubgroup(const QString& subgroupMatch) const
         }
     }
 
-    throw ParseFileException("Неизвесная подгруппа", "null", subgroupMatch);
+    throw ParseFileException(ConfuseType::InvalidSubgroup, "null", subgroupMatch);
 }
 
 QString ParseWorker::parseClassroom(const QString& classroomMatch) const
@@ -347,7 +347,7 @@ QString ParseWorker::parseClassroom(const QString& classroomMatch) const
 
     auto info = workerManager_->hasClassroom(classroom);
     if (!info.valid) {
-        throw ParseFileException("Неизвесная аудитория", info.data, classroom);
+        throw ParseFileException(ConfuseType::InvalidClassroom, info.data, classroom);
     }
 
     return info.data;
@@ -375,7 +375,7 @@ Date ParseWorker::parseDates(const QString& datesMatch) const
             } else if (frequencyString == "ч.н.") {
                 frequency = Frequency::getThroughout();
             } else {
-                throw ParseFileException("Неизвестная периодичность", "null",
+                throw ParseFileException(ConfuseType::InvalidDateFrequency, "null",
                     frequencyString);
             }
 
@@ -396,7 +396,7 @@ Date ParseWorker::parseDates(const QString& datesMatch) const
             continue;
         }
 
-        throw ParseFileException("Неизвестная дата", "null", dateString);
+        throw ParseFileException(ConfuseType::InvalidDate, "null", dateString);
     }
 
     return dates;
@@ -405,8 +405,12 @@ Date ParseWorker::parseDates(const QString& datesMatch) const
 QDate ParseWorker::parseDate(const QString& dateString) const
 {
     int year = workerManager_->year();
-    return QDate::fromString(dateString.trimmed() + "." + QString::number(year),
-        "dd.MM.yyyy");
+    QDate date = QDate::fromString(dateString.trimmed() + "." + QString::number(year), "dd.MM.yyyy");
+    // осенний семестр. пара в январе
+    if (date.month() == 1) {
+        return date.addYears(1);
+    }
+    return date;
 }
 
 Time_ ParseWorker::computeTime(const QMap<int, ParseCell>& timeCells,

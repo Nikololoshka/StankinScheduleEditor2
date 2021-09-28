@@ -4,7 +4,7 @@
 #include "stdafx.h"
 
 /**
- * @brief Класс для подсвечивания пары в редакторе.
+ * @brief РљР»Р°СЃСЃ РґР»СЏ РїРѕРґСЃРІРµС‡РёРІР°РЅРёСЏ РїР°СЂС‹ РІ СЂРµРґР°РєС‚РѕСЂРµ.
 */
 class ParseHighlighter : QSyntaxHighlighter
 {
@@ -15,7 +15,7 @@ protected:
     void highlightBlock(const QString &text) override;
 
 private:
-    //! список с форматами пары
+    //! СЃРїРёСЃРѕРє СЃ С„РѕСЂРјР°С‚Р°РјРё РїР°СЂС‹
     QVector<QTextCharFormat> formats_;
 };
 

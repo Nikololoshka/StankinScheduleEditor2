@@ -2,49 +2,51 @@
 #define PARSEFILEEXCEPTION_H
 
 #include "stdafx.h"
+#include "parseWorkerManager.h"
 
 /**
- * @brief Класс ошибки при парсинге пары из расписания.
+ * @brief РљР»Р°СЃСЃ РѕС€РёР±РєРё РїСЂРё РїР°СЂСЃРёРЅРіРµ РїР°СЂС‹ РёР· СЂР°СЃРїРёСЃР°РЅРёСЏ.
 */
 class ParseFileException : public QException
 {
 public:
     /**
-     * @brief Конструктор ошибки.
-     * @param type тип ошибки.
-     * @param maybe возможное решение.
-     * @param confuse причина возникновения.
+     * @brief РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РѕС€РёР±РєРё.
+     * @param type С‚РёРї РѕС€РёР±РєРё.
+     * @param maybe РІРѕР·РјРѕР¶РЅРѕРµ СЂРµС€РµРЅРёРµ.
+     * @param confuse РїСЂРёС‡РёРЅР° РІРѕР·РЅРёРєРЅРѕРІРµРЅРёСЏ.
     */
-    ParseFileException(const QString &type,
+    ParseFileException(const ConfuseType &type,
                        const QString &maybe,
                        const QString &confuse);
 
     const char *what() const noexcept override;
 
     /**
-     * @brief Возвращает представление ошибки в виде текста.
+     * @brief Р’РѕР·РІСЂР°С‰Р°РµС‚ РїСЂРµРґСЃС‚Р°РІР»РµРЅРёРµ РѕС€РёР±РєРё РІ РІРёРґРµ С‚РµРєСЃС‚Р°.
     */
     QString toString() const;
 
     /**
-     * @brief Возвращает тип ошибки.
+     * @brief Р’РѕР·РІСЂР°С‰Р°РµС‚ С‚РёРї РѕС€РёР±РєРё.
     */
-    QString type() const;
+    ConfuseType type() const;
+
     /**
-     * @brief Возвращает возможное решение.
+     * @brief Р’РѕР·РІСЂР°С‰Р°РµС‚ РІРѕР·РјРѕР¶РЅРѕРµ СЂРµС€РµРЅРёРµ.
     */
     QString maybe() const;
     /** 
-     * @brief Возвращает причину ошибки.
+     * @brief Р’РѕР·РІСЂР°С‰Р°РµС‚ РїСЂРёС‡РёРЅСѓ РѕС€РёР±РєРё.
     */
     QString confuse() const;
 
 private:
-    //! тип ошибки
-    QString type_;
-    //! возможное решение
+    //! С‚РёРї РѕС€РёР±РєРё
+    ConfuseType type_;
+    //! РІРѕР·РјРѕР¶РЅРѕРµ СЂРµС€РµРЅРёРµ
     QString maybe_;
-    //! причина возникновения
+    //! РїСЂРёС‡РёРЅР° РІРѕР·РЅРёРєРЅРѕРІРµРЅРёСЏ
     QString confuse_;
 };
 

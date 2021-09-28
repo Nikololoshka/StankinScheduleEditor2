@@ -22,6 +22,30 @@ enum class WorkerStatus {
 };
 
 /**
+ * @brief Перечисление с типами ошибок при парсинге.
+ */
+enum class ConfuseType {
+    //! неправильное название пары
+    InvalidTitle,
+    //! неправильный преподаватель
+    InvalidLecturer,
+    //! неправильный тип пары
+    InvalidType,
+    //! неправильная подгруппа
+    InvalidSubgroup,
+    //! неправильная аудитория
+    InvalidClassroom,
+    //! неправильная дата
+    InvalidDate,
+    //! неправильная периодичность даты
+    InvalidDateFrequency,
+    //! неправильное время пары
+    InvalidTime,
+    //! неправильная структура пары
+    InvalidPairStruct
+};
+
+/**
  * @brief Структура для определения, являются ли данные правильными.
  * 
  * Используется в сравнении со списками проверки. Если данные не являються
@@ -43,7 +67,7 @@ struct ConfuseInfo {
     //! номер ячейки в расписании с ошибкой
     int cellNumber;
     //! тип ошибки
-    QString type;
+    ConfuseType type;
     //! возможное решение
     QString maybe;
     //! ошибка
@@ -52,6 +76,8 @@ struct ConfuseInfo {
     QString context;
     //! путь к размеченному изображению с расписанием
     QString imagePath;
+
+    static QString readeableType(const ConfuseType &type);
 };
 
 /**

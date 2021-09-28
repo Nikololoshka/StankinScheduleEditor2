@@ -329,3 +329,19 @@ void ParseWorkerManager::setYear(int year)
     year_ = year;
 }
 
+
+QString ConfuseInfo::readeableType(const ConfuseType &type)
+{
+    switch (type) {
+        case ConfuseType::InvalidTitle: return "Неизвесная дисциплина";
+        case ConfuseType::InvalidLecturer: return "Неизвесный преподаватель";
+        case ConfuseType::InvalidType: return "Неизвесный тип занятия";
+        case ConfuseType::InvalidSubgroup: return "Неизвесная подгруппа";
+        case ConfuseType::InvalidClassroom: return "Неизвесная аудитория";
+        case ConfuseType::InvalidDate: return "Неизвестная дата";
+        case ConfuseType::InvalidDateFrequency: return "Неизвестная периодичность даты";
+        case ConfuseType::InvalidTime: return "Неизвестное время занятия";
+        case ConfuseType::InvalidPairStruct: return "Неправильная структура пары";
+        default: return "Unknown type number: " + QString::number(static_cast<int>(type));
+    }
+}

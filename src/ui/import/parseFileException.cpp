@@ -1,6 +1,6 @@
 #include "parseFileException.h"
 
-ParseFileException::ParseFileException(const QString &type,
+ParseFileException::ParseFileException(const ConfuseType &type,
                                        const QString &maybe,
                                        const QString &confuse)
     : QException(),
@@ -18,13 +18,13 @@ const char *ParseFileException::what() const noexcept
 
 QString ParseFileException::toString() const
 {
-    return "Тип ошибки: " + type_ + "\n\n" +
+    return "Тип ошибки: " + ConfuseInfo::readeableType(type_) + "\n\n" +
            "Возможный решение: " + maybe_ + "\n\n" +
            "Причина: " + confuse_;
 
 }
 
-QString ParseFileException::type() const
+ConfuseType ParseFileException::type() const
 {
     return type_;
 }

@@ -55,10 +55,11 @@ void ConfuseDialog::start(const ConfuseInfo &info)
     ui->confuseEdit->setPlainText(
                 "Поток: " + QString::number(info.id) + "\n" +
                 "Ячейка: " + QString::number(info.cellNumber) + "\n\n" +
-                "Тип: " + info.type + "\n" +
+                "Тип: " + ConfuseInfo::readeableType(info.type) + "\n" +
                 "Возможное решение: " + info.maybe + "\n\n" +
                 "Причина: " + info.confuse + "\n\n"
-                "Контекст: " + info.context);
+                "Контекст: " + info.context
+        );
 
     QString context = info.context;
     if (!info.maybe.isEmpty() && info.maybe != "null") {
